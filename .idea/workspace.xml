@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0acb7e08-1832-472f-8454-87d4a8345847" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/settings.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/HitResult.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/Player.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/RubyDung.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/Textures.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/Timer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/level/Chunk.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/level/Frustum.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/level/Level.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/level/LevelListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/level/LevelRenderer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/level/Tesselator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/level/Tile.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/phys/AABB.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/net/lax1dude/eaglercraft/Client.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/net/lax1dude/eaglercraft/TestFilesystem.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/net/lax1dude/eaglercraft/adapter/EaglerAdapterImpl2.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/net/lax1dude/eaglercraft/adapter/Tessellator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/net/lax1dude/eaglercraft/adapter/teavm/BufferConverter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/net/lax1dude/eaglercraft/adapter/teavm/IDBObjectStorePatched.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/net/lax1dude/eaglercraft/adapter/teavm/IndexedDBFilesystem.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/net/lax1dude/eaglercraft/adapter/teavm/WebGL2RenderingContext.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/net/lax1dude/eaglercraft/adapter/teavm/WebGLQuery.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/net/lax1dude/eaglercraft/adapter/teavm/WebGLVertexArray.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 2
+}]]></component>
+  <component name="ProjectId" id="2btpV0ZXdkMPjZ0FLVDYbfkEMb4" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/HOME/Desktop/rd-132211/rd-132211/src/main/java",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\HOME\Desktop\rd-132211\rd-132211\src\main\java" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0acb7e08-1832-472f-8454-87d4a8345847" name="Changes" comment="" />
+      <created>1707044252658</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1707044252658</updated>
+      <workItem from="1707044253323" duration="3170000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+</project>
