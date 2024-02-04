@@ -1,4 +1,4 @@
-package net.lax1dude.eaglercraft.adapter;
+package net.PeytonPlayz585.opengl;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -6,14 +6,11 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
+import java.util.LinkedList;
 
 import org.teavm.interop.Async;
 import org.teavm.interop.AsyncCallback;
@@ -26,7 +23,6 @@ import org.teavm.jso.browser.TimerHandler;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.canvas.CanvasRenderingContext2D;
 import org.teavm.jso.canvas.ImageData;
-import org.teavm.jso.dom.css.CSSStyleDeclaration;
 import org.teavm.jso.dom.events.Event;
 import org.teavm.jso.dom.events.EventListener;
 import org.teavm.jso.dom.events.KeyboardEvent;
@@ -61,21 +57,16 @@ import org.teavm.jso.webgl.WebGLUniformLocation;
 import org.teavm.jso.websocket.CloseEvent;
 import org.teavm.jso.websocket.WebSocket;
 
-import net.lax1dude.eaglercraft.AssetRepository;
-import net.lax1dude.eaglercraft.Base64;
-import net.lax1dude.eaglercraft.Client;
-import net.lax1dude.eaglercraft.EaglerImage;
-import net.lax1dude.eaglercraft.EarlyLoadScreen;
-import net.lax1dude.eaglercraft.LocalStorageManager;
-import net.lax1dude.eaglercraft.adapter.teavm.WebGLQuery;
-import net.lax1dude.eaglercraft.adapter.teavm.WebGLVertexArray;
-import net.lax1dude.eaglercraft.adapter.teavm.IndexedDBFilesystem;
-import net.lax1dude.eaglercraft.adapter.teavm.IndexedDBFilesystem.OpenState;
-import net.lax1dude.eaglercraft.adapter.teavm.WebGL2RenderingContext;
-import static net.lax1dude.eaglercraft.adapter.teavm.WebGL2RenderingContext.*;
+import net.PeytonPlayz585.io.IndexedDBFilesystem;
+import net.PeytonPlayz585.minecraft.AssetRepository;
+import net.PeytonPlayz585.minecraft.Base64;
+import net.minecraft.src.MathHelper;
 
-public class EaglerAdapterImpl2 {
+import static org.teavm.jso.webgl.WebGLRenderingContext.*;
+import static net.PeytonPlayz585.opengl.WebGL2RenderingContext.*;
+import static net.PeytonPlayz585.opengl.RealOpenGLEmuns.*;
 
+public class LWJGLMain {
 	public static final boolean _wisWebGL() {
 		return true;
 	}
@@ -115,6 +106,14 @@ public class EaglerAdapterImpl2 {
 			return new String(contents, Charset.forName("UTF-8"));
 		}
 	}
+	
+//	public static void onWindowUnload() {
+//		LocalStorageManager.saveStorageG();
+//		LocalStorageManager.saveStorageP();
+//	}
+	
+//	@JSBody(params = { }, script = "window.onbeforeunload = function(){javaMethods.get('net.lax1dude.eaglercraft.adapter.EaglerAdapterImpl2.onWindowUnload()V').invoke();return false;};")
+//	private static native void onBeforeCloseRegister();
 	
 	public static final String[] fileContentsLines(String path) {
 		String contents = fileContents(path);
@@ -184,11 +183,6 @@ public class EaglerAdapterImpl2 {
 	
 	@JSBody(params = { }, script = "return window.navigator.platform;")
 	private static native String getPlaf();
-	
-	public static void onWindowUnload() {
-		LocalStorageManager.saveStorageG();
-		LocalStorageManager.saveStorageP();
-	}
 
 	@JSBody(params = { "m" }, script = "return m.offsetX;")
 	private static native int getOffsetX(MouseEvent m);
@@ -206,18 +200,13 @@ public class EaglerAdapterImpl2 {
 		win = Window.current();
 		doc = win.getDocument();
 		canvas = (HTMLCanvasElement)doc.createElement("canvas");
-		double r = win.getDevicePixelRatio();
-		width = (int)(rootElement.getClientWidth() * r);
-		height = (int)(rootElement.getClientHeight() * r);
+		width = rootElement.getClientWidth();
+		height = rootElement.getClientHeight();
 		canvas.setWidth(width);
 		canvas.setHeight(height);
 		canvasContext = (CanvasRenderingContext2D) canvas.getContext("2d");
 		canvas.setAttribute("id", "deevis589723589");
 		rootElement.appendChild(canvas);
-		CSSStyleDeclaration canvasStyle = canvas.getStyle();
-		canvasStyle.setProperty("width", "100%");
-		canvasStyle.setProperty("height", "100%");
-		canvasStyle.setProperty("image-rendering", "pixelated");
 		canvasBack = (HTMLCanvasElement)doc.createElement("canvas");
 		canvasBack.setWidth(width);
 		canvasBack.setHeight(height);
@@ -226,9 +215,6 @@ public class EaglerAdapterImpl2 {
 			throw new RuntimeException("WebGL 2.0 is not supported in your browser ("+getUA()+")");
 		}
 		setContextVar(webgl);
-		
-		//String agent = getString("window.navigator.userAgent").toLowerCase();
-		//if(agent.contains("windows")) isAnisotropicPatched = false;
 		
 		webgl.getExtension("EXT_texture_filter_anisotropic");
 		
@@ -263,9 +249,8 @@ public class EaglerAdapterImpl2 {
 		canvas.addEventListener("mousemove", mousemove = new EventListener<MouseEvent>() {
 			@Override
 			public void handleEvent(MouseEvent evt) {
-				double r = win.getDevicePixelRatio();
-				mouseX = (int)(getOffsetX(evt) * r);
-				mouseY = (int)((canvas.getClientHeight() - getOffsetY(evt)) * r);
+				mouseX = getOffsetX(evt);
+				mouseY = canvas.getClientHeight() - getOffsetY(evt);
 				mouseDX += evt.getMovementX();
 				mouseDY += -evt.getMovementY();
 				evt.preventDefault();
@@ -322,20 +307,10 @@ public class EaglerAdapterImpl2 {
 				forceMouseGrabbed();
 			}
 		});
-		onBeforeCloseRegister();
+		//onBeforeCloseRegister();
 		initFileChooser();
 		
-		EarlyLoadScreen.paintScreen();
-		
-		OpenState st = IndexedDBFilesystem.initialize();
-		if(st != OpenState.OPENED) {
-			if(st == OpenState.LOCKED) {
-				Client.showDatabaseLockedScreen("\nError: World folder is locked!\n\nYou are already playing Eaglercraft in a different tab.\nClose all other Eaglercraft tabs and reload");
-			}else {
-				Client.showDatabaseLockedScreen("\nError: World folder could not be loaded!\n\n" + IndexedDBFilesystem.errorDetail());
-			}
-			throw new Client.AbortedLaunchException();
-		}
+		IndexedDBFilesystem.OpenState st = IndexedDBFilesystem.initialize();
 		
 		downloadAssetPack(assetPackageURI);
 		
@@ -343,18 +318,6 @@ public class EaglerAdapterImpl2 {
 			AssetRepository.install(loadedPackage);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		
-		if(mouseEvents.isEmpty() && keyEvents.isEmpty() && !hasBeenActive()) {
-			EarlyLoadScreen.paintEnable();
-			
-			while(mouseEvents.isEmpty() && keyEvents.isEmpty()) {
-				try {
-					Thread.sleep(100l);
-				} catch (InterruptedException e) {
-					;
-				}
-			}
 		}
 		
 		audioctx = AudioContext.create();
@@ -421,84 +384,84 @@ public class EaglerAdapterImpl2 {
 	@JSBody(params = { }, script = "return {antialias: false, depth: true, powerPreference: \"high-performance\", desynchronized: false, preserveDrawingBuffer: false, premultipliedAlpha: false, alpha: false};")
 	public static native JSObject youEagler();
 	
-	public static final int _wGL_TEXTURE_2D = TEXTURE_2D;
-	public static final int _wGL_DEPTH_TEST = DEPTH_TEST;
-	public static final int _wGL_LEQUAL = LEQUAL;
-	public static final int _wGL_GEQUAL = GEQUAL;
-	public static final int _wGL_GREATER = GREATER;
-	public static final int _wGL_LESS = LESS;
-	public static final int _wGL_BACK = BACK;
-	public static final int _wGL_FRONT = FRONT;
-	public static final int _wGL_FRONT_AND_BACK = FRONT_AND_BACK;
-	public static final int _wGL_COLOR_BUFFER_BIT = COLOR_BUFFER_BIT;
-	public static final int _wGL_DEPTH_BUFFER_BIT = DEPTH_BUFFER_BIT;
-	public static final int _wGL_BLEND = BLEND;
-	public static final int _wGL_RGBA = RGBA;
-	public static final int _wGL_RGB = RGB;
-	public static final int _wGL_RGB8 = RGB8;
-	public static final int _wGL_RGBA8 = RGBA8;
-	public static final int _wGL_UNSIGNED_BYTE = UNSIGNED_BYTE;
-	public static final int _wGL_UNSIGNED_SHORT = UNSIGNED_SHORT;
-	public static final int _wGL_SRC_ALPHA = SRC_ALPHA;
-	public static final int _wGL_ONE_MINUS_SRC_ALPHA = ONE_MINUS_SRC_ALPHA;
-	public static final int _wGL_ONE_MINUS_DST_COLOR = ONE_MINUS_DST_COLOR;
-	public static final int _wGL_ONE_MINUS_SRC_COLOR = ONE_MINUS_SRC_COLOR;
-	public static final int _wGL_ZERO = ZERO;
-	public static final int _wGL_CULL_FACE = CULL_FACE;
-	public static final int _wGL_TEXTURE_MIN_FILTER = TEXTURE_MIN_FILTER;
-	public static final int _wGL_TEXTURE_MAG_FILTER = TEXTURE_MAG_FILTER;
-	public static final int _wGL_LINEAR = LINEAR;
-	public static final int _wGL_EQUAL = EQUAL;
-	public static final int _wGL_SRC_COLOR = SRC_COLOR;
-	public static final int _wGL_ONE = ONE;
-	public static final int _wGL_NEAREST = NEAREST;
-	public static final int _wGL_CLAMP = CLAMP_TO_EDGE;
-	public static final int _wGL_TEXTURE_WRAP_S = TEXTURE_WRAP_S;
-	public static final int _wGL_TEXTURE_WRAP_T = TEXTURE_WRAP_T;
-	public static final int _wGL_REPEAT = REPEAT;
-	public static final int _wGL_DST_COLOR = DST_COLOR;
-	public static final int _wGL_DST_ALPHA = DST_ALPHA;
-	public static final int _wGL_FLOAT = FLOAT;
-	public static final int _wGL_SHORT = SHORT;
-	public static final int _wGL_TRIANGLES = TRIANGLES;
-	public static final int _wGL_TRIANGLE_STRIP = TRIANGLE_STRIP;
-	public static final int _wGL_TRIANGLE_FAN = TRIANGLE_FAN;
-	public static final int _wGL_LINE_STRIP = LINE_STRIP;
-	public static final int _wGL_LINES = LINES;
-	public static final int _wGL_PACK_ALIGNMENT = PACK_ALIGNMENT;
-	public static final int _wGL_UNPACK_ALIGNMENT = UNPACK_ALIGNMENT;
-	public static final int _wGL_TEXTURE0 = TEXTURE0;
-	public static final int _wGL_TEXTURE1 = TEXTURE1;
-	public static final int _wGL_TEXTURE2 = TEXTURE2;
-	public static final int _wGL_TEXTURE3 = TEXTURE3;
-	public static final int _wGL_VIEWPORT = VIEWPORT;
-	public static final int _wGL_VERTEX_SHADER = VERTEX_SHADER;
-	public static final int _wGL_FRAGMENT_SHADER = FRAGMENT_SHADER;
-	public static final int _wGL_ARRAY_BUFFER = ARRAY_BUFFER;
-	public static final int _wGL_ELEMENT_ARRAY_BUFFER = ELEMENT_ARRAY_BUFFER;
-	public static final int _wGL_STATIC_DRAW = STATIC_DRAW;
-	public static final int _wGL_DYNAMIC_DRAW = DYNAMIC_DRAW;
-	public static final int _wGL_INVALID_ENUM = INVALID_ENUM;
-	public static final int _wGL_INVALID_VALUE= INVALID_VALUE;
-	public static final int _wGL_INVALID_OPERATION = INVALID_OPERATION;
-	public static final int _wGL_OUT_OF_MEMORY = OUT_OF_MEMORY;
-	public static final int _wGL_CONTEXT_LOST_WEBGL = CONTEXT_LOST_WEBGL;
+	public static final int _wGL_TEXTURE_2D = GL_TEXTURE_2D;
+	public static final int _wGL_DEPTH_TEST = GL_DEPTH_TEST;
+	public static final int _wGL_LEQUAL = GL_LEQUAL;
+	public static final int _wGL_GEQUAL = GL_GEQUAL;
+	public static final int _wGL_GREATER = GL_GREATER;
+	public static final int _wGL_LESS = GL_LESS;
+	public static final int _wGL_BACK = GL_BACK;
+	public static final int _wGL_FRONT = GL_FRONT;
+	public static final int _wGL_FRONT_AND_BACK = GL_FRONT_AND_BACK;
+	public static final int _wGL_COLOR_BUFFER_BIT = GL_COLOR_BUFFER_BIT;
+	public static final int _wGL_DEPTH_BUFFER_BIT = GL_DEPTH_BUFFER_BIT;
+	public static final int _wGL_BLEND = GL_BLEND;
+	public static final int _wGL_RGBA = GL_RGBA;
+	public static final int _wGL_RGB = GL_RGB;
+	public static final int _wGL_RGB8 = GL_RGB8;
+	public static final int _wGL_RGBA8 = GL_RGBA8;
+	public static final int _wGL_UNSIGNED_BYTE = GL_UNSIGNED_BYTE;
+	public static final int _wGL_UNSIGNED_SHORT = GL_UNSIGNED_SHORT;
+	public static final int _wGL_SRC_ALPHA = GL_SRC_ALPHA;
+	public static final int _wGL_ONE_MINUS_SRC_ALPHA = GL_ONE_MINUS_SRC_ALPHA;
+	public static final int _wGL_ONE_MINUS_DST_COLOR = GL_ONE_MINUS_DST_COLOR;
+	public static final int _wGL_ONE_MINUS_SRC_COLOR = GL_ONE_MINUS_SRC_COLOR;
+	public static final int _wGL_ZERO = GL_ZERO;
+	public static final int _wGL_CULL_FACE = GL_CULL_FACE;
+	public static final int _wGL_TEXTURE_MIN_FILTER = GL_TEXTURE_MIN_FILTER;
+	public static final int _wGL_TEXTURE_MAG_FILTER = GL_TEXTURE_MAG_FILTER;
+	public static final int _wGL_LINEAR = GL_LINEAR;
+	public static final int _wGL_EQUAL = GL_EQUAL;
+	public static final int _wGL_SRC_COLOR = GL_SRC_COLOR;
+	public static final int _wGL_ONE = GL_ONE;
+	public static final int _wGL_NEAREST = GL_NEAREST;
+	public static final int _wGL_CLAMP = GL_CLAMP_TO_EDGE;
+	public static final int _wGL_TEXTURE_WRAP_S = GL_TEXTURE_WRAP_S;
+	public static final int _wGL_TEXTURE_WRAP_T = GL_TEXTURE_WRAP_T;
+	public static final int _wGL_REPEAT = GL_REPEAT;
+	public static final int _wGL_DST_COLOR = GL_DST_COLOR;
+	public static final int _wGL_DST_ALPHA = GL_DST_ALPHA;
+	public static final int _wGL_FLOAT = GL_FLOAT;
+	public static final int _wGL_SHORT = GL_SHORT;
+	public static final int _wGL_TRIANGLES = GL_TRIANGLES;
+	public static final int _wGL_TRIANGLE_STRIP = GL_TRIANGLE_STRIP;
+	public static final int _wGL_TRIANGLE_FAN = GL_TRIANGLE_FAN;
+	public static final int _wGL_LINE_STRIP = GL_LINE_STRIP;
+	public static final int _wGL_LINES = GL_LINES;
+	public static final int _wGL_PACK_ALIGNMENT = GL_PACK_ALIGNMENT;
+	public static final int _wGL_UNPACK_ALIGNMENT = GL_UNPACK_ALIGNMENT;
+	public static final int _wGL_TEXTURE0 = GL_TEXTURE0;
+	public static final int _wGL_TEXTURE1 = GL_TEXTURE1;
+	public static final int _wGL_TEXTURE2 = GL_TEXTURE2;
+	public static final int _wGL_TEXTURE3 = GL_TEXTURE3;
+	public static final int _wGL_VIEWPORT = GL_VIEWPORT;
+	public static final int _wGL_VERTEX_SHADER = GL_VERTEX_SHADER;
+	public static final int _wGL_FRAGMENT_SHADER = GL_FRAGMENT_SHADER;
+	public static final int _wGL_ARRAY_BUFFER = GL_ARRAY_BUFFER;
+	public static final int _wGL_ELEMENT_ARRAY_BUFFER = GL_ELEMENT_ARRAY_BUFFER;
+	public static final int _wGL_STATIC_DRAW = GL_STATIC_DRAW;
+	public static final int _wGL_DYNAMIC_DRAW = GL_DYNAMIC_DRAW;
+	public static final int _wGL_INVALID_ENUM = GL_INVALID_ENUM;
+	public static final int _wGL_INVALID_VALUE= GL_INVALID_VALUE;
+	public static final int _wGL_INVALID_OPERATION = GL_INVALID_OPERATION;
+	public static final int _wGL_OUT_OF_MEMORY = GL_OUT_OF_MEMORY;
+	public static final int _wGL_CONTEXT_LOST_WEBGL = GL_CONTEXT_LOST_WEBGL;
 	public static final int _wGL_FRAMEBUFFER_COMPLETE = FRAMEBUFFER_COMPLETE;
 	public static final int _wGL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT = FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
 	public static final int _wGL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT = FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
 	public static final int _wGL_COLOR_ATTACHMENT0 = COLOR_ATTACHMENT0;
 	public static final int _wGL_DEPTH_STENCIL_ATTACHMENT = DEPTH_STENCIL_ATTACHMENT;
 	public static final int _wGL_DEPTH_STENCIL = DEPTH_STENCIL;
-	public static final int _wGL_NEAREST_MIPMAP_LINEAR = NEAREST_MIPMAP_LINEAR; 
-	public static final int _wGL_LINEAR_MIPMAP_LINEAR = LINEAR_MIPMAP_LINEAR; 
-	public static final int _wGL_LINEAR_MIPMAP_NEAREST = LINEAR_MIPMAP_NEAREST; 
-	public static final int _wGL_NEAREST_MIPMAP_NEAREST = NEAREST_MIPMAP_NEAREST;
-	public static final int _wGL_TEXTURE_MAX_LEVEL = TEXTURE_MAX_LEVEL; 
+	public static final int _wGL_NEAREST_MIPMAP_LINEAR = GL_NEAREST_MIPMAP_LINEAR; 
+	public static final int _wGL_LINEAR_MIPMAP_LINEAR = GL_LINEAR_MIPMAP_LINEAR; 
+	public static final int _wGL_LINEAR_MIPMAP_NEAREST = GL_LINEAR_MIPMAP_NEAREST; 
+	public static final int _wGL_NEAREST_MIPMAP_NEAREST = GL_NEAREST_MIPMAP_NEAREST;
+	public static final int _wGL_TEXTURE_MAX_LEVEL = GL_TEXTURE_MAX_LEVEL; 
 	public static final int _wGL_UNSIGNED_INT_24_8 = UNSIGNED_INT_24_8;
-	public static final int _wGL_UNSIGNED_INT = UNSIGNED_INT;
+	public static final int _wGL_UNSIGNED_INT = GL_UNSIGNED_INT;
 	public static final int _wGL_ANY_SAMPLES_PASSED = ANY_SAMPLES_PASSED; 
-	public static final int _wGL_QUERY_RESULT = QUERY_RESULT;
-	public static final int _wGL_QUERY_RESULT_AVAILABLE = QUERY_RESULT_AVAILABLE;
+	public static final int _wGL_QUERY_RESULT = GL_QUERY_RESULT;
+	public static final int _wGL_QUERY_RESULT_AVAILABLE = GL_QUERY_RESULT_AVAILABLE;
 	public static final int _wGL_TEXTURE_MAX_ANISOTROPY = TEXTURE_MAX_ANISOTROPY_EXT;
 	public static final int _wGL_DEPTH24_STENCIL8 = DEPTH24_STENCIL8;
 	public static final int _wGL_DEPTH_COMPONENT32F = DEPTH_COMPONENT32F;
@@ -508,7 +471,7 @@ public class EaglerAdapterImpl2 {
 	public static final int _wGL_READ_FRAMEBUFFER = READ_FRAMEBUFFER;
 	public static final int _wGL_DRAW_FRAMEBUFFER = DRAW_FRAMEBUFFER;
 	public static final int _wGL_FRAMEBUFFER = FRAMEBUFFER;
-	public static final int _wGL_POLYGON_OFFSET_FILL = POLYGON_OFFSET_FILL;
+	public static final int _wGL_POLYGON_OFFSET_FILL = GL_POLYGON_OFFSET_FILL;
 	
 	public static final class TextureGL { 
 		protected final WebGLTexture obj;
@@ -624,6 +587,9 @@ public class EaglerAdapterImpl2 {
 	public static final void _wglBlendFunc(int p1, int p2) {
 		webgl.blendFunc(p1, p2);
 	}
+	public static final void _wglBlendFuncSeparate(int p1, int p2, int p3, int p4) {
+		webgl.blendFuncSeparate(p1, p2, p3, p4);
+	}
 	public static final void _wglDepthMask(boolean p1) {
 		webgl.depthMask(p1);
 	}
@@ -711,10 +677,10 @@ public class EaglerAdapterImpl2 {
 		return webgl.getProgramInfoLog(p1.obj);
 	}
 	public static final boolean _wglGetShaderCompiled(ShaderGL p1) {
-		return webgl.getShaderParameteri(p1.obj, COMPILE_STATUS) == 1;
+		return webgl.getShaderParameteri(p1.obj, GL_COMPILE_STATUS) == 1;
 	}
 	public static final boolean _wglGetProgramLinked(ProgramGL p1) {
-		return webgl.getProgramParameteri(p1.obj, LINK_STATUS) == 1;
+		return webgl.getProgramParameteri(p1.obj, GL_LINK_STATUS) == 1;
 	}
 	public static final void _wglDeleteShader(ShaderGL p1) {
 		webgl.deleteShader(p1.obj);
@@ -841,7 +807,7 @@ public class EaglerAdapterImpl2 {
 		webgl.deleteFramebuffer(p1.obj);
 	}
 	public static final void _wglFramebufferTexture2D(int p1, TextureGL p2) {
-		webgl.framebufferTexture2D(FRAMEBUFFER, p1, TEXTURE_2D, p2 == null ? null : p2.obj, 0);
+		webgl.framebufferTexture2D(FRAMEBUFFER, p1, GL_TEXTURE_2D, p2 == null ? null : p2.obj, 0);
 	}
 	public static final QueryGL _wglCreateQuery() { 
 		return new QueryGL(webgl.createQuery()); 
@@ -917,16 +883,16 @@ public class EaglerAdapterImpl2 {
 	@JSBody(params = { "url" }, script = "URL.revokeObjectURL(url);")
 	private static native void freeDataURL(String url);
 
-	public static final EaglerImage loadPNG(byte[] data) {
+	public static final MinecraftImageData loadPNG(byte[] data) {
 		ArrayBuffer arr = ArrayBuffer.create(data.length);
 		Uint8Array.create(arr).set(data);
 		return loadPNG0(arr);
 	}
 
 	@Async
-	private static native EaglerImage loadPNG0(ArrayBuffer data);
+	private static native MinecraftImageData loadPNG0(ArrayBuffer data);
 
-	private static void loadPNG0(ArrayBuffer data, final AsyncCallback<EaglerImage> ret) {
+	private static void loadPNG0(ArrayBuffer data, final AsyncCallback<MinecraftImageData> ret) {
 		final HTMLImageElement toLoad = (HTMLImageElement) doc.createElement("img");
 		toLoad.addEventListener("load", new EventListener<Event>() {
 			@Override
@@ -957,7 +923,8 @@ public class EaglerAdapterImpl2 {
 				for(int i = 0; i < pixels.length; ++i) {
 					pixels[i] = (pxls.get(i * 4) << 16) | (pxls.get(i * 4 + 1) << 8) | pxls.get(i * 4 + 2) | (pxls.get(i * 4 + 3) << 24);
 				}
-				ret.complete(new EaglerImage(pixels, pxlsDat.getWidth(), pxlsDat.getHeight(), true));
+				IntBuffer buffer = IntBuffer.wrap(pixels);
+				ret.complete(new MinecraftImageData(buffer, pxlsDat.getWidth(), pxlsDat.getHeight(), true));
 			}
 		});
 		toLoad.addEventListener("error", new EventListener<Event>() {
@@ -1061,10 +1028,10 @@ public class EaglerAdapterImpl2 {
 		return mouseY;
 	}
 	public static final int mouseGetEventX() {
-		return currentEvent == null ? -1 : (int)(currentEvent.getClientX() * win.getDevicePixelRatio());
+		return currentEvent == null ? -1 : currentEvent.getClientX();
 	}
 	public static final int mouseGetEventY() {
-		return currentEvent == null ? -1 : (int)((canvas.getClientHeight() - currentEvent.getClientY()) * win.getDevicePixelRatio());
+		return currentEvent == null ? -1 : canvas.getClientHeight() - currentEvent.getClientY();
 	}
 	public static final boolean keysNext() {
 		if(unpressCTRL) { //un-press ctrl after copy/paste permission
@@ -1106,8 +1073,19 @@ public class EaglerAdapterImpl2 {
 		return (p1 >= 0 && p1 < 256) ? LWJGLKeyNames[p1] : "null";
 	}
 	public static final void setFullscreen(boolean p1) {
-		win.alert("use F11 to enter fullscreen");
+		if(p1) {
+			fullscreen();
+		} else {
+			exitFullscreen();
+		}
 	}
+	
+	@JSBody(script = "if(!document.fullscreenElement){document.documentElement.requestFullscreen();}")
+	public static final native void fullscreen();
+	
+	@JSBody(script = "if(document.fullscreenElement){document.exitFullscreen();}")
+	public static final native void exitFullscreen();
+	
 	public static final boolean shouldShutdown() {
 		return false;
 	}
@@ -1126,10 +1104,10 @@ public class EaglerAdapterImpl2 {
 	
 	public static final void updateDisplay() {
 		commitContext(webgl);
-		canvasContext.drawImage(canvasBack, 0d, 0d, canvasBack.getWidth(), canvasBack.getHeight());
-		double r = win.getDevicePixelRatio();
-		int ww = (int)(canvas.getClientWidth() * r);
-		int hh = (int)(canvas.getClientHeight() * r);
+		canvasContext.drawImage(canvasBack, 0d, 0d, canvas.getWidth(), canvas.getHeight());
+		
+		int ww = canvas.getClientWidth();
+		int hh = canvas.getClientHeight();
 		if(ww != width || hh != height) {
 			width = ww;
 			height = hh;
@@ -1176,7 +1154,7 @@ public class EaglerAdapterImpl2 {
 		return win.getScreen().getAvailHeight();
 	}
 	public static final int getCanvasWidth() {
-		int w = (int)(parent.getClientWidth() * win.getDevicePixelRatio());
+		int w = parent.getClientWidth();
 		if(w != width) {
 			canvas.setWidth(w);
 			canvasBack.setWidth(w);
@@ -1185,7 +1163,7 @@ public class EaglerAdapterImpl2 {
 		return w;
 	}
 	public static final int getCanvasHeight() {
-		int h = (int)(parent.getClientHeight() * win.getDevicePixelRatio());
+		int h = parent.getClientHeight();
 		if(h != height) {
 			canvas.setHeight(h);
 			canvasBack.setHeight(h);
@@ -1193,33 +1171,19 @@ public class EaglerAdapterImpl2 {
 		}
 		return h;
 	}
-	public static final void setDisplaySize(int x, int y) {
-		
-	}
-	public static final void syncDisplay(int performanceToFps) {
-		
-	}
-	
-	private static final DateFormat dateFormatSS = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
-	public static final void saveScreenshot() {
-		saveScreenshot("screenshot_" + dateFormatSS.format(new Date()).toString() + ".png", canvas);
-	}
-	
-	@JSBody(params = { "name", "cvs" }, script = "var a=document.createElement(\"a\");a.href=cvs.toDataURL(\"image/png\");a.download=name;a.click();")
-	private static native void saveScreenshot(String name, HTMLCanvasElement cvs);
 
 	public static enum RateLimit {
 		NONE, FAILED, BLOCKED, FAILED_POSSIBLY_LOCKED, LOCKED, NOW_LOCKED;
 	}
 
-	private static final Set<String> rateLimitedAddresses = new HashSet();
-	private static final Set<String> blockedAddresses = new HashSet();
+	private static final Set<String> rateLimitedAddresses = new HashSet<String>();
+	private static final Set<String> blockedAddresses = new HashSet<String>();
 	
 	private static WebSocket sock = null;
 	private static boolean sockIsConnecting = false;
 	private static boolean sockIsConnected = false;
 	private static boolean sockIsAlive = false;
-	private static LinkedList<byte[]> readPackets = new LinkedList();
+	private static LinkedList<byte[]> readPackets = new LinkedList<byte[]>();
 	private static RateLimit rateLimitStatus = null;
 	private static String currentSockURI = null;
 	
@@ -1384,9 +1348,6 @@ public class EaglerAdapterImpl2 {
 	public static final void redirectTo(String url) {
 		Window.current().getLocation().setFullURL(url);
 	}
-	
-	@JSBody(params = { }, script = "window.onbeforeunload = function(){javaMethods.get('net.lax1dude.eaglercraft.adapter.EaglerAdapterImpl2.onWindowUnload()V').invoke();return false;};")
-	private static native void onBeforeCloseRegister();
 
 	@JSBody(params = { "ext", "mime" }, script = "window.eagsFileChooser.openFileChooser(ext, mime);")
 	public static native void openFileChooser(String ext, String mime);
@@ -1476,37 +1437,44 @@ public class EaglerAdapterImpl2 {
 		}
 		return ret.buffer;
 	}
-	public static final int beginPlayback(String fileName, float x, float y, float z, float volume, float pitch) {
+	
+	public static void beginPlayback(String fileName) {
+		AudioBuffer b = getBufferFor(fileName);
+		if(b == null) return;
+		AudioBufferSourceNode s = audioctx.createBufferSource();
+		s.setBuffer(b);
+		PannerNode p = audioctx.createPanner();
+		GainNode g = audioctx.createGain();
+		g.getGain().setValue(1.0f);
+		s.connect(g);
+		g.connect(p);
+		p.connect(audioctx.getDestination());
+		s.start(0.0d, playbackOffsetDelay);
+	}
+
+	public static final int beginPlayback(String fileName, float x, float y, float z, float volume) {
 		AudioBuffer b = getBufferFor(fileName);
 		if(b == null) return -1;
-		AudioBufferSourceNode s;
-		PannerNode p;
-		GainNode g;
-		try {
-			s = audioctx.createBufferSource();
-			s.setBuffer(b);
-			s.getPlaybackRate().setValue(pitch);
-			p = audioctx.createPanner();
-			p.setPosition(x, y, z);
-			p.setMaxDistance(volume * 16f + 0.1f);
-			p.setRolloffFactor(1f);
-			//p.setVelocity(0f, 0f, 0f);
-			p.setDistanceModel("linear");
-			p.setPanningModel("HRTF");
-			p.setConeInnerAngle(360f);
-			p.setConeOuterAngle(0f);
-			p.setConeOuterGain(0f);
-			p.setOrientation(0f, 1f, 0f);
-			g = audioctx.createGain();
-			g.getGain().setValue(volume > 1.0f ? 1.0f : volume);
-			s.connect(g);
-			g.connect(p);
-			p.connect(audioctx.getDestination());
-			s.start(0.0d, playbackOffsetDelay);
-		}catch(Throwable t) {
-			System.err.println("Failed to set up 3D audio source node! " + t.toString());
-			return -1;
-		}
+		AudioBufferSourceNode s = audioctx.createBufferSource();
+		s.setBuffer(b);
+		//s.getPlaybackRate().setValue(pitch);
+		PannerNode p = audioctx.createPanner();
+		p.setPosition(x, y, z);
+		p.setMaxDistance(volume * 16f + 0.1f);
+		p.setRolloffFactor(1f);
+		//p.setVelocity(0f, 0f, 0f);
+		p.setDistanceModel("linear");
+		p.setPanningModel("HRTF");
+		p.setConeInnerAngle(360f);
+		p.setConeOuterAngle(0f);
+		p.setConeOuterGain(0f);
+		p.setOrientation(0f, 1f, 0f);
+		GainNode g = audioctx.createGain();
+		g.getGain().setValue(volume > 1.0f ? 1.0f : volume);
+		s.connect(g);
+		g.connect(p);
+		p.connect(audioctx.getDestination());
+		s.start(0.0d, playbackOffsetDelay);
 		final int theId = ++playbackId;
 		activeSoundEffects.put(theId, new AudioBufferSourceNodeX(s, p, g));
 		s.setOnEnded(new EventListener<MediaEvent>() {
@@ -1522,21 +1490,14 @@ public class EaglerAdapterImpl2 {
 	public static final int beginPlaybackStatic(String fileName, float volume, float pitch) {
 		AudioBuffer b = getBufferFor(fileName);
 		if(b == null) return -1;
-		AudioBufferSourceNode s;
-		GainNode g;
-		try {
-			s = audioctx.createBufferSource();
-			s.setBuffer(b);
-			s.getPlaybackRate().setValue(pitch);
-			g = audioctx.createGain();
-			g.getGain().setValue(volume > 1.0f ? 1.0f : volume);
-			s.connect(g);
-			g.connect(audioctx.getDestination());
-			s.start(0.0d, playbackOffsetDelay);
-		}catch(Throwable t) {
-			System.err.println("Failed to set up 2D audio source node! " + t.toString());
-			return -1;
-		}
+		AudioBufferSourceNode s = audioctx.createBufferSource();
+		s.setBuffer(b);
+		s.getPlaybackRate().setValue(pitch);
+		GainNode g = audioctx.createGain();
+		g.getGain().setValue(volume > 1.0f ? 1.0f : volume);
+		s.connect(g);
+		g.connect(audioctx.getDestination());
+		s.start(0.0d, playbackOffsetDelay);
 		final int theId = ++playbackId;
 		activeSoundEffects.put(theId, new AudioBufferSourceNodeX(s, null, g));
 		s.setOnEnded(new EventListener<MediaEvent>() {
@@ -1564,11 +1525,7 @@ public class EaglerAdapterImpl2 {
 	public static final void moveSound(int id, float x, float y, float z, float vx, float vy, float vz) {
 		AudioBufferSourceNodeX b = activeSoundEffects.get(id);
 		if(b != null && b.panner != null) {
-			try {
-				b.panner.setPosition(x, y, z);
-			}catch(Throwable t) {
-				System.err.println("Could not reposition audio node " + id + ": " + t.toString());
-			}
+			b.panner.setPosition(x, y, z);
 			//b.panner.setVelocity(vx, vy, vz);
 		}
 	}
@@ -1917,16 +1874,6 @@ public class EaglerAdapterImpl2 {
 	@JSBody(params = { "obj" }, script = "return typeof obj === \"string\";")
 	private static native boolean isString(JSObject obj);
 	
-	private static String serverToJoinOnLaunch = null;
-	
-	public static final void setServerToJoinOnLaunch(String s) {
-		serverToJoinOnLaunch = s;
-	}
-	
-	public static final String getServerToJoinOnLaunch() {
-		return serverToJoinOnLaunch;
-	}
-	
 	public static final boolean fileExists(String path) {
 		return IndexedDBFilesystem.fileExists(path);
 	}
@@ -2011,16 +1958,6 @@ public class EaglerAdapterImpl2 {
 		}
 		return str;
 	}
-	
-	private static ISaveFormat svformat = null;
-	
-	public static final void configureSaveFormat(ISaveFormat fmt) {
-		svformat = fmt;
-	}
-	
-	public static final ISaveFormat getConfiguredSaveFormat() {
-		return svformat;
-	}
 
 	@JSBody(params = { "name", "cvs" }, script = "var a=document.createElement(\"a\");a.href=URL.createObjectURL(new Blob([cvs],{type:\"application/octet-stream\"}));a.download=name;a.click();URL.revokeObjectURL(a.href);")
 	private static native void downloadFile0(String name, ArrayBuffer cvs);
@@ -2030,5 +1967,4 @@ public class EaglerAdapterImpl2 {
 		b.set(data);
 		downloadFile0(filename, b.getBuffer());
 	}
-	
 }

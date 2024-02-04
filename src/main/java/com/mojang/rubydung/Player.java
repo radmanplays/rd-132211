@@ -3,7 +3,11 @@ package com.mojang.rubydung;
 import com.mojang.rubydung.level.Level;
 import com.mojang.rubydung.phys.AABB;
 import java.util.ArrayList;
+import me.radmanplays.lwjglkeys;
 import org.lwjgl.input.Keyboard;
+
+import static me.radmanplays.lwjglkeys.*;
+
 
 public class Player {
 	private Level level;
@@ -61,27 +65,27 @@ public class Player {
 		this.zo = this.z;
 		float xa = 0.0F;
 		float ya = 0.0F;
-		if(Keyboard.isKeyDown(Keyboard.KEY_R)) {
+		if(Keyboard.isKeyDown(KEY_R)) {
 			this.resetPos();
 		}
 
-		if(Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W)) {
+		if(Keyboard.isKeyDown(KEY_UP) || Keyboard.isKeyDown(KEY_W)) {
 			--ya;
 		}
 
-		if(Keyboard.isKeyDown(Keyboard.KEY_DOWN) || Keyboard.isKeyDown(Keyboard.KEY_S)) {
+		if(Keyboard.isKeyDown(KEY_DOWN) || Keyboard.isKeyDown(KEY_S)) {
 			++ya;
 		}
 
-		if(Keyboard.isKeyDown(Keyboard.KEY_LEFT) || Keyboard.isKeyDown(Keyboard.KEY_A)) {
+		if(Keyboard.isKeyDown(KEY_LEFT) || Keyboard.isKeyDown(KEY_A)) {
 			--xa;
 		}
 
-		if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT) || Keyboard.isKeyDown(Keyboard.KEY_D)) {
+		if(Keyboard.isKeyDown(KEY_RIGHT) || Keyboard.isKeyDown(KEY_D)) {
 			++xa;
 		}
 
-		if((Keyboard.isKeyDown(Keyboard.KEY_SPACE) || Keyboard.isKeyDown(Keyboard.KEY_LMETA)) && this.onGround) {
+		if((Keyboard.isKeyDown(KEY_SPACE) || Keyboard.isKeyDown(KEY_LMETA)) && this.onGround) {
 			this.yd = 0.12F;
 		}
 

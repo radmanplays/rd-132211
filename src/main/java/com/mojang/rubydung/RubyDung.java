@@ -11,12 +11,13 @@ import javax.swing.JOptionPane;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import net.lax1dude.eaglercraft.adapter.EaglerAdapterImpl2;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+import org.lwjgl.opengl.Display;
 import org.teavm.jso.JSBody;
+
+import static me.radmanplays.lwjglkeys.*;
 
 public class RubyDung implements Runnable {
 	private static final boolean FULLSCREEN_MODE = false;
@@ -30,24 +31,28 @@ public class RubyDung implements Runnable {
 	private IntBuffer viewportBuffer = BufferUtils.createIntBuffer(16);
 	private IntBuffer selectBuffer = BufferUtils.createIntBuffer(2000);
 	private HitResult hitResult = null;
+	private boolean isCloseRequested = false;
+
+	@JSBody(params = { "message" }, script = "alert(message)")
+	public static native void jsalert(String message);
+
+	@JSBody(params = { "message" }, script = "console.log(message)")
+	public static native void jsconsolelog(String message);
 
 	public void init() throws LWJGLException, IOException {
+		jsconsolelog("starting minecraft rd-132211");
 		int col = 920330;
 		float fr = 0.5F;
 		float fg = 0.8F;
 		float fb = 1.0F;
 		this.fogColor.put(new float[]{(float)(col >> 16 & 255) / 255.0F, (float)(col >> 8 & 255) / 255.0F, (float)(col & 255) / 255.0F, 1.0F});
 		this.fogColor.flip();
-		Display.setDisplayMode(new DisplayMode(1024, 768));
-		Display.create();
-		Keyboard.create();
-		Mouse.create();
-		this.width = Display.getDisplayMode().getWidth();
-		this.height = Display.getDisplayMode().getHeight();
+		this.width = EaglerAdapterImpl2.getScreenWidth();
+		this.height = EaglerAdapterImpl2.getScreenHeight();
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glShadeModel(GL11.GL_SMOOTH);
 		GL11.glClearColor(fr, fg, fb, 0.0F);
-		GL11.glClearDepth(1.0D);
+		GL11.glClearDepth(1.0F);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDepthFunc(GL11.GL_LEQUAL);
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -56,21 +61,20 @@ public class RubyDung implements Runnable {
 		this.level = new Level(256, 256, 64);
 		this.levelRenderer = new LevelRenderer(this.level);
 		this.player = new Player(this.level);
-		Mouse.setGrabbed(true);
+		EaglerAdapterImpl2.mouseSetGrabbed(true);
 	}
 
 	public void destroy() {
 		this.level.save();
-		Mouse.destroy();
-		Keyboard.destroy();
-		Display.destroy();
+		isCloseRequested = true;
+		jsalert("the game tried to close itself. browser cant do that! reload the page or close the tab");
 	}
 
 	public void run() {
 		try {
 			this.init();
 		} catch (Exception var9) {
-			JOptionPane.showMessageDialog((Component)null, var9.toString(), "Failed to start RubyDung", 0);
+			JOptionPane.showMessageDialog((Component)null, var9.toString(), "Failed to start minecraft rd-132211", 0);
 			System.exit(0);
 		}
 
@@ -78,7 +82,7 @@ public class RubyDung implements Runnable {
 		int frames = 0;
 
 		try {
-			while(!Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !Display.isCloseRequested()) {
+			while(!EaglerAdapterImpl2.isKeyDown(KEY_ESCAPE) && !isCloseRequested) {
 				this.timer.advanceTime();
 
 				for(int e = 0; e < this.timer.ticks; ++e) {
@@ -181,17 +185,17 @@ public class RubyDung implements Runnable {
 	}
 
 	public void render(float a) {
-		float xo = (float)Mouse.getDX();
-		float yo = (float)Mouse.getDY();
+		float xo = (float)EaglerAdapterImpl2.mouseGetDX();
+		float yo = (float)EaglerAdapterImpl2.mouseGetDY();
 		this.player.turn(xo, yo);
 		this.pick(a);
 
-		while(Mouse.next()) {
-			if(Mouse.getEventButton() == 1 && Mouse.getEventButtonState() && this.hitResult != null) {
+		while(EaglerAdapterImpl2.mouseNext()) {
+			if(EaglerAdapterImpl2.mouseGetEventButton() == 1 && EaglerAdapterImpl2.mouseGetEventButtonState() && this.hitResult != null) {
 				this.level.setTile(this.hitResult.x, this.hitResult.y, this.hitResult.z, 0);
 			}
 
-			if(Mouse.getEventButton() == 0 && Mouse.getEventButtonState() && this.hitResult != null) {
+			if(EaglerAdapterImpl2.mouseGetEventButton() == 0 && EaglerAdapterImpl2.mouseGetEventButtonState() && this.hitResult != null) {
 				int x = this.hitResult.x;
 				int y = this.hitResult.y;
 				int z = this.hitResult.z;
@@ -223,8 +227,8 @@ public class RubyDung implements Runnable {
 			}
 		}
 
-		while(Keyboard.next()) {
-			if(Keyboard.getEventKey() == Keyboard.KEY_RETURN && Keyboard.getEventKeyState()) {
+		while(EaglerAdapterImpl2.keysNext()) {
+			if(EaglerAdapterImpl2.getEventKey() == KEY_RETURN && EaglerAdapterImpl2.getEventKeyState()) {
 				this.level.save();
 			}
 		}
@@ -246,7 +250,7 @@ public class RubyDung implements Runnable {
 		}
 
 		GL11.glDisable(GL11.GL_FOG);
-		Display.update();
+		EaglerAdapterImpl2.updateDisplay();
 	}
 
 	public static void checkError() {
