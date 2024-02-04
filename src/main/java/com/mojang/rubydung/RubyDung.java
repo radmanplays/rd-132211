@@ -11,7 +11,6 @@ import javax.swing.JOptionPane;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import net.lax1dude.eaglercraft.adapter.EaglerAdapterImpl2;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.opengl.Display;
@@ -124,7 +123,7 @@ public class RubyDung implements Runnable {
 	private void setupCamera(float a) {
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GLU.gluPerspective(70.0F, (float)this.width / (float)this.height, 0.05F, 1000.0F);
+		GL11.gluPerspective(70.0F, (float)this.width / (float)this.height, 0.05F, 1000.0F);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 		this.moveCameraToPlayer(a);
@@ -137,8 +136,8 @@ public class RubyDung implements Runnable {
 		GL11.glGetInteger(GL11.GL_VIEWPORT, this.viewportBuffer);
 		this.viewportBuffer.flip();
 		this.viewportBuffer.limit(16);
-		GLU.gluPickMatrix((float)x, (float)y, 5.0F, 5.0F, this.viewportBuffer);
-		GLU.gluPerspective(70.0F, (float)this.width / (float)this.height, 0.05F, 1000.0F);
+		GL11.gluPickMatrix((float)x, (float)y, 5.0F, 5.0F, this.viewportBuffer);
+		GL11.gluPerspective(70.0F, (float)this.width / (float)this.height, 0.05F, 1000.0F);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 		this.moveCameraToPlayer(a);
@@ -256,7 +255,7 @@ public class RubyDung implements Runnable {
 	public static void checkError() {
 		int e = GL11.glGetError();
 		if(e != 0) {
-			throw new IllegalStateException(GLU.gluErrorString(e));
+			throw new IllegalStateException(GL11.gluErrorString(e));
 		}
 	}
 
