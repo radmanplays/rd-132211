@@ -1,0 +1,13 @@
+ rd-132211_TeaVM Developers
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ radmanplays:
+  - Ported rd-132211 to TeaVM
+  - soon
+
+ Other code used in Infdev-20100630-1_WebGL
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Lax1dude's EaglerAdapter (OpenGL Emulator)
+- PeytonPlayz595's modified OpenGL Emulator 
+- 2002-2008 LWJGL Project
