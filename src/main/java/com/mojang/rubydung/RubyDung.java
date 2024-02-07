@@ -5,6 +5,7 @@ import com.mojang.rubydung.level.Level;
 import com.mojang.rubydung.level.LevelRenderer;
 import java.awt.Component;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import javax.swing.JOptionPane;
@@ -12,7 +13,6 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import net.lax1dude.eaglercraft.adapter.EaglerAdapterImpl2;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.GLU;
 import org.lwjgl.opengl.Display;
 import org.teavm.jso.JSBody;
 
@@ -133,10 +133,9 @@ public class RubyDung implements Runnable {
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
 		this.viewportBuffer.clear();
-		GL11.glGetInteger(GL11.GL_VIEWPORT, this.viewportBuffer);
+		GL11.glGetInteger(GL11.GL_VIEWPORT, this.viewportBuffer.array());
 		this.viewportBuffer.flip();
 		this.viewportBuffer.limit(16);
-		GL11.gluPickMatrix((float)x, (float)y, 5.0F, 5.0F, this.viewportBuffer);
 		GL11.gluPerspective(70.0F, (float)this.width / (float)this.height, 0.05F, 1000.0F);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
@@ -144,44 +143,40 @@ public class RubyDung implements Runnable {
 	}
 
 	private void pick(float a) {
-		this.selectBuffer.clear();
-		GL11.glSelectBuffer(this.selectBuffer);
-		GL11.glRenderMode(GL11.GL_SELECT);
-		this.setupPickCamera(a, this.width / 2, this.height / 2);
+		this.hitResult = null;
+
+		int mouseX = EaglerAdapterImpl2.mouseGetX();
+		int mouseY = EaglerAdapterImpl2.mouseGetY();
+
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadIdentity();
+		GL11.glOrtho(0, width, height, 0, -1, 1);
+
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glLoadIdentity();
+
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+
+		setupPickCamera(a, mouseX, mouseY);
 		this.levelRenderer.pick(this.player);
-		int hits = GL11.glRenderMode(GL11.GL_RENDER);
-		this.selectBuffer.flip();
-		this.selectBuffer.limit(this.selectBuffer.capacity());
-		long closest = 0L;
-		int[] names = new int[10];
-		int hitNameCount = 0;
 
-		for(int i = 0; i < hits; ++i) {
-			int nameCount = this.selectBuffer.get();
-			long minZ = (long)this.selectBuffer.get();
-			this.selectBuffer.get();
-			int j;
-			if(minZ >= closest && i != 0) {
-				for(j = 0; j < nameCount; ++j) {
-					this.selectBuffer.get();
-				}
-			} else {
-				closest = minZ;
-				hitNameCount = nameCount;
+		ByteBuffer pixel = BufferUtils.createByteBuffer(3);
+		GL11.glReadPixels(mouseX, height - mouseY, 1, 1, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixel);
 
-				for(j = 0; j < nameCount; ++j) {
-					names[j] = this.selectBuffer.get();
-				}
-			}
+		int id = (pixel.get(0) & 0xFF) | ((pixel.get(1) & 0xFF) << 8) | ((pixel.get(2) & 0xFF) << 16);
+		if (id != 0) {
+			this.hitResult = new HitResult(id, 0, 0, 0, 0);
 		}
 
-		if(hitNameCount > 0) {
-			this.hitResult = new HitResult(names[0], names[1], names[2], names[3], names[4]);
-		} else {
-			this.hitResult = null;
-		}
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 
+		setupCamera(a);
 	}
+
+
 
 	public void render(float a) {
 		float xo = (float)EaglerAdapterImpl2.mouseGetDX();

@@ -1,7 +1,5 @@
 package org.lwjgl.input;
 
-import net.PeytonPlayz585.opengl.LWJGLMain;
-
 public class Mouse {
 
 	public static int getDX() {

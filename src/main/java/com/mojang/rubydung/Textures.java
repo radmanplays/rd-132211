@@ -8,7 +8,6 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.GLU;
 
 public class Textures {
 	private static HashMap<String, Integer> idMap = new HashMap();
