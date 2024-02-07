@@ -1,0 +1,14 @@
+ rd-132211_TeaVM Developers
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ radmanplays:
+  - Decompiled and ported rd-132211's codebase to TeaVM
+  - soon
+
+ Other code used in rd-132211_TeaVM
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- rd-132211
+- Lax1dude's EaglerAdapter (OpenGL Emulator)
+- PeytonPlayz595's modified OpenGL Emulator 
+- 2002-2008 LWJGL Project
