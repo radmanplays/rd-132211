@@ -1,5 +1,7 @@
 package org.lwjgl.input;
 
+import net.PeytonPlayz585.opengl.LWJGLMain;
+
 public class Keyboard {
 
 	public static String getKeyName(int keyCode) {

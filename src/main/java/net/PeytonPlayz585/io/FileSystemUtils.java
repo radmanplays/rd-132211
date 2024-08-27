@@ -2,6 +2,7 @@ package net.PeytonPlayz585.io;
 
 import java.util.Collection;
 
+import net.PeytonPlayz585.opengl.LWJGLMain;
 import net.minecraft.src.IProgressUpdate;
 
 public class FileSystemUtils {

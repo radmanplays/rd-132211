@@ -23,6 +23,8 @@ import org.teavm.jso.indexeddb.IDBVersionChangeEvent;
 import org.teavm.jso.typedarrays.ArrayBuffer;
 import org.teavm.jso.typedarrays.Uint8Array;
 
+import net.PeytonPlayz585.opengl.LWJGLMain;
+
 public class IndexedDBFilesystem {
 	
 	public static enum OpenState {

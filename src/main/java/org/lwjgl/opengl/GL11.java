@@ -6,6 +6,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
 
+import net.PeytonPlayz585.minecraft.FixedFunctionShader;
 import net.PeytonPlayz585.opengl.*;
 
 public class GL11 extends LWJGLMain implements RealOpenGLEmuns {
@@ -540,6 +541,19 @@ public class GL11 extends LWJGLMain implements RealOpenGLEmuns {
 
 	private static int displayListId = 0;
 
+	public static final void glCallList(int p1) {
+		if (!isCompilingDisplayList) {
+			DisplayList d = displayListsInitialized.get(p1);
+			if (d != null && d.listLength > 0) {
+				bindTheShader(d.shaderMode | getShaderModeFlag1());
+				_wglBindVertexArray0(d.glarray);
+				_wglDrawQuadArrays(0, d.listLength);
+				shader.unuseProgram();
+				vertexDrawn += d.listLength * 6 / 4;
+				triangleDrawn += d.listLength / 2;
+			}
+		}
+	}
 
 	public static final void glNewList(int p1, int p2) {
 		if (!isCompilingDisplayList) {
@@ -552,6 +566,27 @@ public class GL11 extends LWJGLMain implements RealOpenGLEmuns {
 		}
 	}
 
+	public static final void glEndList() {
+		if (isCompilingDisplayList) {
+			isCompilingDisplayList = false;
+			Object upload = _wGetLowLevelBuffersAppended();
+			int l = _wArrayByteLength(upload);
+			if (l > 0) {
+				if (compilingDisplayList.glbuffer == null) {
+					displayListsInitialized.put(compilingDisplayList.id, compilingDisplayList);
+					compilingDisplayList.glarray = _wglCreateVertexArray();
+					compilingDisplayList.glbuffer = _wglCreateBuffer();
+					FixedFunctionShader f = FixedFunctionShader.instance(compilingDisplayList.shaderMode);
+					_wglBindVertexArray0(compilingDisplayList.glarray);
+					_wglBindBuffer(_wGL_ARRAY_BUFFER, compilingDisplayList.glbuffer);
+					f.setupArrayForProgram();
+				}
+				_wglBindBuffer(_wGL_ARRAY_BUFFER, compilingDisplayList.glbuffer);
+				_wglBufferData(_wGL_ARRAY_BUFFER, upload, _wGL_STATIC_DRAW);
+				bytesUploaded += l;
+			}
+		}
+	}
 
 	public static final void glColor3f(float p1, float p2, float p3) {
 		colorR = p1;
@@ -603,6 +638,11 @@ public class GL11 extends LWJGLMain implements RealOpenGLEmuns {
 		_wglPolygonOffset(p1, p2);
 	}
 
+	public static final void glCallLists(IntBuffer p1) {
+		while (p1.hasRemaining()) {
+			glCallList(p1.get());
+		}
+	}
 
 	public static final void glEnableVertexAttrib(int p1) {
 		switch (p1) {
@@ -636,9 +676,130 @@ public class GL11 extends LWJGLMain implements RealOpenGLEmuns {
 		}
 	}
 
+	private static final int getShaderModeFlag0() {
+		int mode = 0;
+		mode = (mode | (enableColorArray ? FixedFunctionShader.COLOR : 0));
+		//mode = (mode | (enableNormalArray ? FixedFunctionShader.NORMAL : 0));
+		mode = (mode | (enableTex0Array ? FixedFunctionShader.TEXTURE0 : 0));
+		return mode;
+	}
+
+	private static final int getShaderModeFlag1() {
+		int mode = 0;
+		mode = (mode | ((enableColorMaterial && enableLighting) ? FixedFunctionShader.LIGHTING : 0));
+		mode = (mode | (fogEnabled ? FixedFunctionShader.FOG : 0));
+		mode = (mode | (enableAlphaTest ? FixedFunctionShader.ALPHATEST : 0));
+		mode = (mode | (enableTexture2D ? FixedFunctionShader.UNIT0 : 0));
+		return mode;
+	}
+
+	private static final int getShaderModeFlag() {
+		int mode = 0;
+		mode = (mode | (enableColorArray ? FixedFunctionShader.COLOR : 0));
+		//mode = (mode | (enableNormalArray ? FixedFunctionShader.NORMAL : 0));
+		mode = (mode | (enableTex0Array ? FixedFunctionShader.TEXTURE0 : 0));
+		mode = (mode | ((enableColorMaterial && enableLighting) ? FixedFunctionShader.LIGHTING : 0));
+		mode = (mode | (fogEnabled ? FixedFunctionShader.FOG : 0));
+		mode = (mode | (enableAlphaTest ? FixedFunctionShader.ALPHATEST : 0));
+		mode = (mode | (enableTexture2D ? FixedFunctionShader.UNIT0 : 0));
+		return mode;
+	}
+
+	private static FixedFunctionShader shader = null;
+
+	private static final void bindTheShader() {
+		bindTheShader(getShaderModeFlag());
+	}
+
+	private static final void bindTheShader(int mode) {
+		FixedFunctionShader s = shader = FixedFunctionShader.instance(mode);
+		s.useProgram();
+		if (enableAlphaTest) {
+			s.setAlphaTest(alphaThresh);
+		}
+		s.setColor(colorR, colorG, colorB, colorA);
+		if (fogEnabled) {
+			s.setFogMode((fogPremultiply ? 2 : 0) + fogMode);
+			s.setFogColor(fogColorR, fogColorG, fogColorB, fogColorA);
+			s.setFogDensity(fogDensity);
+			s.setFogStartEnd(fogStart, fogEnd);
+		}
+		s.setModelMatrix(matModelV[matModelPointer]);
+		s.setProjectionMatrix(matProjV[matProjPointer]);
+		s.setTextureMatrix(matTexV[matTexPointer]);
+		if (enableColorMaterial && enableLighting) {
+			s.setNormal(normalX, normalY, normalZ);
+			s.setLightPositions(lightPos0vec, lightPos1vec);
+		}
+		s.setTex0Coords(tex0X, tex0Y);
+	}
 
 	private static Object blankUploadArray = _wCreateLowLevelIntBuffer(525000);
 
+	public static final void glDrawArrays(int p1, int p2, int p3, Object buffer) {
+		if (isCompilingDisplayList) {
+			if (p1 == GL_QUADS) {
+				if (compilingDisplayList.shaderMode == -1) {
+					compilingDisplayList.shaderMode = getShaderModeFlag0();
+				} else {
+					if (compilingDisplayList.shaderMode != getShaderModeFlag0()) {
+						System.err.println("vertex format inconsistent in display list");
+					}
+				}
+				compilingDisplayList.listLength += p3;
+				_wAppendLowLevelBuffer(buffer);
+			} else {
+				System.err.println("only GL_QUADS supported in a display list");
+			}
+		} else {
+			bytesUploaded += _wArrayByteLength(buffer);
+			vertexDrawn += p3;
+
+			bindTheShader();
+
+			_wglBindVertexArray0(shader.genericArray);
+			_wglBindBuffer(_wGL_ARRAY_BUFFER, shader.genericBuffer);
+			if (!shader.bufferIsInitialized) {
+				shader.bufferIsInitialized = true;
+				_wglBufferData(_wGL_ARRAY_BUFFER, blankUploadArray, _wGL_DYNAMIC_DRAW);
+			}
+			_wglBufferSubData(_wGL_ARRAY_BUFFER, 0, buffer);
+
+			if (p1 == GL_QUADS) {
+				_wglDrawQuadArrays(p2, p3);
+				triangleDrawn += p3 / 2;
+			} else {
+				int drawMode = 0;
+				switch (p1) {
+				default:
+				case GL_TRIANGLES:
+					drawMode = _wGL_TRIANGLES;
+					triangleDrawn += p3 / 3;
+					break;
+				case GL_TRIANGLE_STRIP:
+					drawMode = _wGL_TRIANGLE_STRIP;
+					triangleDrawn += p3 - 2;
+					break;
+				case GL_TRIANGLE_FAN:
+					drawMode = _wGL_TRIANGLE_FAN;
+					triangleDrawn += p3 - 2;
+					break;
+				case GL_LINE_STRIP:
+					drawMode = _wGL_LINE_STRIP;
+					triangleDrawn += p3 - 1;
+					break;
+				case GL_LINES:
+					drawMode = _wGL_LINES;
+					triangleDrawn += p3 / 2;
+					break;
+				}
+				_wglDrawArrays(drawMode, p2, p3);
+			}
+
+			shader.unuseProgram();
+
+		}
+	}
 
 	private static final void _wglDrawQuadArrays(int p2, int p3) {
 		if (quadsToTrianglesBuffer == null) {
