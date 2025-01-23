@@ -18,38 +18,38 @@ public class BufferUtils {
      */
 
     public static ByteBuffer createByteBuffer(int size) {
-    	return ByteBuffer.wrap(new byte[size]).order(ByteOrder.nativeOrder());
+        return ByteBuffer.wrap(new byte[size]).order(ByteOrder.nativeOrder());
     }
 
     public static ShortBuffer createShortBuffer(int size) {
-    	return ShortBuffer.wrap(new short[size]);
+        return createByteBuffer(size << 1).asShortBuffer();
     }
 
     public static CharBuffer createCharBuffer(int size) {
-    	return CharBuffer.wrap(new char[size]);
+		return createByteBuffer(size << 1).asCharBuffer();
 	}
 
     public static IntBuffer createIntBuffer(int size) {
-    	return IntBuffer.wrap(new int[size]);
+		return createByteBuffer(size << 2).asIntBuffer();
 	}
 
     public static LongBuffer createLongBuffer(int size) {
-    	return LongBuffer.wrap(new long[size]);
+		return createByteBuffer(size << 3).asLongBuffer();
 	}
 
     public static FloatBuffer createFloatBuffer(int size) {
-    	return FloatBuffer.wrap(new float[size]);
+		return createByteBuffer(size << 2).asFloatBuffer();
 	}
 
     public static DoubleBuffer createDoubleBuffer(int size) {
-    	return DoubleBuffer.wrap(new double[size]);
+		return createByteBuffer(size << 3).asDoubleBuffer();
 	}
 
-/*    public static PointerBuffer createPointerBuffer(int size) {
+    public static PointerBuffer createPointerBuffer(int size) {
         //Doesn't actually directly allocate
         //I rewrote the PointerBuffer class to use buffer.wrap
 		return PointerBuffer.allocateDirect(size);
-	}*/
+	}
 
     public static int getElementSizeExponent(Buffer buf) {
 		if (buf instanceof ByteBuffer) {

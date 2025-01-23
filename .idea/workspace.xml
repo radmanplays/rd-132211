@@ -4,51 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0acb7e08-1832-472f-8454-87d4a8345847" name="Changes" comment="add BufferUtils">
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/radmanplays/MathHelper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/Client.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/LWJGLMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/io/FileSystemUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/io/FileSystemUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/io/IDBObjectStorePatched.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/io/IDBObjectStorePatched.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/io/IndexedDBFilesystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/io/IndexedDBFilesystem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/minecraft/AssetRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/minecraft/AssetRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/minecraft/Base64.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/minecraft/Base64.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/minecraft/BaseNCodec.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/minecraft/BaseNCodec.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/minecraft/FixedFunctionShader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/minecraft/FixedFunctionShader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/minecraft/GeneralDigest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/minecraft/GeneralDigest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/minecraft/SHA1Digest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/minecraft/SHA1Digest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/GLObjectMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/GLObjectMap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/Matrix.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/Matrix.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/Matrix4f.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/Matrix4f.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/MinecraftImageData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/MinecraftImageData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/ReadableVector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/ReadableVector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/ReadableVector2f.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/ReadableVector2f.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/ReadableVector3f.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/ReadableVector3f.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/ReadableVector4f.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/ReadableVector4f.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/RealOpenGLEmuns.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/RealOpenGLEmuns.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/Vector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/Vector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/Vector2f.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/Vector2f.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/Vector3f.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/Vector3f.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/Vector4f.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/Vector4f.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/WebGL2RenderingContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/WebGL2RenderingContext.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/WebGLQuery.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/WebGLQuery.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/WebGLVertexArray.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/WebGLVertexArray.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/WritableVector2f.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/WritableVector2f.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/WritableVector3f.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/WritableVector3f.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/WritableVector4f.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/PeytonPlayz585/opengl/WritableVector4f.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/lax1dude/eaglercraft/adapter/GL11.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/lax1dude/eaglercraft/adapter/GL11.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/lwjgl/BufferUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/lwjgl/BufferUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/lwjgl/LWJGLException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/lwjgl/LWJGLException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/lwjgl/input/Keyboard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/lwjgl/input/Keyboard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/lwjgl/input/Mouse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/lwjgl/input/Mouse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/lwjgl/opengl/Display.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/lwjgl/opengl/Display.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/lwjgl/opengl/GL11.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/lwjgl/opengl/GL11.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/lwjgl/opengl/GL12.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/lwjgl/opengl/GL12.java" afterDir="false" />
-    </list>
+    <list default="true" id="0acb7e08-1832-472f-8454-87d4a8345847" name="Changes" comment="add BufferUtils" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -81,13 +37,13 @@
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="rd-132211" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="build" type="c8890929:TasksNode$1" />
+                <item name="teavm" type="c8890929:TasksNode$1" />
               </path>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="rd-132211" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="teavm" type="c8890929:TasksNode$1" />
+                <item name="verification" type="c8890929:TasksNode$1" />
               </path>
             </expand>
             <select />
@@ -106,6 +62,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;WtmcX&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/WtmcX/port.git",
+    "accountId": "956cbec7-a3ee-409a-b863-308a63dc2529"
+  }
+}]]></component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -122,43 +90,54 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Gradle.rd-132211 [:com.mojang.rubydung.RubyDung.main()].executor": "Run",
+    "Gradle.rd-132211 [:net.PeytonPlayz585.Client.main()].executor": "Run",
+    "Gradle.rd-132211 [:net.lax1dude.eaglercraft.Client.main()].executor": "Run",
+    "Gradle.rd-132211 [generateJavaScript].executor": "Run",
     "Gradle.rd-132211 [jar].executor": "Run",
     "Gradle.rd-132211 [teavmc].executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
+    "external.system.has.shared.sources": "true",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/HOME/Documents/GitHub/rd-132211",
+    "last_opened_file_path": "C:/Users/Administartor/Desktop/astra-eagler-main/port",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15234375",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Administartor\rd-132211\src\main\java\com\demez\minecraft\Client" />
+      <recent name="C:\Users\Administartor\rd-132211\src\main\resources" />
+      <recent name="C:\Users\Administartor\rd-132211\src\main\java\net\lax1dude\eaglercraft" />
+      <recent name="C:\Users\Administartor\rd-132211\src\main\java\org\json" />
       <recent name="C:\Users\HOME\Desktop\rd-132211\rd-132211\src\main\java\net" />
-      <recent name="C:\Users\HOME\Desktop\rd-132211\rd-132211\src\main\java\net\lax1dude\eaglercraft\adapter" />
-      <recent name="C:\Users\HOME\Desktop\rd-132211\rd-132211\src\main\java\net\lax1dude\eaglercraft" />
-      <recent name="C:\Users\HOME\Desktop\rd-132211\rd-132211\src\main\java" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Administartor\rd-132211\src\main\java\com\demez\minecraft\Client" />
+      <recent name="C:\Users\Administartor\rd-132211\src\main\java\org\json" />
       <recent name="C:\Users\HOME\Desktop\rd-132211\rd-132211\src\main\java\net" />
       <recent name="C:\Users\HOME\Desktop\rd-132211\rd-132211\src\main\java\net\lax1dude\eaglercraft\adapter" />
       <recent name="C:\Users\HOME\Desktop\rd-132211\rd-132211\src\main\java\net\PeytonPlayz585" />
-      <recent name="C:\Users\HOME\Desktop\rd-132211\rd-132211\src\main\java" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.rd-132211 [teavmc]">
-    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="me.radmanplays.Main" />
+  <component name="RunManager" selected="Gradle.rd-132211 [generateJavaScript]">
+    <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="net.PeytonPlayz585.Client" />
       <module name="rd-132211.main" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="me.radmanplays.*" />
+          <option name="PATTERN" value="net.PeytonPlayz585.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -179,7 +158,20 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="rd-132211 [jar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="net.lax1dude.eaglercraft.Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="net.lax1dude.eaglercraft.Client" />
+      <module name="rd-132211.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="net.lax1dude.eaglercraft.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="rd-132211 [generateJavaScript]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -190,7 +182,7 @@
         </option>
         <option name="taskNames">
           <list>
-            <option value="jar" />
+            <option value="generateJavaScript" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -225,19 +217,13 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.rd-132211 [teavmc]" />
-        <item itemvalue="Gradle.rd-132211 [jar]" />
-        <item itemvalue="Application.Main" />
+        <item itemvalue="Gradle.rd-132211 [generateJavaScript]" />
         <item itemvalue="Application.RubyDung" />
+        <item itemvalue="Application.net.lax1dude.eaglercraft.Client" />
+        <item itemvalue="Application.Client" />
+        <item itemvalue="Gradle.rd-132211 [teavmc]" />
       </list>
     </recent_temporary>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="jdk-1.8.0_402-corretto-1.8.0_402-4caba194b151-ae57be32" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -281,6 +267,17 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />

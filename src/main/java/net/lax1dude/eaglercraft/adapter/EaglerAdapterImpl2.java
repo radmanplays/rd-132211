@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import me.radmanplays.MathHelper;
 import org.teavm.interop.Async;
 import org.teavm.interop.AsyncCallback;
 import org.teavm.jso.JSBody;
@@ -64,9 +65,6 @@ import org.teavm.jso.websocket.WebSocket;
 import net.lax1dude.eaglercraft.AssetRepository;
 import net.lax1dude.eaglercraft.Base64;
 import net.lax1dude.eaglercraft.Client;
-import net.lax1dude.eaglercraft.EaglerImage;
-import net.lax1dude.eaglercraft.EarlyLoadScreen;
-import net.lax1dude.eaglercraft.LocalStorageManager;
 import net.lax1dude.eaglercraft.adapter.teavm.WebGLQuery;
 import net.lax1dude.eaglercraft.adapter.teavm.WebGLVertexArray;
 import net.lax1dude.eaglercraft.adapter.teavm.IndexedDBFilesystem;
@@ -185,10 +183,6 @@ public class EaglerAdapterImpl2 {
 	@JSBody(params = { }, script = "return window.navigator.platform;")
 	private static native String getPlaf();
 	
-	public static void onWindowUnload() {
-		LocalStorageManager.saveStorageG();
-		LocalStorageManager.saveStorageP();
-	}
 
 	@JSBody(params = { "m" }, script = "return m.offsetX;")
 	private static native int getOffsetX(MouseEvent m);
@@ -325,8 +319,7 @@ public class EaglerAdapterImpl2 {
 		onBeforeCloseRegister();
 		initFileChooser();
 		
-		EarlyLoadScreen.paintScreen();
-		
+
 		OpenState st = IndexedDBFilesystem.initialize();
 		if(st != OpenState.OPENED) {
 			if(st == OpenState.LOCKED) {
@@ -346,8 +339,7 @@ public class EaglerAdapterImpl2 {
 		}
 		
 		if(mouseEvents.isEmpty() && keyEvents.isEmpty() && !hasBeenActive()) {
-			EarlyLoadScreen.paintEnable();
-			
+
 			while(mouseEvents.isEmpty() && keyEvents.isEmpty()) {
 				try {
 					Thread.sleep(100l);
@@ -917,63 +909,9 @@ public class EaglerAdapterImpl2 {
 	@JSBody(params = { "url" }, script = "URL.revokeObjectURL(url);")
 	private static native void freeDataURL(String url);
 
-	public static final EaglerImage loadPNG(byte[] data) {
-		ArrayBuffer arr = ArrayBuffer.create(data.length);
-		Uint8Array.create(arr).set(data);
-		return loadPNG0(arr);
-	}
 
-	@Async
-	private static native EaglerImage loadPNG0(ArrayBuffer data);
 
-	private static void loadPNG0(ArrayBuffer data, final AsyncCallback<EaglerImage> ret) {
-		final HTMLImageElement toLoad = (HTMLImageElement) doc.createElement("img");
-		toLoad.addEventListener("load", new EventListener<Event>() {
-			@Override
-			public void handleEvent(Event evt) {
-				if(imageLoadCanvas == null) {
-					imageLoadCanvas = (HTMLCanvasElement) doc.createElement("canvas");
-				}
-				if(imageLoadCanvas.getWidth() < toLoad.getWidth()) {
-					imageLoadCanvas.setWidth(toLoad.getWidth());
-				}
-				if(imageLoadCanvas.getHeight() < toLoad.getHeight()) {
-					imageLoadCanvas.setHeight(toLoad.getHeight());
-				}
-				if(imageLoadContext == null) {
-					imageLoadContext = (CanvasRenderingContext2D) imageLoadCanvas.getContext("2d");
-				}
-				imageLoadContext.clearRect(0, 0, toLoad.getWidth(), toLoad.getHeight());
-				imageLoadContext.drawImage(toLoad, 0, 0, toLoad.getWidth(), toLoad.getHeight());
-				ImageData pxlsDat = imageLoadContext.getImageData(0, 0, toLoad.getWidth(), toLoad.getHeight());
-				Uint8ClampedArray pxls = pxlsDat.getData();
-				int totalPixels = pxlsDat.getWidth() * pxlsDat.getHeight();
-				freeDataURL(toLoad.getSrc());
-				if(pxls.getByteLength() < totalPixels * 4) {
-					ret.complete(null);
-					return;
-				}
-				int[] pixels = new int[totalPixels];
-				for(int i = 0; i < pixels.length; ++i) {
-					pixels[i] = (pxls.get(i * 4) << 16) | (pxls.get(i * 4 + 1) << 8) | pxls.get(i * 4 + 2) | (pxls.get(i * 4 + 3) << 24);
-				}
-				ret.complete(new EaglerImage(pixels, pxlsDat.getWidth(), pxlsDat.getHeight(), true));
-			}
-		});
-		toLoad.addEventListener("error", new EventListener<Event>() {
-			@Override
-			public void handleEvent(Event evt) {
-				freeDataURL(toLoad.getSrc());
-				ret.complete(null);
-			}
-		});
-		String src = getDataURL(data, "image/png");
-		if(src == null) {
-			ret.complete(null);
-		}else {
-			toLoad.setSrc(src);
-		}
-	}
+
 
 	private static MouseEvent currentEvent = null;
 	private static KeyboardEvent currentEventK = null;
@@ -1262,16 +1200,7 @@ public class EaglerAdapterImpl2 {
 			return;
 		}
 		sock.setBinaryType("arraybuffer");
-		sock.onOpen(new EventListener<MessageEvent>() {
-			@Override
-			public void handleEvent(MessageEvent evt) {
-				sockIsConnecting = false;
-				sockIsAlive = false;
-				sockIsConnected = true;
-				readPackets.clear();
-				cb.complete("okay");
-			}
-		});
+
 		sock.onClose(new EventListener<CloseEvent>() {
 			@Override
 			public void handleEvent(CloseEvent evt) {
@@ -1385,7 +1314,6 @@ public class EaglerAdapterImpl2 {
 		Window.current().getLocation().setFullURL(url);
 	}
 	
-	@JSBody(params = { }, script = "window.onbeforeunload = function(){javaMethods.get('net.lax1dude.eaglercraft.adapter.EaglerAdapterImpl2.onWindowUnload()V').invoke();return false;};")
 	private static native void onBeforeCloseRegister();
 
 	@JSBody(params = { "ext", "mime" }, script = "window.eagsFileChooser.openFileChooser(ext, mime);")
@@ -2012,15 +1940,8 @@ public class EaglerAdapterImpl2 {
 		return str;
 	}
 	
-	private static ISaveFormat svformat = null;
-	
-	public static final void configureSaveFormat(ISaveFormat fmt) {
-		svformat = fmt;
-	}
-	
-	public static final ISaveFormat getConfiguredSaveFormat() {
-		return svformat;
-	}
+
+
 
 	@JSBody(params = { "name", "cvs" }, script = "var a=document.createElement(\"a\");a.href=URL.createObjectURL(new Blob([cvs],{type:\"application/octet-stream\"}));a.download=name;a.click();URL.revokeObjectURL(a.href);")
 	private static native void downloadFile0(String name, ArrayBuffer cvs);

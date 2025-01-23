@@ -5,11 +5,13 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="$PROJECT_DIR$/../../../../../Gradle/gradle-8.4" />
-        <option name="gradleJvm" value="1.8" />
+        <option name="gradleJvm" value="temurin-17" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/src" />
+            <option value="$PROJECT_DIR$/src/main" />
+            <option value="$PROJECT_DIR$/src/main/resources" />
           </set>
         </option>
       </GradleProjectSettings>

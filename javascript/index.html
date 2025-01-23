@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft TeaVM Port</title>
+    <!-- Tarayıcıda JavaScript için başlık, favicon vb. ayarları buraya ekleyebilirsiniz -->
+</head>
+<body>
+    <!-- Sayfanın içeriği burada yer alacak -->
+    <h1>Minecraft TeaVM Port Başlatılıyor...</h1>
+    <div id="loading">Yükleniyor...</div>
+
+    <!-- JavaScript dosyasını yükleyin -->
+    <script src="classes.js"></script>
+
+    <script>
+        // TeaVM'ye ait başlatma ve hata ayıklama işlemleri burada yapılabilir
+        window.onload = function() {
+            console.log("Minecraft TeaVM portu başlatıldı!");
+
+            // Yükleme tamamlandığında loading mesajını kaldırabilirsiniz
+            document.getElementById("loading").style.display = "none";
+
+            // Diğer başlatma kodları buraya eklenebilir
+        };
+
+        // Tarayıcı konsolunda hataları görebilmek için bir hata yakalama bloğu ekleyebilirsiniz
+        window.onerror = function (msg, url, lineNo, columnNo, error) {
+            console.error("Bir hata oluştu: ", msg);
+            return true; // Hata mesajının tarayıcıda görünmesini engeller
+        };
+    </script>
+</body>
+</html>

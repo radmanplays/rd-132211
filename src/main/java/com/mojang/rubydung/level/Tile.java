@@ -1,169 +1,207 @@
 package com.mojang.rubydung.level;
 
 public class Tile {
-	public static Tile rock = new Tile(0);
-	public static Tile grass = new Tile(1);
-	private int tex = 0;
 
-	private Tile(int tex) {
-		this.tex = tex;
-	}
+    public static Tile grass = new Tile(0);
+    public static Tile rock = new Tile(1);
 
-	public void render(Tesselator t, Level level, int layer, int x, int y, int z) {
-		float u0 = (float)this.tex / 16.0F;
-		float u1 = u0 + 0.999F / 16.0F;
-		float v0 = 0.0F;
-		float v1 = v0 + 0.999F / 16.0F;
-		float c1 = 1.0F;
-		float c2 = 0.8F;
-		float c3 = 0.6F;
-		float x0 = (float)x + 0.0F;
-		float x1 = (float)x + 1.0F;
-		float y0 = (float)y + 0.0F;
-		float y1 = (float)y + 1.0F;
-		float z0 = (float)z + 0.0F;
-		float z1 = (float)z + 1.0F;
-		float br;
-		if(!level.isSolidTile(x, y - 1, z)) {
-			br = level.getBrightness(x, y - 1, z) * c1;
-			if(br == c1 ^ layer == 1) {
-				t.color(br, br, br);
-				t.tex(u0, v1);
-				t.vertex(x0, y0, z1);
-				t.tex(u0, v0);
-				t.vertex(x0, y0, z0);
-				t.tex(u1, v0);
-				t.vertex(x1, y0, z0);
-				t.tex(u1, v1);
-				t.vertex(x1, y0, z1);
-			}
-		}
+    private final int textureId;
 
-		if(!level.isSolidTile(x, y + 1, z)) {
-			br = level.getBrightness(x, y, z) * c1;
-			if(br == c1 ^ layer == 1) {
-				t.color(br, br, br);
-				t.tex(u1, v1);
-				t.vertex(x1, y1, z1);
-				t.tex(u1, v0);
-				t.vertex(x1, y1, z0);
-				t.tex(u0, v0);
-				t.vertex(x0, y1, z0);
-				t.tex(u0, v1);
-				t.vertex(x0, y1, z1);
-			}
-		}
+    public Tile(int textureId) {
+        this.textureId = textureId;
+    }
 
-		if(!level.isSolidTile(x, y, z - 1)) {
-			br = level.getBrightness(x, y, z - 1) * c2;
-			if(br == c2 ^ layer == 1) {
-				t.color(br, br, br);
-				t.tex(u1, v0);
-				t.vertex(x0, y1, z0);
-				t.tex(u0, v0);
-				t.vertex(x1, y1, z0);
-				t.tex(u0, v1);
-				t.vertex(x1, y0, z0);
-				t.tex(u1, v1);
-				t.vertex(x0, y0, z0);
-			}
-		}
+    /**
+     * Render a tile at the given position
+     *
+     * @param tessellator Tessellator for rendering
+     * @param level       Level to check for surrounding tiles
+     * @param layer       The layer which decides if it's a shadow or not
+     * @param x           Tile position x
+     * @param y           Tile position y
+     * @param z           Tile position z
+     */
+    public void render(Tessellator tessellator, Level level, int layer, int x, int y, int z) {
+        float minU = this.textureId / 16.0F;
+        float maxU = minU + 16 / 256F;
+        float minV = 0.0F;
+        float maxV = minV + 16 / 256F;
 
-		if(!level.isSolidTile(x, y, z + 1)) {
-			br = level.getBrightness(x, y, z + 1) * c2;
-			if(br == c2 ^ layer == 1) {
-				t.color(br, br, br);
-				t.tex(u0, v0);
-				t.vertex(x0, y1, z1);
-				t.tex(u0, v1);
-				t.vertex(x0, y0, z1);
-				t.tex(u1, v1);
-				t.vertex(x1, y0, z1);
-				t.tex(u1, v0);
-				t.vertex(x1, y1, z1);
-			}
-		}
+        float shadeX = 0.6f;
+        float shadeY = 1.0f;
+        float shadeZ = 0.8f;
 
-		if(!level.isSolidTile(x - 1, y, z)) {
-			br = level.getBrightness(x - 1, y, z) * c3;
-			if(br == c3 ^ layer == 1) {
-				t.color(br, br, br);
-				t.tex(u1, v0);
-				t.vertex(x0, y1, z1);
-				t.tex(u0, v0);
-				t.vertex(x0, y1, z0);
-				t.tex(u0, v1);
-				t.vertex(x0, y0, z0);
-				t.tex(u1, v1);
-				t.vertex(x0, y0, z1);
-			}
-		}
+        float minX = x + 0.0F;
+        float maxX = x + 1.0F;
+        float minY = y + 0.0F;
+        float maxY = y + 1.0F;
+        float minZ = z + 0.0F;
+        float maxZ = z + 1.0F;
 
-		if(!level.isSolidTile(x + 1, y, z)) {
-			br = level.getBrightness(x + 1, y, z) * c3;
-			if(br == c3 ^ layer == 1) {
-				t.color(br, br, br);
-				t.tex(u0, v1);
-				t.vertex(x1, y0, z1);
-				t.tex(u1, v1);
-				t.vertex(x1, y0, z0);
-				t.tex(u1, v0);
-				t.vertex(x1, y1, z0);
-				t.tex(u0, v0);
-				t.vertex(x1, y1, z1);
-			}
-		}
+        // Render bottom face
+        if (!level.isSolidTile(x, y - 1, z)) {
+            // Get the brightness of the tile below
+            float brightness = level.getBrightness(x, y - 1, z) * shadeY;
 
-	}
+            // Don't render face if both conditions are the same (isShadowLayer != isFullBrightness)
+            if (layer == 1 ^ brightness == shadeY) {
+                tessellator.color(brightness, brightness, brightness);
+                tessellator.texture(minU, maxV);
+                tessellator.vertex(minX, minY, maxZ);
+                tessellator.texture(minU, minV);
+                tessellator.vertex(minX, minY, minZ);
+                tessellator.texture(maxU, minV);
+                tessellator.vertex(maxX, minY, minZ);
+                tessellator.texture(maxU, maxV);
+                tessellator.vertex(maxX, minY, maxZ);
+            }
+        }
 
-	public void renderFace(Tesselator t, int x, int y, int z, int face) {
-		float x0 = (float)x + 0.0F;
-		float x1 = (float)x + 1.0F;
-		float y0 = (float)y + 0.0F;
-		float y1 = (float)y + 1.0F;
-		float z0 = (float)z + 0.0F;
-		float z1 = (float)z + 1.0F;
-		if(face == 0) {
-			t.vertex(x0, y0, z1);
-			t.vertex(x0, y0, z0);
-			t.vertex(x1, y0, z0);
-			t.vertex(x1, y0, z1);
-		}
+        // Render top face
+        if (!level.isSolidTile(x, y + 1, z)) {
+            // Get the brightness of the tile above
+            float brightness = level.getBrightness(x, y + 1, z) * shadeY;
 
-		if(face == 1) {
-			t.vertex(x1, y1, z1);
-			t.vertex(x1, y1, z0);
-			t.vertex(x0, y1, z0);
-			t.vertex(x0, y1, z1);
-		}
+            // Don't render face if both conditions are the same (isShadowLayer != isFullBrightness)
+            if (layer == 1 ^ brightness == shadeY) {
+                tessellator.color(brightness, brightness, brightness);
+                tessellator.texture(maxU, maxV);
+                tessellator.vertex(maxX, maxY, maxZ);
+                tessellator.texture(maxU, minV);
+                tessellator.vertex(maxX, maxY, minZ);
+                tessellator.texture(minU, minV);
+                tessellator.vertex(minX, maxY, minZ);
+                tessellator.texture(minU, maxV);
+                tessellator.vertex(minX, maxY, maxZ);
+            }
+        }
 
-		if(face == 2) {
-			t.vertex(x0, y1, z0);
-			t.vertex(x1, y1, z0);
-			t.vertex(x1, y0, z0);
-			t.vertex(x0, y0, z0);
-		}
+        // Render side faces Z
+        if (!level.isSolidTile(x, y, z - 1)) {
+            // Get the brightness of the tile next to it
+            float brightness = level.getBrightness(x, y, z - 1) * shadeZ;
 
-		if(face == 3) {
-			t.vertex(x0, y1, z1);
-			t.vertex(x0, y0, z1);
-			t.vertex(x1, y0, z1);
-			t.vertex(x1, y1, z1);
-		}
+            // Don't render face if both conditions are the same (isShadowLayer != isFullBrightness)
+            if (layer == 1 ^ brightness == shadeZ) {
+                tessellator.color(brightness, brightness, brightness);
+                tessellator.texture(maxU, minV);
+                tessellator.vertex(minX, maxY, minZ);
+                tessellator.texture(minU, minV);
+                tessellator.vertex(maxX, maxY, minZ);
+                tessellator.texture(minU, maxV);
+                tessellator.vertex(maxX, minY, minZ);
+                tessellator.texture(maxU, maxV);
+                tessellator.vertex(minX, minY, minZ);
+            }
+        }
+        if (!level.isSolidTile(x, y, z + 1)) {
+            // Get the brightness of the tile next to it
+            float brightness = level.getBrightness(x, y, z + 1) * shadeZ;
 
-		if(face == 4) {
-			t.vertex(x0, y1, z1);
-			t.vertex(x0, y1, z0);
-			t.vertex(x0, y0, z0);
-			t.vertex(x0, y0, z1);
-		}
+            // Don't render face if both conditions are the same (isShadowLayer != isFullBrightness)
+            if (layer == 1 ^ brightness == shadeZ) {
+                tessellator.color(brightness, brightness, brightness);
+                tessellator.texture(minU, minV);
+                tessellator.vertex(minX, maxY, maxZ);
+                tessellator.texture(minU, maxV);
+                tessellator.vertex(minX, minY, maxZ);
+                tessellator.texture(maxU, maxV);
+                tessellator.vertex(maxX, minY, maxZ);
+                tessellator.texture(maxU, minV);
+                tessellator.vertex(maxX, maxY, maxZ);
+            }
+        }
 
-		if(face == 5) {
-			t.vertex(x1, y0, z1);
-			t.vertex(x1, y0, z0);
-			t.vertex(x1, y1, z0);
-			t.vertex(x1, y1, z1);
-		}
+        // Render side faces X
+        if (!level.isSolidTile(x - 1, y, z)) {
+            // Get the brightness of the tile next to it
+            float brightness = level.getBrightness(x - 1, y, z) * shadeX;
 
-	}
+            // Don't render face if both conditions are the same (isShadowLayer != isFullBrightness)
+            if (layer == 1 ^ brightness == shadeX) {
+                tessellator.color(brightness, brightness, brightness);
+                tessellator.texture(maxU, minV);
+                tessellator.vertex(minX, maxY, maxZ);
+                tessellator.texture(minU, minV);
+                tessellator.vertex(minX, maxY, minZ);
+                tessellator.texture(minU, maxV);
+                tessellator.vertex(minX, minY, minZ);
+                tessellator.texture(maxU, maxV);
+                tessellator.vertex(minX, minY, maxZ);
+            }
+        }
+        if (!level.isSolidTile(x + 1, y, z)) {
+            // Get the brightness of the tile next to it
+            float brightness = level.getBrightness(x + 1, y, z) * shadeX;
+
+            // Don't render face if both conditions are the same (isShadowLayer != isFullBrightness)
+            if (layer == 1 ^ brightness == shadeX) {
+                tessellator.color(brightness, brightness, brightness);
+                tessellator.texture(minU, maxV);
+                tessellator.vertex(maxX, minY, maxZ);
+                tessellator.texture(maxU, maxV);
+                tessellator.vertex(maxX, minY, minZ);
+                tessellator.texture(maxU, minV);
+                tessellator.vertex(maxX, maxY, minZ);
+                tessellator.texture(minU, minV);
+                tessellator.vertex(maxX, maxY, maxZ);
+            }
+        }
+    }
+
+    /**
+     * Render the single face of a tile
+     *
+     * @param tessellator Tessellator for rendering
+     * @param x Tile position x
+     * @param y Tile position y
+     * @param z Tile position z
+     * @param face Face id (0:Top, 1:Bottom, ...)
+     */
+    public void renderFace(Tessellator tessellator, int x, int y, int z, int face) {
+        float minX = x + 0.0f;
+        float maxX = x + 1.0f;
+        float minY = y + 0.0f;
+        float maxY = y + 1.0f;
+        float minZ = z + 0.0f;
+        float maxZ = z + 1.0f;
+
+        // Render face
+        if (face == 0) {
+            tessellator.vertex(minX, minY, maxZ);
+            tessellator.vertex(minX, minY, minZ);
+            tessellator.vertex(maxX, minY, minZ);
+            tessellator.vertex(maxX, minY, maxZ);
+        }
+        if (face == 1) {
+            tessellator.vertex(maxX, maxY, maxZ);
+            tessellator.vertex(maxX, maxY, minZ);
+            tessellator.vertex(minX, maxY, minZ);
+            tessellator.vertex(minX, maxY, maxZ);
+        }
+        if (face == 2) {
+            tessellator.vertex(minX, maxY, minZ);
+            tessellator.vertex(maxX, maxY, minZ);
+            tessellator.vertex(maxX, minY, minZ);
+            tessellator.vertex(minX, minY, minZ);
+        }
+        if (face == 3) {
+            tessellator.vertex(minX, maxY, maxZ);
+            tessellator.vertex(minX, minY, maxZ);
+            tessellator.vertex(maxX, minY, maxZ);
+            tessellator.vertex(maxX, maxY, maxZ);
+        }
+        if (face == 4) {
+            tessellator.vertex(minX, maxY, maxZ);
+            tessellator.vertex(minX, maxY, minZ);
+            tessellator.vertex(minX, minY, minZ);
+            tessellator.vertex(minX, minY, maxZ);
+        }
+        if (face == 5) {
+            tessellator.vertex(maxX, minY, maxZ);
+            tessellator.vertex(maxX, minY, minZ);
+            tessellator.vertex(maxX, maxY, minZ);
+            tessellator.vertex(maxX, maxY, maxZ);
+        }
+    }
 }

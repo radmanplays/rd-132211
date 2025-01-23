@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.LinkedList;
+
 import me.radmanplays.MathHelper;
 import org.teavm.interop.Async;
 import org.teavm.interop.AsyncCallback;
@@ -76,14 +77,14 @@ public class LWJGLMain {
 	public static final String _wgetShaderHeader() {
 		return "#version 300 es";
 	}
-	
+
 	@JSBody(params = { }, script = "return window.location.href;")
 	private static native String getLocationString();
-	
+
 	public static final boolean isSSLPage() {
 		return getLocationString().startsWith("https");
 	}
-	
+
 	public static final InputStream loadResource(String path) {
 		byte[] file = loadResourceBytes(path);
 		if (file != null) {
@@ -96,7 +97,7 @@ public class LWJGLMain {
 	public static final byte[] loadResourceBytes(String path) {
 		return AssetRepository.getResource(path);
 	}
-	
+
 	public static final String fileContents(String path) {
 		byte[] contents = loadResourceBytes(path);
 		if(contents == null) {
@@ -105,15 +106,15 @@ public class LWJGLMain {
 			return new String(contents, Charset.forName("UTF-8"));
 		}
 	}
-	
+
 //	public static void onWindowUnload() {
 //		LocalStorageManager.saveStorageG();
 //		LocalStorageManager.saveStorageP();
 //	}
-	
+
 //	@JSBody(params = { }, script = "window.onbeforeunload = function(){javaMethods.get('net.lax1dude.eaglercraft.adapter.EaglerAdapterImpl2.onWindowUnload()V').invoke();return false;};")
 //	private static native void onBeforeCloseRegister();
-	
+
 	public static final String[] fileContentsLines(String path) {
 		String contents = fileContents(path);
 		if(contents == null) {
@@ -122,10 +123,10 @@ public class LWJGLMain {
 			return contents.replace("\r\n", "\n").split("[\r\n]");
 		}
 	}
-	
+
 	@Async
 	public static native String downloadAssetPack(String assetPackageURI);
-	
+
 	private static void downloadAssetPack(String assetPackageURI, final AsyncCallback<String> cb) {
 		final XMLHttpRequest request = XMLHttpRequest.create();
 		request.setResponseType("arraybuffer");
@@ -145,13 +146,13 @@ public class LWJGLMain {
 		});
 		request.send();
 	}
-	
+
 	@JSBody(params = { "obj" }, script = "window.currentContext = obj;")
 	private static native int setContextVar(JSObject obj);
 
 	@JSBody(params = { "v", "s" }, script = "window[v] = s;")
 	public static native void setDebugVar(String v, String s);
-	
+
 	@JSBody(params = { }, script = "if(window.navigator.userActivation){return window.navigator.userActivation.hasBeenActive;}else{return false;}")
 	public static native boolean hasBeenActive();
 
@@ -172,26 +173,26 @@ public class LWJGLMain {
 	private static EventListener keypress = null;
 	private static EventListener wheel = null;
 	private static String[] identifier = new String[0];
-	
+
 	public static final String[] getIdentifier() {
 		return identifier;
 	}
 
 	@JSBody(params = { }, script = "return window.navigator.userAgent;")
 	private static native String getUA();
-	
+
 	@JSBody(params = { }, script = "return window.navigator.platform;")
 	private static native String getPlaf();
 
 	@JSBody(params = { "m" }, script = "return m.offsetX;")
 	private static native int getOffsetX(MouseEvent m);
-	
+
 	@JSBody(params = { "m" }, script = "return m.offsetY;")
 	private static native int getOffsetY(MouseEvent m);
-	
+
 	@JSBody(params = { "e" }, script = "return e.which;")
 	private static native int getWhich(KeyboardEvent e);
-	
+
 	public static final void initializeContext(HTMLElement rootElement, String assetPackageURI) {
 		parent = rootElement;
 		String s = parent.getAttribute("style");
@@ -214,9 +215,9 @@ public class LWJGLMain {
 			throw new RuntimeException("WebGL 2.0 is not supported in your browser ("+getUA()+")");
 		}
 		setContextVar(webgl);
-		
+
 		webgl.getExtension("EXT_texture_filter_anisotropic");
-		
+
 		win.addEventListener("contextmenu", contextmenu = new EventListener<MouseEvent>() {
 			@Override
 			public void handleEvent(MouseEvent evt) {
@@ -308,55 +309,55 @@ public class LWJGLMain {
 		});
 		//onBeforeCloseRegister();
 		initFileChooser();
-		
+
 		IndexedDBFilesystem.OpenState st = IndexedDBFilesystem.initialize();
-		
+
 		downloadAssetPack(assetPackageURI);
-		
+
 		try {
 			AssetRepository.install(loadedPackage);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		audioctx = AudioContext.create();
-		
+
 		mouseEvents.clear();
 		keyEvents.clear();
 	}
-	
-	@JSBody(params = { }, script = 
-			"window.eagsFileChooser = {\r\n" + 
-			"inputElement: null,\r\n" + 
-			"openFileChooser: function(ext, mime){\r\n" + 
-			"var el = window.eagsFileChooser.inputElement = document.createElement(\"input\");\r\n" + 
-			"el.type = \"file\";\r\n" + 
-			"el.multiple = false;\r\n" + 
-			"el.addEventListener(\"change\", function(evt){\r\n" + 
-			"var f = window.eagsFileChooser.inputElement.files;\r\n" + 
-			"if(f.length == 0){\r\n" + 
-			"window.eagsFileChooser.getFileChooserResult = null;\r\n" + 
-			"}else{\r\n" + 
-			"(async function(){\r\n" + 
-			"window.eagsFileChooser.getFileChooserResult = await f[0].arrayBuffer();\r\n" + 
-			"window.eagsFileChooser.getFileChooserResultName = f[0].name;\r\n" + 
-			"})();\r\n" + 
-			"}\r\n" + 
-			"});\r\n" + 
-			"window.eagsFileChooser.getFileChooserResult = null;\r\n" + 
-			"window.eagsFileChooser.getFileChooserResultName = null;\r\n" + 
-			"el.accept = mime;\r\n" + 
-			"el.click();\r\n" + 
-			"},\r\n" + 
-			"getFileChooserResult: null,\r\n" + 
-			"getFileChooserResultName: null\r\n" + 
-			"};")
+
+	@JSBody(params = { }, script =
+			"window.eagsFileChooser = {\r\n" +
+					"inputElement: null,\r\n" +
+					"openFileChooser: function(ext, mime){\r\n" +
+					"var el = window.eagsFileChooser.inputElement = document.createElement(\"input\");\r\n" +
+					"el.type = \"file\";\r\n" +
+					"el.multiple = false;\r\n" +
+					"el.addEventListener(\"change\", function(evt){\r\n" +
+					"var f = window.eagsFileChooser.inputElement.files;\r\n" +
+					"if(f.length == 0){\r\n" +
+					"window.eagsFileChooser.getFileChooserResult = null;\r\n" +
+					"}else{\r\n" +
+					"(async function(){\r\n" +
+					"window.eagsFileChooser.getFileChooserResult = await f[0].arrayBuffer();\r\n" +
+					"window.eagsFileChooser.getFileChooserResultName = f[0].name;\r\n" +
+					"})();\r\n" +
+					"}\r\n" +
+					"});\r\n" +
+					"window.eagsFileChooser.getFileChooserResult = null;\r\n" +
+					"window.eagsFileChooser.getFileChooserResultName = null;\r\n" +
+					"el.accept = mime;\r\n" +
+					"el.click();\r\n" +
+					"},\r\n" +
+					"getFileChooserResult: null,\r\n" +
+					"getFileChooserResultName: null\r\n" +
+					"};")
 	private static native void initFileChooser();
-	
+
 	public static final void destroyContext() {
-		
+
 	}
-	
+
 	public static final void removeEventHandlers() {
 		win.removeEventListener("contextmenu", contextmenu);
 		win.removeEventListener("mousedown", mousedown);
@@ -379,10 +380,10 @@ public class LWJGLMain {
 	private static int height = 0;
 	private static boolean enableRepeatEvents = false;
 	private static boolean isWindowFocused = true;
-	
+
 	@JSBody(params = { }, script = "return {antialias: false, depth: true, powerPreference: \"high-performance\", desynchronized: false, preserveDrawingBuffer: false, premultipliedAlpha: false, alpha: false};")
 	public static native JSObject youEagler();
-	
+
 	public static final int _wGL_TEXTURE_2D = GL_TEXTURE_2D;
 	public static final int _wGL_DEPTH_TEST = GL_DEPTH_TEST;
 	public static final int _wGL_LEQUAL = GL_LEQUAL;
@@ -451,14 +452,14 @@ public class LWJGLMain {
 	public static final int _wGL_COLOR_ATTACHMENT0 = COLOR_ATTACHMENT0;
 	public static final int _wGL_DEPTH_STENCIL_ATTACHMENT = DEPTH_STENCIL_ATTACHMENT;
 	public static final int _wGL_DEPTH_STENCIL = DEPTH_STENCIL;
-	public static final int _wGL_NEAREST_MIPMAP_LINEAR = GL_NEAREST_MIPMAP_LINEAR; 
-	public static final int _wGL_LINEAR_MIPMAP_LINEAR = GL_LINEAR_MIPMAP_LINEAR; 
-	public static final int _wGL_LINEAR_MIPMAP_NEAREST = GL_LINEAR_MIPMAP_NEAREST; 
+	public static final int _wGL_NEAREST_MIPMAP_LINEAR = GL_NEAREST_MIPMAP_LINEAR;
+	public static final int _wGL_LINEAR_MIPMAP_LINEAR = GL_LINEAR_MIPMAP_LINEAR;
+	public static final int _wGL_LINEAR_MIPMAP_NEAREST = GL_LINEAR_MIPMAP_NEAREST;
 	public static final int _wGL_NEAREST_MIPMAP_NEAREST = GL_NEAREST_MIPMAP_NEAREST;
-	public static final int _wGL_TEXTURE_MAX_LEVEL = GL_TEXTURE_MAX_LEVEL; 
+	public static final int _wGL_TEXTURE_MAX_LEVEL = GL_TEXTURE_MAX_LEVEL;
 	public static final int _wGL_UNSIGNED_INT_24_8 = UNSIGNED_INT_24_8;
 	public static final int _wGL_UNSIGNED_INT = GL_UNSIGNED_INT;
-	public static final int _wGL_ANY_SAMPLES_PASSED = ANY_SAMPLES_PASSED; 
+	public static final int _wGL_ANY_SAMPLES_PASSED = ANY_SAMPLES_PASSED;
 	public static final int _wGL_QUERY_RESULT = GL_QUERY_RESULT;
 	public static final int _wGL_QUERY_RESULT_AVAILABLE = GL_QUERY_RESULT_AVAILABLE;
 	public static final int _wGL_TEXTURE_MAX_ANISOTROPY = TEXTURE_MAX_ANISOTROPY_EXT;
@@ -471,71 +472,71 @@ public class LWJGLMain {
 	public static final int _wGL_DRAW_FRAMEBUFFER = DRAW_FRAMEBUFFER;
 	public static final int _wGL_FRAMEBUFFER = FRAMEBUFFER;
 	public static final int _wGL_POLYGON_OFFSET_FILL = GL_POLYGON_OFFSET_FILL;
-	
-	public static final class TextureGL { 
+
+	public static final class TextureGL {
 		protected final WebGLTexture obj;
 		public int w = -1;
 		public int h = -1;
 		public boolean nearest = true;
 		public boolean anisotropic = false;
-		protected TextureGL(WebGLTexture obj) { 
-			this.obj = obj; 
-		} 
-	} 
-	public static final class BufferGL { 
-		protected final WebGLBuffer obj; 
-		protected BufferGL(WebGLBuffer obj) { 
-			this.obj = obj; 
-		} 
-	} 
-	public static final class ShaderGL { 
-		protected final WebGLShader obj; 
-		protected ShaderGL(WebGLShader obj) { 
-			this.obj = obj; 
-		} 
+		protected TextureGL(WebGLTexture obj) {
+			this.obj = obj;
+		}
+	}
+	public static final class BufferGL {
+		protected final WebGLBuffer obj;
+		protected BufferGL(WebGLBuffer obj) {
+			this.obj = obj;
+		}
+	}
+	public static final class ShaderGL {
+		protected final WebGLShader obj;
+		protected ShaderGL(WebGLShader obj) {
+			this.obj = obj;
+		}
 	}
 	private static int progId = 0;
-	public static final class ProgramGL { 
-		protected final WebGLProgram obj; 
-		protected final int hashcode; 
-		protected ProgramGL(WebGLProgram obj) { 
-			this.obj = obj; 
+	public static final class ProgramGL {
+		protected final WebGLProgram obj;
+		protected final int hashcode;
+		protected ProgramGL(WebGLProgram obj) {
+			this.obj = obj;
 			this.hashcode = ++progId;
-		} 
-	} 
-	public static final class UniformGL { 
-		protected final WebGLUniformLocation obj; 
-		protected UniformGL(WebGLUniformLocation obj) { 
-			this.obj = obj; 
-		} 
-	} 
-	public static final class BufferArrayGL { 
-		protected final WebGLVertexArray obj; 
-		public boolean isQuadBufferBound; 
-		protected BufferArrayGL(WebGLVertexArray obj) { 
-			this.obj = obj; 
-			this.isQuadBufferBound = false; 
-		} 
-	} 
-	public static final class FramebufferGL { 
-		protected final WebGLFramebuffer obj; 
-		protected FramebufferGL(WebGLFramebuffer obj) { 
-			this.obj = obj; 
-		} 
-	} 
-	public static final class RenderbufferGL { 
-		protected final WebGLRenderbuffer obj; 
-		protected RenderbufferGL(WebGLRenderbuffer obj) { 
-			this.obj = obj; 
-		} 
-	} 
-	public static final class QueryGL { 
-		protected final WebGLQuery obj; 
-		protected QueryGL(WebGLQuery obj) { 
-			this.obj = obj; 
-		} 
+		}
 	}
-	
+	public static final class UniformGL {
+		protected final WebGLUniformLocation obj;
+		protected UniformGL(WebGLUniformLocation obj) {
+			this.obj = obj;
+		}
+	}
+	public static final class BufferArrayGL {
+		protected final WebGLVertexArray obj;
+		public boolean isQuadBufferBound;
+		protected BufferArrayGL(WebGLVertexArray obj) {
+			this.obj = obj;
+			this.isQuadBufferBound = false;
+		}
+	}
+	public static final class FramebufferGL {
+		protected final WebGLFramebuffer obj;
+		protected FramebufferGL(WebGLFramebuffer obj) {
+			this.obj = obj;
+		}
+	}
+	public static final class RenderbufferGL {
+		protected final WebGLRenderbuffer obj;
+		protected RenderbufferGL(WebGLRenderbuffer obj) {
+			this.obj = obj;
+		}
+	}
+	public static final class QueryGL {
+		protected final WebGLQuery obj;
+		protected QueryGL(WebGLQuery obj) {
+			this.obj = obj;
+		}
+	}
+
 	public static final void _wglEnable(int p1) {
 		webgl.enable(p1);
 	}
@@ -808,19 +809,19 @@ public class LWJGLMain {
 	public static final void _wglFramebufferTexture2D(int p1, TextureGL p2) {
 		webgl.framebufferTexture2D(FRAMEBUFFER, p1, GL_TEXTURE_2D, p2 == null ? null : p2.obj, 0);
 	}
-	public static final QueryGL _wglCreateQuery() { 
-		return new QueryGL(webgl.createQuery()); 
+	public static final QueryGL _wglCreateQuery() {
+		return new QueryGL(webgl.createQuery());
 	}
-	public static final void _wglBeginQuery(int p1, QueryGL p2) { 
-		webgl.beginQuery(p1, p2.obj); 
+	public static final void _wglBeginQuery(int p1, QueryGL p2) {
+		webgl.beginQuery(p1, p2.obj);
 	}
-	public static final void _wglEndQuery(int p1) { 
-		webgl.endQuery(p1); 
+	public static final void _wglEndQuery(int p1) {
+		webgl.endQuery(p1);
 	}
-	public static final void _wglDeleteQuery(QueryGL p1) { 
+	public static final void _wglDeleteQuery(QueryGL p1) {
 		webgl.deleteQuery(p1.obj);
 	}
-	public static final int _wglGetQueryObjecti(QueryGL p1, int p2) { 
+	public static final int _wglGetQueryObjecti(QueryGL p1, int p2) {
 		return webgl.getQueryParameter(p1.obj, p2);
 	}
 	public static final BufferArrayGL _wglCreateVertexArray() {
@@ -859,7 +860,7 @@ public class LWJGLMain {
 	public static final int _wglGetAttribLocation(ProgramGL p1, String p2) {
 		return webgl.getAttribLocation(p1.obj, p2);
 	}
-	
+
 	@JSBody(params = { "ctx", "p" }, script = "return ctx.getTexParameter(0x0DE1, p) | 0;")
 	private static final native int __wglGetTexParameteri(WebGL2RenderingContext ctx, int p);
 	public static final int _wglGetTexParameteri(int p1) {
@@ -922,8 +923,6 @@ public class LWJGLMain {
 				for(int i = 0; i < pixels.length; ++i) {
 					pixels[i] = (pxls.get(i * 4) << 16) | (pxls.get(i * 4 + 1) << 8) | pxls.get(i * 4 + 2) | (pxls.get(i * 4 + 3) << 24);
 				}
-				IntBuffer buffer = IntBuffer.wrap(pixels);
-				ret.complete(new MinecraftImageData(buffer, pxlsDat.getWidth(), pxlsDat.getHeight(), true));
 			}
 		});
 		toLoad.addEventListener("error", new EventListener<Event>() {
@@ -964,7 +963,7 @@ public class LWJGLMain {
 		return ("wheel".equals(currentEvent.getType())) ? (((WheelEvent)currentEvent).getDeltaY() == 0.0D ? 0 : (((WheelEvent)currentEvent).getDeltaY() > 0.0D ? -1 : 1)) : 0;
 	}
 	public static final void mouseSetCursorPosition(int x, int y) {
-		
+
 	}
 	private static long mouseUngrabTimer = 0l;
 	private static int mouseUngrabTimeout = 0;
@@ -1078,13 +1077,13 @@ public class LWJGLMain {
 			exitFullscreen();
 		}
 	}
-	
+
 	@JSBody(script = "if(!document.fullscreenElement){document.documentElement.requestFullscreen();}")
 	public static final native void fullscreen();
-	
+
 	@JSBody(script = "if(document.fullscreenElement){document.exitFullscreen();}")
 	public static final native void exitFullscreen();
-	
+
 	public static final boolean shouldShutdown() {
 		return false;
 	}
@@ -1097,14 +1096,14 @@ public class LWJGLMain {
 	public static final boolean isFunctionKeyHeldDown(int mod, int p1) {
 		return isKeyDown(mod) && p1 >= 59 && p1 <= 67 & isKeyDown(2 + (p1 - 59));
 	}
-	
+
 	@JSBody(params = { "obj" }, script = "if(obj.commit) obj.commit();")
 	private static native int commitContext(JSObject obj);
-	
+
 	public static final void updateDisplay() {
 		commitContext(webgl);
 		canvasContext.drawImage(canvasBack, 0d, 0d, canvas.getWidth(), canvas.getHeight());
-		
+
 		int ww = canvas.getClientWidth();
 		int hh = canvas.getClientHeight();
 		if(ww != width || hh != height) {
@@ -1113,7 +1112,7 @@ public class LWJGLMain {
 			canvasBack.setWidth(ww);
 			canvasBack.setHeight(hh);
 		}
-		
+
 		try {
 			Thread.sleep(1l);
 		} catch (InterruptedException e) {
@@ -1121,21 +1120,21 @@ public class LWJGLMain {
 		}
 	}
 	public static final void setVSyncEnabled(boolean p1) {
-		
-	} 
+
+	}
 	public static final void enableRepeatEvents(boolean b) {
 		enableRepeatEvents = b;
 	}
-	
+
 	public static boolean isPointerLocked2() {
 		return mouseUngrabTimeout != 0 || isPointerLocked();
 	}
 
 	@JSBody(params = { }, script = "return document.pointerLockElement != null;")
 	public static native boolean isPointerLocked();
-	
+
 	private static boolean pointerLockFlag = false;
-	
+
 	public static final boolean isFocused() {
 		boolean yee = isPointerLocked();
 		boolean dee = pointerLockFlag;
@@ -1177,7 +1176,7 @@ public class LWJGLMain {
 
 	private static final Set<String> rateLimitedAddresses = new HashSet<String>();
 	private static final Set<String> blockedAddresses = new HashSet<String>();
-	
+
 	private static WebSocket sock = null;
 	private static boolean sockIsConnecting = false;
 	private static boolean sockIsConnected = false;
@@ -1185,7 +1184,7 @@ public class LWJGLMain {
 	private static LinkedList<byte[]> readPackets = new LinkedList<byte[]>();
 	private static RateLimit rateLimitStatus = null;
 	private static String currentSockURI = null;
-	
+
 	public static final RateLimit getRateLimitStatus() {
 		RateLimit l = rateLimitStatus;
 		rateLimitStatus = null;
@@ -1207,10 +1206,10 @@ public class LWJGLMain {
 			return RateLimit.NONE;
 		}
 	}
-	
+
 	@Async
 	public static native String connectWebSocket(String sockURI);
-	
+
 	private static void connectWebSocket(String sockURI, final AsyncCallback<String> cb) {
 		sockIsConnecting = true;
 		sockIsConnected = false;
@@ -1225,16 +1224,7 @@ public class LWJGLMain {
 			return;
 		}
 		sock.setBinaryType("arraybuffer");
-		sock.onOpen(new EventListener<MessageEvent>() {
-			@Override
-			public void handleEvent(MessageEvent evt) {
-				sockIsConnecting = false;
-				sockIsAlive = false;
-				sockIsConnected = true;
-				readPackets.clear();
-				cb.complete("okay");
-			}
-		});
+
 		sock.onClose(new EventListener<CloseEvent>() {
 			@Override
 			public void handleEvent(CloseEvent evt) {
@@ -1297,7 +1287,7 @@ public class LWJGLMain {
 			}
 		});
 	}
-	
+
 	public static final boolean startConnection(String uri) {
 		String res = connectWebSocket(uri);
 		return "fail".equals(res) ? false : true;
@@ -1350,7 +1340,7 @@ public class LWJGLMain {
 
 	@JSBody(params = { "ext", "mime" }, script = "window.eagsFileChooser.openFileChooser(ext, mime);")
 	public static native void openFileChooser(String ext, String mime);
-	
+
 	public static final byte[] getFileChooserResult() {
 		ArrayBuffer b = getFileChooserResult0();
 		if(b == null) return null;
@@ -1367,7 +1357,7 @@ public class LWJGLMain {
 
 	@JSBody(params = { }, script = "var ret = window.eagsFileChooser.getFileChooserResultName; window.eagsFileChooser.getFileChooserResultName = null; return ret;")
 	public static native String getFileChooserResultName();
-	
+
 	public static final void setListenerPos(float x, float y, float z, float vx, float vy, float vz, float pitch, float yaw) {
 		float var2 = MathHelper.cos(-yaw * 0.017453292F);
 		float var3 = MathHelper.sin(-yaw * 0.017453292F);
@@ -1377,19 +1367,19 @@ public class LWJGLMain {
 		l.setPosition(x, y, z);
 		l.setOrientation(-var3 * var4, -var5, -var2 * var4, 0.0f, 1.0f, 0.0f);
 	}
-	
+
 	private static int playbackId = 0;
 	private static final HashMap<String,AudioBufferX> loadedSoundFiles = new HashMap();
 	private static AudioContext audioctx = null;
 	private static float playbackOffsetDelay = 0.03f;
-	
+
 	public static final void setPlaybackOffsetDelay(float f) {
 		playbackOffsetDelay = f;
 	}
-	
+
 	@Async
 	public static native AudioBuffer decodeAudioAsync(ArrayBuffer buffer);
-	
+
 	private static void decodeAudioAsync(ArrayBuffer buffer, final AsyncCallback<AudioBuffer> cb) {
 		audioctx.decodeAudioData(buffer, new DecodeSuccessCallback() {
 			@Override
@@ -1403,9 +1393,9 @@ public class LWJGLMain {
 			}
 		});
 	}
-	
+
 	private static final HashMap<Integer,AudioBufferSourceNodeX> activeSoundEffects = new HashMap();
-	
+
 	private static class AudioBufferX {
 		private final AudioBuffer buffer;
 		private AudioBufferX(AudioBuffer buffer) {
@@ -1423,7 +1413,7 @@ public class LWJGLMain {
 			this.gain = gain;
 		}
 	}
-	
+
 	private static final AudioBuffer getBufferFor(String fileName) {
 		AudioBufferX ret = loadedSoundFiles.get(fileName);
 		if(ret == null) {
@@ -1436,7 +1426,7 @@ public class LWJGLMain {
 		}
 		return ret.buffer;
 	}
-	
+
 	public static void beginPlayback(String fileName) {
 		AudioBuffer b = getBufferFor(fileName);
 		if(b == null) return;
@@ -1482,7 +1472,7 @@ public class LWJGLMain {
 			public void handleEvent(MediaEvent evt) {
 				activeSoundEffects.remove(theId);
 			}
-			
+
 		});
 		return theId;
 	}
@@ -1504,7 +1494,7 @@ public class LWJGLMain {
 			public void handleEvent(MediaEvent evt) {
 				activeSoundEffects.remove(theId);
 			}
-			
+
 		});
 		return playbackId;
 	}
@@ -1539,7 +1529,7 @@ public class LWJGLMain {
 		return activeSoundEffects.containsKey(id);
 	}
 	public static final void openConsole() {
-		
+
 	}
 	private static boolean connected = false;
 	public static final void voiceConnect(String channel) {
@@ -1547,7 +1537,7 @@ public class LWJGLMain {
 		connected = true;
 	}
 	public static final void voiceVolume(float volume) {
-		
+
 	}
 	public static final boolean voiceActive() {
 		return connected;
@@ -1565,7 +1555,7 @@ public class LWJGLMain {
 		connected = false;
 	}
 	public static final void doJavascriptCoroutines() {
-		
+
 	}
 	public static final long maxMemory() {
 		return 1024*1024*1024;
@@ -1577,14 +1567,14 @@ public class LWJGLMain {
 		return 0l;
 	}
 	public static final void exit() {
-		
+
 	}
-	
+
 	@JSBody(params = { }, script = "return window.navigator.userAgent;")
 	public static native String getUserAgent();
-	
+
 	private static String[] LWJGLKeyNames = new String[] {"NONE", "ESCAPE", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "MINUS", "EQUALS", "BACK", "TAB", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "LBRACKET", "RBRACKET", "RETURN", "LCONTROL", "A", "S", "D", "F", "G", "H", "J", "K", "L", "SEMICOLON", "APOSTROPHE", "GRAVE", "LSHIFT", "BACKSLASH", "Z", "X", "C", "V", "B", "N", "M", "COMMA", "PERIOD", "SLASH", "RSHIFT", "MULTIPLY", "LMENU", "SPACE", "CAPITAL", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "NUMLOCK", "SCROLL", "NUMPAD7", "NUMPAD8", "NUMPAD9", "SUBTRACT", "NUMPAD4", "NUMPAD5", "NUMPAD6", "ADD", "NUMPAD1", "NUMPAD2", "NUMPAD3", "NUMPAD0", "DECIMAL", "null", "null", "null", "F11", "F12", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "F13", "F14", "F15", "F16", "F17", "F18", "null", "null", "null", "null", "null", "null", "KANA", "F19", "null", "null", "null", "null", "null", "null", "null", "CONVERT", "null", "NOCONVERT", "null", "YEN", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "NUMPADEQUALS", "null", "null", "CIRCUMFLEX", "AT", "COLON", "UNDERLINE", "KANJI", "STOP", "AX", "UNLABELED", "null", "null", "null", "null", "NUMPADENTER", "RCONTROL", "null", "null", "null", "null", "null", "null", "null", "null", "null", "SECTION", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "NUMPADCOMMA", "null", "DIVIDE", "null", "SYSRQ", "RMENU", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "FUNCTION", "PAUSE", "null", "HOME", "UP", "PRIOR", "null", "LEFT", "null", "RIGHT", "null", "END", "DOWN", "NEXT", "INSERT", "DELETE", "null", "null", "null", "null", "null", "null", "CLEAR", "LMETA", "RMETA", "APPS", "POWER", "SLEEP", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null"};
-	
+
 	private static int[] LWJGLKeyCodes = new int[] {
 			/* 0 */ -1,
 			/* 1 */ -1,
@@ -1815,11 +1805,11 @@ public class LWJGLMain {
 	public static final int _wArrayByteLength(Object obj) {
 		return ((Int32Array)obj).getByteLength();
 	}
-	
+
 	public static final Object _wCreateLowLevelIntBuffer(int len) {
 		return Int32Array.create(len);
 	}
-	
+
 	private static int appendbufferindex = 0;
 	private static Int32Array appendbuffer = Int32Array.create(ArrayBuffer.create(525000*4));
 
@@ -1830,27 +1820,27 @@ public class LWJGLMain {
 			appendbufferindex += a.getLength();
 		}
 	}
-	
+
 	public static final Object _wGetLowLevelBuffersAppended() {
 		Int32Array ret = Int32Array.create(appendbuffer.getBuffer(), 0, appendbufferindex);
 		appendbufferindex = 0;
 		return ret;
 	}
-	
+
 	private static int remapKey(int k) {
 		return (k > LWJGLKeyCodes.length || k < 0) ? -1 : LWJGLKeyCodes[k];
 	}
-	
+
 	@JSFunctor
 	private static interface StupidFunctionResolveString extends JSObject {
 		void resolveStr(String s);
 	}
-	
+
 	private static boolean unpressCTRL = false;
-	
+
 	@Async
 	public static native String getClipboard();
-	
+
 	private static void getClipboard(final AsyncCallback<String> cb) {
 		final long start = System.currentTimeMillis();
 		getClipboard0(new StupidFunctionResolveString() {
@@ -1863,52 +1853,52 @@ public class LWJGLMain {
 			}
 		});
 	}
-	
+
 	@JSBody(params = { "cb" }, script = "if(!window.navigator.clipboard) cb(null); else window.navigator.clipboard.readText().then(function(s) { cb(s); }, function(s) { cb(null); });")
 	private static native void getClipboard0(StupidFunctionResolveString cb);
-	
+
 	@JSBody(params = { "str" }, script = "if(window.navigator.clipboard) window.navigator.clipboard.writeText(str);")
 	public static native void setClipboard(String str);
-	
+
 	@JSBody(params = { "obj" }, script = "return typeof obj === \"string\";")
 	private static native boolean isString(JSObject obj);
-	
+
 	public static final boolean fileExists(String path) {
 		return IndexedDBFilesystem.fileExists(path);
 	}
-	
+
 	public static final boolean directoryExists(String path) {
 		return IndexedDBFilesystem.directoryExists(path);
 	}
-	
+
 	public static final boolean pathExists(String path) {
 		return IndexedDBFilesystem.pathExists(path);
 	}
-	
+
 	public static final void writeFile(String path, byte[] data) {
 		IndexedDBFilesystem.writeFile(path, data);
 	}
-	
+
 	public static final byte[] readFile(String path) {
 		return IndexedDBFilesystem.readFile(path);
 	}
-	
+
 	public static final long getLastModified(String path) {
 		return IndexedDBFilesystem.getLastModified(path);
 	}
-	
+
 	public static final int getFileSize(String path) {
 		return IndexedDBFilesystem.getFileSize(path);
 	}
-	
+
 	public static final void renameFile(String oldPath, String newPath) {
 		IndexedDBFilesystem.renameFile(oldPath, newPath);
 	}
-	
+
 	public static final void copyFile(String oldPath, String newPath) {
 		IndexedDBFilesystem.copyFile(oldPath, newPath);
 	}
-	
+
 	public static final void deleteFile(String path) {
 		IndexedDBFilesystem.deleteFile(path);
 	}
@@ -1916,27 +1906,27 @@ public class LWJGLMain {
 	public static final Collection<FileEntry> listFiles(String path, boolean listDirs, boolean recursiveDirs) {
 		return IndexedDBFilesystem.listFiles(path, listDirs, recursiveDirs);
 	}
-	
+
 	public static final Collection<FileEntry> listFilesAndDirectories(String path) {
 		return listFiles(path, true, false);
 	}
-	
+
 	public static final Collection<FileEntry> listFilesRecursive(String path) {
 		return listFiles(path, false, true);
 	}
 
 	public static class FileEntry {
-		
+
 		public final String path;
 		public final boolean isDirectory;
 		public final long lastModified;
-		
+
 		public FileEntry(String path, boolean isDirectory, long lastModified) {
 			this.path = path;
 			this.isDirectory = isDirectory;
 			this.lastModified = lastModified;
 		}
-		
+
 		public String getName() {
 			int i = path.indexOf('/');
 			if(i >= 0) {
@@ -1945,9 +1935,9 @@ public class LWJGLMain {
 				return path;
 			}
 		}
-		
+
 	}
-	
+
 	private static String stripPath(String str) {
 		if(str.startsWith("/")) {
 			str = str.substring(1);
@@ -1960,7 +1950,7 @@ public class LWJGLMain {
 
 	@JSBody(params = { "name", "cvs" }, script = "var a=document.createElement(\"a\");a.href=URL.createObjectURL(new Blob([cvs],{type:\"application/octet-stream\"}));a.download=name;a.click();URL.revokeObjectURL(a.href);")
 	private static native void downloadFile0(String name, ArrayBuffer cvs);
-	
+
 	public static final void downloadFile(String filename, byte[] data) {
 		Uint8Array b = Uint8Array.create(data.length);
 		b.set(data);

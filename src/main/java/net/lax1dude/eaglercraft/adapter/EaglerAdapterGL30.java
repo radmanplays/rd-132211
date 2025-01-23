@@ -6,6 +6,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
 
+import net.PeytonPlayz585.opengl.GLObjectMap;
 import net.lax1dude.eaglercraft.EaglerAdapter;
 
 import net.lax1dude.eaglercraft.adapter.EaglerAdapterImpl2;
@@ -736,6 +737,8 @@ public class EaglerAdapterGL30 extends EaglerAdapterImpl2 {
 		}
 		_wglDrawElements(_wGL_TRIANGLES, p3 * 6 / 4, _wGL_UNSIGNED_SHORT, p2 * 6 / 4);
 	}
+
+
 
 	private static BufferArrayGL occlusion_vao = null;
 	private static BufferGL occlusion_vbo = null;

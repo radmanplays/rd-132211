@@ -3,6 +3,7 @@ package net.lax1dude.eaglercraft.adapter.teavm;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import net.PeytonPlayz585.io.IDBObjectStorePatched;
 import org.teavm.interop.Async;
 import org.teavm.interop.AsyncCallback;
 import org.teavm.jso.JSBody;

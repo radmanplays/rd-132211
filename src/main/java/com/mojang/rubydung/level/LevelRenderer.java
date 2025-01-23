@@ -3,169 +3,222 @@ package com.mojang.rubydung.level;
 import com.mojang.rubydung.HitResult;
 import com.mojang.rubydung.Player;
 import com.mojang.rubydung.phys.AABB;
-import org.lwjgl.opengl.GL11;
+
+import static org.lwjgl.opengl.GL11.*;
 
 public class LevelRenderer implements LevelListener {
-	private static final int CHUNK_SIZE = 16;
-	private Level level;
-	private Chunk[] chunks;
-	private int xChunks;
-	private int yChunks;
-	private int zChunks;
-	Tesselator t = new Tesselator();
 
-	public LevelRenderer(Level level) {
-		this.level = level;
-		level.addListener(this);
-		this.xChunks = level.width / 16;
-		this.yChunks = level.depth / 16;
-		this.zChunks = level.height / 16;
-		this.chunks = new Chunk[this.xChunks * this.yChunks * this.zChunks];
+    private static final int CHUNK_SIZE = 16;
 
-		for(int x = 0; x < this.xChunks; ++x) {
-			for(int y = 0; y < this.yChunks; ++y) {
-				for(int z = 0; z < this.zChunks; ++z) {
-					int x0 = x * 16;
-					int y0 = y * 16;
-					int z0 = z * 16;
-					int x1 = (x + 1) * 16;
-					int y1 = (y + 1) * 16;
-					int z1 = (z + 1) * 16;
-					if(x1 > level.width) {
-						x1 = level.width;
-					}
+    private final Tessellator tessellator;
+    private final Level level;
+    private final Chunk[] chunks;
 
-					if(y1 > level.depth) {
-						y1 = level.depth;
-					}
+    private final int chunkAmountX;
+    private final int chunkAmountY;
+    private final int chunkAmountZ;
 
-					if(z1 > level.height) {
-						z1 = level.height;
-					}
+    /**
+     * Create renderer for level
+     *
+     * @param level The rendered level
+     */
+    public LevelRenderer(Level level) {
+        level.addListener(this);
 
-					this.chunks[(x + y * this.xChunks) * this.zChunks + z] = new Chunk(level, x0, y0, z0, x1, y1, z1);
-				}
-			}
-		}
+        this.tessellator = new Tessellator();
+        this.level = level;
 
-	}
+        // Calculate amount of chunks of level
+        this.chunkAmountX = level.width / CHUNK_SIZE;
+        this.chunkAmountY = level.depth / CHUNK_SIZE;
+        this.chunkAmountZ = level.height / CHUNK_SIZE;
 
-	public void render(Player player, int layer) {
-		Chunk.rebuiltThisFrame = 0;
-		Frustum frustum = Frustum.getFrustum();
+        // Create chunk array
+        this.chunks = new Chunk[this.chunkAmountX * this.chunkAmountY * this.chunkAmountZ];
 
-		for(int i = 0; i < this.chunks.length; ++i) {
-			if(frustum.cubeInFrustum(this.chunks[i].aabb)) {
-				this.chunks[i].render(layer);
-			}
-		}
+        // Fill level with chunks
+        for (int x = 0; x < this.chunkAmountX; x++) {
+            for (int y = 0; y < this.chunkAmountY; y++) {
+                for (int z = 0; z < this.chunkAmountZ; z++) {
+                    // Calculate min bounds for chunk
+                    int minChunkX = x * CHUNK_SIZE;
+                    int minChunkY = y * CHUNK_SIZE;
+                    int minChunkZ = z * CHUNK_SIZE;
 
-	}
+                    // Calculate max bounds for chunk
+                    int maxChunkX = (x + 1) * CHUNK_SIZE;
+                    int maxChunkY = (y + 1) * CHUNK_SIZE;
+                    int maxChunkZ = (z + 1) * CHUNK_SIZE;
 
-	public void pick(Player player) {
-		float r = 3.0F;
-		AABB box = player.bb.grow(r, r, r);
-		int x0 = (int)box.x0;
-		int x1 = (int)(box.x1 + 1.0F);
-		int y0 = (int)box.y0;
-		int y1 = (int)(box.y1 + 1.0F);
-		int z0 = (int)box.z0;
-		int z1 = (int)(box.z1 + 1.0F);
-		GL11.glInitNames();
+                    // Check for chunk bounds out of level
+                    maxChunkX = Math.min(level.width, maxChunkX);
+                    maxChunkY = Math.min(level.depth, maxChunkY);
+                    maxChunkZ = Math.min(level.height, maxChunkZ);
 
-		for(int x = x0; x < x1; ++x) {
-			GL11.glPushName(x);
+                    // Create chunk based on bounds
+                    Chunk chunk = new Chunk(level, minChunkX, minChunkY, minChunkZ, maxChunkX, maxChunkY, maxChunkZ);
+                    this.chunks[(x + y * this.chunkAmountX) * this.chunkAmountZ + z] = chunk;
+                }
+            }
+        }
+    }
 
-			for(int y = y0; y < y1; ++y) {
-				GL11.glPushName(y);
+    /**
+     * Render all chunks of the level
+     *
+     * @param layer The render layer
+     */
+    public void render(int layer) {
+        // Get current camera frustum
+        Frustum frustum = Frustum.getFrustum();
 
-				for(int z = z0; z < z1; ++z) {
-					GL11.glPushName(z);
-					if(this.level.isSolidTile(x, y, z)) {
-						GL11.glPushName(0);
+        // Reset global chunk rebuild stats
+        Chunk.rebuiltThisFrame = 0;
 
-						for(int i = 0; i < 6; ++i) {
-							GL11.glPushName(i);
-							this.t.init();
-							Tile.rock.renderFace(this.t, x, y, z, i);
-							this.t.flush();
-							GL11.glPopName();
-						}
+        // For all chunks
+        for (Chunk chunk : this.chunks) {
 
-						GL11.glPopName();
-					}
+            // Render if bounding box of chunk is in frustum
+            if (frustum.cubeInFrustum(chunk.boundingBox)) {
 
-					GL11.glPopName();
-				}
+                // Render chunk
+                chunk.render(layer);
+            }
+        }
+    }
 
-				GL11.glPopName();
-			}
+    /**
+     * Mark all chunks inside of the given area as dirty.
+     *
+     * @param minX Minimum on X axis
+     * @param minY Minimum on Y axis
+     * @param minZ Minimum on Z axis
+     * @param maxX Maximum on X axis
+     * @param maxY Maximum on Y axis
+     * @param maxZ Maximum on Z axis
+     */
+    public void setDirty(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+        // To chunk coordinates
+        minX /= CHUNK_SIZE;
+        minY /= CHUNK_SIZE;
+        minZ /= CHUNK_SIZE;
+        maxX /= CHUNK_SIZE;
+        maxY /= CHUNK_SIZE;
+        maxZ /= CHUNK_SIZE;
 
-			GL11.glPopName();
-		}
+        // Minimum limit
+        minX = Math.max(minX, 0);
+        minY = Math.max(minY, 0);
+        minZ = Math.max(minZ, 0);
 
-	}
+        // Maximum limit
+        maxX = Math.min(maxX, this.chunkAmountX - 1);
+        maxY = Math.min(maxY, this.chunkAmountY - 1);
+        maxZ = Math.min(maxZ, this.chunkAmountZ - 1);
 
-	public void renderHit(HitResult h) {
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, (float)Math.sin((double)System.currentTimeMillis() / 100.0D) * 0.2F + 0.4F);
-		this.t.init();
-		Tile.rock.renderFace(this.t, h.x, h.y, h.z, h.f);
-		this.t.flush();
-		GL11.glDisable(GL11.GL_BLEND);
-	}
+        // Mark all chunks as dirty
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    // Get chunk at this position
+                    Chunk chunk = this.chunks[(x + y * this.chunkAmountX) * this.chunkAmountZ + z];
 
-	public void setDirty(int x0, int y0, int z0, int x1, int y1, int z1) {
-		x0 /= 16;
-		x1 /= 16;
-		y0 /= 16;
-		y1 /= 16;
-		z0 /= 16;
-		z1 /= 16;
-		if(x0 < 0) {
-			x0 = 0;
-		}
+                    // Set dirty
+                    chunk.setDirty();
+                }
+            }
+        }
+    }
 
-		if(y0 < 0) {
-			y0 = 0;
-		}
+    /**
+     * Render pick selection face on tile
+     *
+     * @param player The player
+     */
+    public void pick(Player player) {
+        float radius = 3.0F;
+        AABB boundingBox = player.boundingBox.grow(radius, radius, radius);
 
-		if(z0 < 0) {
-			z0 = 0;
-		}
+        int minX = (int) boundingBox.minX;
+        int maxX = (int) (boundingBox.maxX + 1.0f);
+        int minY = (int) boundingBox.minY;
+        int maxY = (int) (boundingBox.maxY + 1.0f);
+        int minZ = (int) boundingBox.minZ;
+        int maxZ = (int) (boundingBox.maxZ + 1.0f);
 
-		if(x1 >= this.xChunks) {
-			x1 = this.xChunks - 1;
-		}
+        glInitNames();
+        for (int x = minX; x < maxX; x++) {
+            // Name value x
+            glPushName(x);
+            for (int y = minY; y < maxY; y++) {
+                // Name value y
+                glPushName(y);
+                for (int z = minZ; z < maxZ; z++) {
+                    // Name value z
+                    glPushName(z);
 
-		if(y1 >= this.yChunks) {
-			y1 = this.yChunks - 1;
-		}
+                    // Check for solid tile
+                    if (this.level.isSolidTile(x, y, z)) {
 
-		if(z1 >= this.zChunks) {
-			z1 = this.zChunks - 1;
-		}
+                        // Name value type
+                        glPushName(0);
 
-		for(int x = x0; x <= x1; ++x) {
-			for(int y = y0; y <= y1; ++y) {
-				for(int z = z0; z <= z1; ++z) {
-					this.chunks[(x + y * this.xChunks) * this.zChunks + z].setDirty();
-				}
-			}
-		}
+                        // Render all faces
+                        for (int face = 0; face < 6; face++) {
 
-	}
+                            // Name value face id
+                            glPushName(face);
 
-	public void tileChanged(int x, int y, int z) {
-		this.setDirty(x - 1, y - 1, z - 1, x + 1, y + 1, z + 1);
-	}
+                            // Render selection face
+                            this.tessellator.init();
+                            Tile.rock.renderFace(this.tessellator, x, y, z, face);
+                            this.tessellator.flush();
 
-	public void lightColumnChanged(int x, int z, int y0, int y1) {
-		this.setDirty(x - 1, y0 - 1, z - 1, x + 1, y1 + 1, z + 1);
-	}
+                            glPopName();
+                        }
+                        glPopName();
+                    }
+                    glPopName();
+                }
+                glPopName();
+            }
+            glPopName();
+        }
+    }
 
-	public void allChanged() {
-		this.setDirty(0, 0, 0, this.level.width, this.level.depth, this.level.height);
-	}
+    /**
+     * Render hit face of the result
+     *
+     * @param hitResult The hit result to render
+     */
+    public void renderHit(HitResult hitResult) {
+        // Setup blending and color
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_CURRENT_BIT);
+        glColor4f(1.0f, 1.0f, 1.0f, (float) Math.sin(System.currentTimeMillis() / 100.0) * 0.2f + 0.4f);
+
+        // Render face
+        this.tessellator.init();
+        Tile.rock.renderFace(this.tessellator, hitResult.x, hitResult.y, hitResult.z, hitResult.face);
+        this.tessellator.flush();
+
+        // Disable blending
+        glDisable(GL_BLEND);
+    }
+
+    @Override
+    public void lightColumnChanged(int x, int z, int minY, int maxY) {
+        setDirty(x - 1, minY - 1, z - 1, x + 1, maxY + 1, z + 1);
+    }
+
+    @Override
+    public void tileChanged(int x, int y, int z) {
+        setDirty(x - 1, y - 1, z - 1, x + 1, y + 1, z + 1);
+    }
+
+    @Override
+    public void allChanged() {
+        setDirty(0, 0, 0, this.level.width, this.level.depth, this.level.height);
+    }
 }
