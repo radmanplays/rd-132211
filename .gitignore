@@ -27,6 +27,7 @@ out/
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
+EclipseWorkspace
 
 ### NetBeans ###
 /nbproject/private/
