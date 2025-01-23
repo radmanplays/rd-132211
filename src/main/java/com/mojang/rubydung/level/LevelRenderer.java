@@ -137,54 +137,35 @@ public class LevelRenderer implements LevelListener {
      * @param player The player
      */
     public void pick(Player player) {
-        float radius = 3.0F;
-        AABB boundingBox = player.boundingBox.grow(radius, radius, radius);
+        // Işın parametreleri
+        float rayLength = 3.0f; // Maksimum ışın uzunluğu
+        float step = 0.1f;      // Işın kontrol adımı
+        float x = (float) player.x;
+        float y = (float) (player.y + player.height / 2.0f); // Oyuncunun göz yüksekliği
+        float z = (float) player.z;
 
-        int minX = (int) boundingBox.minX;
-        int maxX = (int) (boundingBox.maxX + 1.0f);
-        int minY = (int) boundingBox.minY;
-        int maxY = (int) (boundingBox.maxY + 1.0f);
-        int minZ = (int) boundingBox.minZ;
-        int maxZ = (int) (boundingBox.maxZ + 1.0f);
+        // Oyuncunun bakış yönü
+        float dx = (float) Math.cos(Math.toRadians(player.yRotation)) * (float) Math.cos(Math.toRadians(player.xRotation));
+        float dy = (float) Math.sin(Math.toRadians(player.xRotation));
+        float dz = (float) Math.sin(Math.toRadians(player.yRotation)) * (float) Math.cos(Math.toRadians(player.xRotation));
 
-        glInitNames();
-        for (int x = minX; x < maxX; x++) {
-            // Name value x
-            glPushName(x);
-            for (int y = minY; y < maxY; y++) {
-                // Name value y
-                glPushName(y);
-                for (int z = minZ; z < maxZ; z++) {
-                    // Name value z
-                    glPushName(z);
+        // Işın boyunca ilerleyin
+        for (float t = 0; t < rayLength; t += step) {
+            int blockX = (int) Math.floor(x + dx * t);
+            int blockY = (int) Math.floor(y + dy * t);
+            int blockZ = (int) Math.floor(z + dz * t);
 
-                    // Check for solid tile
-                    if (this.level.isSolidTile(x, y, z)) {
-
-                        // Name value type
-                        glPushName(0);
-
-                        // Render all faces
-                        for (int face = 0; face < 6; face++) {
-
-                            // Name value face id
-                            glPushName(face);
-
-                            // Render selection face
-                            this.tessellator.init();
-                            Tile.rock.renderFace(this.tessellator, x, y, z, face);
-                            this.tessellator.flush();
-
-                            glPopName();
-                        }
-                        glPopName();
-                    }
-                    glPopName();
-                }
-                glPopName();
+            // Blok var mı kontrol et
+            if (level.isSolidTile(blockX, blockY, blockZ)) {
+                // Blok bulundu, HitResult döndür
+                HitResult hit = new HitResult(blockX, blockY, blockZ, 0, (int) t);
+                player.setHitResult(hit);
+                return;
             }
-            glPopName();
         }
+
+        // Hiçbir blok bulunamadı
+        player.setHitResult(null);
     }
 
     /**

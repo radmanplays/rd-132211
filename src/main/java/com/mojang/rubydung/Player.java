@@ -18,7 +18,8 @@ public class Player {
     private boolean onGround;
 
     public AABB boundingBox;
-
+    public float height = 1.8f; // Oyuncu yüksekliği
+    private HitResult hitResult;
     /**
      * The player that is controlling the camera of the game
      *
@@ -207,5 +208,13 @@ public class Player {
         // Move the player in facing direction
         this.motionX += x * cos - z * sin;
         this.motionZ += z * cos + x * sin;
+    }
+
+    public HitResult getHitResult() {
+        return hitResult;
+    }
+
+    public void setHitResult(HitResult hitResult) {
+        this.hitResult = hitResult;
     }
 }
