@@ -2,137 +2,79 @@ package com.mojang.rubydung.level;
 
 import com.mojang.rubydung.Textures;
 import com.mojang.rubydung.phys.AABB;
-
-import static org.lwjgl.opengl.GL11.*;
-
+import org.lwjgl.opengl.GL11;
 
 public class Chunk {
+	public AABB aabb;
+	public final Level level;
+	public final int x0;
+	public final int y0;
+	public final int z0;
+	public final int x1;
+	public final int y1;
+	public final int z1;
+	private boolean dirty = true;
+	private int lists = -1;
+	private static int texture = Textures.loadTexture("/terrain.png", 9728);
+	private static Tesselator t = new Tesselator();
+	public static int rebuiltThisFrame = 0;
+	public static int updates = 0;
 
-    private static final int TEXTURE = Textures.loadTexture("/terrain.png", GL_NEAREST);
-    private static final Tessellator TESSELLATOR = new Tessellator();
+	public Chunk(Level level, int x0, int y0, int z0, int x1, int y1, int z1) {
+		this.level = level;
+		this.x0 = x0;
+		this.y0 = y0;
+		this.z0 = z0;
+		this.x1 = x1;
+		this.y1 = y1;
+		this.z1 = z1;
+		this.aabb = new AABB((float)x0, (float)y0, (float)z0, (float)x1, (float)y1, (float)z1);
+		this.lists = GL11.glGenLists(2);
+	}
 
-    /**
-     * Global rebuild statistic
-     */
-    public static int rebuiltThisFrame;
-    public static int updates;
+	private void rebuild(int layer) {
+		if(rebuiltThisFrame != 2) {
+			this.dirty = false;
+			++updates;
+			++rebuiltThisFrame;
+			GL11.glNewList(this.lists + layer, GL11.GL_COMPILE);
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+			t.init();
+			int tiles = 0;
 
-    /**
-     * The game level
-     */
-    private final Level level;
+			for(int x = this.x0; x < this.x1; ++x) {
+				for(int y = this.y0; y < this.y1; ++y) {
+					for(int z = this.z0; z < this.z1; ++z) {
+						if(this.level.isTile(x, y, z)) {
+							boolean tex = y != this.level.depth * 2 / 3;
+							++tiles;
+							if(!tex) {
+								Tile.rock.render(t, this.level, layer, x, y, z);
+							} else {
+								Tile.grass.render(t, this.level, layer, x, y, z);
+							}
+						}
+					}
+				}
+			}
 
-    /**
-     * Bounding box values
-     */
-    public AABB boundingBox;
-    private final int minX, minY, minZ;
-    private final int maxX, maxY, maxZ;
+			t.flush();
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GL11.glEndList();
+		}
+	}
 
-    /**
-     * Rendering states
-     */
-    private final int lists;
-    private boolean dirty = true;
+	public void render(int layer) {
+		if(this.dirty) {
+			this.rebuild(0);
+			this.rebuild(1);
+		}
 
-    /**
-     * Chunk containing a part of the tiles in a level
-     *
-     * @param level The game level
-     * @param minX  Minimal location X
-     * @param minY  Minimal location Y
-     * @param minZ  Minimal location Z
-     * @param maxX  Maximal location X
-     * @param maxY  Maximal location Y
-     * @param maxZ  Maximal location Z
-     */
-    public Chunk(Level level, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
-        this.level = level;
+		GL11.glCallList(this.lists + layer);
+	}
 
-        this.minX = minX;
-        this.minY = minY;
-        this.minZ = minZ;
-        this.maxX = maxX;
-        this.maxY = maxY;
-        this.maxZ = maxZ;
-
-        // Generate lists id
-        this.lists = glGenLists(2);
-
-        // Create bounding box object of chunk
-        this.boundingBox = new AABB(minX, minY, minZ, maxX, maxY, maxZ);
-    }
-
-    /**
-     * Render all tiles in this chunk
-     *
-     * @param layer The layer of the chunk (For shadows)
-     */
-    public void rebuild(int layer) {
-        if (rebuiltThisFrame == 2) {
-            // Rebuild limit reached for this frame
-            return;
-        }
-
-        // Update global stats
-        updates++;
-        rebuiltThisFrame++;
-
-        // Mark chunk as no longer dirty
-        this.dirty = false;
-
-        // Setup tile rendering
-        glNewList(this.lists + layer, GL_COMPILE);
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE, TEXTURE);
-        TESSELLATOR.init();
-
-        // For each tile in this chunk
-        for (int x = this.minX; x < this.maxX; ++x) {
-            for (int y = this.minY; y < this.maxY; ++y) {
-                for (int z = this.minZ; z < this.maxZ; ++z) {
-                    // Is a tile at this location?
-                    if (this.level.isTile(x, y, z)) {
-                        int id = (y != this.level.depth * 2 / 3) ? 1 : 0;
-
-                        if (id == 0) {
-                            // Render the grass tile
-                            Tile.grass.render(TESSELLATOR, this.level, layer, x, y, z);
-                        } else {
-                            // Render the rock tile
-                            Tile.rock.render(TESSELLATOR, this.level, layer, x, y, z);
-                        }
-                    }
-                }
-            }
-        }
-
-        // Finish tile rendering
-        TESSELLATOR.flush();
-        glDisable(GL_TEXTURE_2D);
-        glEndList();
-    }
-
-    /**
-     * Render all tiles in this chunk
-     *
-     * @param layer The render layer (Shadow layer)
-     */
-    public void render(int layer) {
-        // Rebuild chunk if dirty
-        if (this.dirty) {
-            rebuild(0);
-            rebuild(1);
-        }
-
-        // Call lists id to render the chunk
-        glCallList(this.lists + layer);
-    }
-
-    /**
-     * Mark chunk as dirty. The chunk will rebuild in the next frame
-     */
-    public void setDirty() {
-        this.dirty = true;
-    }
+	public void setDirty() {
+		this.dirty = true;
+	}
 }
