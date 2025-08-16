@@ -31,7 +31,7 @@ import com.mojang.util.MathHelper;
 
 import static net.lax1dude.eaglercraft.internal.PlatformOpenGL.*;
 
-public class GlStateManager {
+public class GlStateManager extends RealOpenGLEnums {
 
 	static final Logger logger = LogManager.getLogger("GlStateManager");
 
