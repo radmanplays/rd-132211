@@ -1,7 +1,9 @@
 package com.mojang.rubydung.level;
 
 import com.mojang.rubydung.phys.AABB;
-import java.nio.FloatBuffer;
+
+import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 

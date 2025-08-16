@@ -1,8 +1,9 @@
 package com.mojang.rubydung.level;
 
-import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+
+import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
 
 public class Tesselator {
 	private static final int MAX_VERTICES = 100000;

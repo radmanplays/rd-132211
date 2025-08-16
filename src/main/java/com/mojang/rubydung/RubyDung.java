@@ -8,9 +8,6 @@ import net.lax1dude.eaglercraft.EagRuntime;
 
 import java.awt.Component;
 import java.io.IOException;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import javax.swing.JOptionPane;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -19,6 +16,8 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
+import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;
 
 public class RubyDung implements Runnable {
 	private static final boolean FULLSCREEN_MODE = false;
@@ -69,7 +68,7 @@ public class RubyDung implements Runnable {
 		try {
 			this.init();
 		} catch (Exception var9) {
-			JOptionPane.showMessageDialog((Component)null, var9.toString(), "Failed to start RubyDung", 0);
+			System.out.println("Failed to start RubyDung");
 			System.exit(0);
 		}
 
@@ -241,8 +240,8 @@ public class RubyDung implements Runnable {
 		this.setupCamera(a);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glEnable(GL11.GL_FOG);
-		GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_EXP);
-		GL11.glFogf(GL11.GL_FOG_DENSITY, 0.2F);
+//		GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_EXP);
+//		GL11.glFogf(GL11.GL_FOG_DENSITY, 0.2F);
 		GL11.glFog(GL11.GL_FOG_COLOR, this.fogColor);
 		GL11.glDisable(GL11.GL_FOG);
 		this.levelRenderer.render(this.player, 0);

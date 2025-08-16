@@ -239,4 +239,11 @@ public class GL11 extends RealOpenGLEnums {
 
 	public static void glColorMaterial(int i, int j) {
 	}
+	
+	public static void glFog(int pname, FloatBuffer params) {
+	    EaglercraftGPU.glFog(pname, params);
+	}
+	public static int glGetError() {
+	    return EaglercraftGPU.glGetError();
+	}
 }
