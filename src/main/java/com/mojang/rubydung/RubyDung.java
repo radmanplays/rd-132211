@@ -144,7 +144,7 @@ public class RubyDung implements Runnable {
 	    double closestT = reach + 1;
 
 	    for (int x = (int) Math.floor(px - reach); x <= (int) Math.floor(px + reach); x++) {
-	        for (int y = (int) Math.floor(py - reach); y <= (int) Math.floor(py + reach); y++) {
+	        for (int y = (int) Math.floor(py - (reach + 1)); y <= (int) Math.floor(py + (reach + 1)); y++) {
 	            for (int z = (int) Math.floor(pz - reach); z <= (int) Math.floor(pz + reach); z++) {
 	                int block = level.getTile(x, y, z);
 	                if (block != 0) {
@@ -164,7 +164,7 @@ public class RubyDung implements Runnable {
 	                    double tEnter = Math.max(Math.max(txmin, tymin), tzmin);
 	                    double tExit = Math.min(Math.min(txmax, tymax), tzmax);
 
-	                    if (tEnter <= tExit && tEnter < closestT && tEnter >= 0 && tEnter <= reach) {
+	                    if (tEnter <= tExit && tEnter < closestT && tEnter >= 0 && tEnter <= reach + 1) {
 	                        closestT = tEnter;
 
 	                        int face;
@@ -185,7 +185,6 @@ public class RubyDung implements Runnable {
 
 	    this.hitResult = closestHit;
 	}
-
 
 	public void render(float a) {
 		float xo = (float)Mouse.getDX();
