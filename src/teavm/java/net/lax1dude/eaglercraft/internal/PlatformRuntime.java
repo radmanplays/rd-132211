@@ -49,7 +49,6 @@ import com.jcraft.jzlib.GZIPInputStream;
 import com.jcraft.jzlib.GZIPOutputStream;
 import com.jcraft.jzlib.Inflater;
 import com.jcraft.jzlib.InflaterInputStream;
-import com.mojang.minecraft.Minecraft;
 
 import net.lax1dude.eaglercraft.internal.buffer.ByteBuffer;
 import net.lax1dude.eaglercraft.internal.buffer.EaglerArrayBufferAllocator;
@@ -76,7 +75,6 @@ import net.lax1dude.eaglercraft.internal.teavm.WebGLBackBuffer;
 import net.lax1dude.eaglercraft.internal.vfs2.VFile2;
 import net.lax1dude.eaglercraft.opengl.EaglercraftGPU;
 import net.lax1dude.eaglercraft.opengl.RealOpenGLEnums;
-import net.peyton.eagler.level.LevelUtils;
 
 /**
  * Copyright (c) 2022-2024 lax1dude. All Rights Reserved.
@@ -503,9 +501,6 @@ public class PlatformRuntime {
 	@JSBody(params = { }, script = "return navigator.userAgent||null;")
 	public static native String getUserAgentString();
 
-	public static EnumPlatformOS getPlatformOS() {
-		return EnumPlatformOS.getFromUA(getUserAgentString());
-	}
 
 	@JSBody(params = { }, script = "return (typeof visualViewport !== \"undefined\");")
 	private static native boolean isVisualViewportSupported();
@@ -1167,7 +1162,6 @@ public class PlatformRuntime {
 	}
 
 	static void beforeUnload() {
-		LevelUtils.save();
 	}
 
 }

@@ -1,5 +1,6 @@
 package org.lwjgl.opengl;
 
+import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.opengl.EaglercraftGPU;
 import net.lax1dude.eaglercraft.opengl.RealOpenGLEnums;
 
@@ -8,7 +9,7 @@ import static net.lax1dude.eaglercraft.opengl.RealOpenGLEnums.*;
 import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
 import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;
 
-public class GL11 extends RealOpenGLEnums {
+public class GL11 extends EaglercraftGPU {
 
 	public static final int GL_TEXTURE_2D = RealOpenGLEnums.GL_TEXTURE_2D;
 

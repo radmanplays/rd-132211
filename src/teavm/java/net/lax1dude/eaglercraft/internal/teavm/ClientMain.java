@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.mojang.rubydung.RubyDung;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.ILogRedirector;
 import org.apache.logging.log4j.LogManager;
@@ -23,7 +24,6 @@ import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.webgl.WebGLRenderingContext;
 
-import com.mojang.minecraft.Minecraft;
 
 import net.lax1dude.eaglercraft.Display;
 import net.lax1dude.eaglercraft.EagRuntime;
@@ -209,7 +209,7 @@ public class ClientMain {
 			systemOut.println("ClientMain: [INFO] launching eaglercraftx main thread");
 
 			try {
-				new Minecraft(Display.getWidth(), Display.getHeight(), false).run();
+				new RubyDung().run();
 			}catch(Throwable t) {
 				systemErr.println("ClientMain: [ERROR] unhandled exception caused main thread to exit");
 				EagRuntime.debugPrintStackTraceToSTDERR(t);
