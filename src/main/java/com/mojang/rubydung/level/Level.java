@@ -108,6 +108,14 @@ public class Level {
 	public boolean isLightBlocker(int x, int y, int z) {
 		return this.isSolidTile(x, y, z);
 	}
+	
+	public int getTile(int x, int y, int z) {
+	    if(x >= 0 && y >= 0 && z >= 0 && x < this.width && y < this.depth && z < this.height) {
+	        return this.blocks[(y * this.height + z) * this.width + x] & 0xFF;
+	    }
+	    return 0;
+	}
+
 
 	public ArrayList<AABB> getCubes(AABB aABB) {
 		ArrayList aABBs = new ArrayList();

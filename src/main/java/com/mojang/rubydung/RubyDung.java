@@ -3,6 +3,9 @@ package com.mojang.rubydung;
 import com.mojang.rubydung.level.Chunk;
 import com.mojang.rubydung.level.Level;
 import com.mojang.rubydung.level.LevelRenderer;
+
+import net.lax1dude.eaglercraft.EagRuntime;
+
 import java.awt.Component;
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -37,12 +40,11 @@ public class RubyDung implements Runnable {
 		float fb = 1.0F;
 		this.fogColor.put(new float[]{(float)(col >> 16 & 255) / 255.0F, (float)(col >> 8 & 255) / 255.0F, (float)(col & 255) / 255.0F, 1.0F});
 		this.fogColor.flip();
-		Display.setDisplayMode(new DisplayMode(1024, 768));
 		Display.create();
 		Keyboard.create();
 		Mouse.create();
-		this.width = Display.getDisplayMode().getWidth();
-		this.height = Display.getDisplayMode().getHeight();
+		this.width = Display.getWidth();
+		this.height = Display.getHeight();
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glShadeModel(GL11.GL_SMOOTH);
 		GL11.glClearColor(fr, fg, fb, 0.0F);
@@ -60,9 +62,7 @@ public class RubyDung implements Runnable {
 
 	public void destroy() {
 		this.level.save();
-		Mouse.destroy();
-		Keyboard.destroy();
-		Display.destroy();
+		EagRuntime.destroy();
 	}
 
 	public void run() {
@@ -125,59 +125,68 @@ public class RubyDung implements Runnable {
 		this.moveCameraToPlayer(a);
 	}
 
-	private void setupPickCamera(float a, int x, int y) {
-		GL11.glMatrixMode(GL11.GL_PROJECTION);
-		GL11.glLoadIdentity();
-		this.viewportBuffer.clear();
-		GL11.glGetInteger(GL11.GL_VIEWPORT, this.viewportBuffer);
-		this.viewportBuffer.flip();
-		this.viewportBuffer.limit(16);
-		GLU.gluPickMatrix((float)x, (float)y, 5.0F, 5.0F, this.viewportBuffer);
-		GLU.gluPerspective(70.0F, (float)this.width / (float)this.height, 0.05F, 1000.0F);
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		GL11.glLoadIdentity();
-		this.moveCameraToPlayer(a);
-	}
-
 	private void pick(float a) {
-		this.selectBuffer.clear();
-		GL11.glSelectBuffer(this.selectBuffer);
-		GL11.glRenderMode(GL11.GL_SELECT);
-		this.setupPickCamera(a, this.width / 2, this.height / 2);
-		this.levelRenderer.pick(this.player);
-		int hits = GL11.glRenderMode(GL11.GL_RENDER);
-		this.selectBuffer.flip();
-		this.selectBuffer.limit(this.selectBuffer.capacity());
-		long closest = 0L;
-		int[] names = new int[10];
-		int hitNameCount = 0;
+	    double px = player.x;
+	    double py = player.y;
+	    double pz = player.z;
 
-		for(int i = 0; i < hits; ++i) {
-			int nameCount = this.selectBuffer.get();
-			long minZ = (long)this.selectBuffer.get();
-			this.selectBuffer.get();
-			int j;
-			if(minZ >= closest && i != 0) {
-				for(j = 0; j < nameCount; ++j) {
-					this.selectBuffer.get();
-				}
-			} else {
-				closest = minZ;
-				hitNameCount = nameCount;
+	    float yaw = (float) Math.toRadians(player.yRot);
+	    float pitch = (float) Math.toRadians(player.xRot);
 
-				for(j = 0; j < nameCount; ++j) {
-					names[j] = this.selectBuffer.get();
-				}
-			}
-		}
+	    double dx = Math.sin(yaw) * Math.cos(pitch);
+	    double dy = -Math.sin(pitch);
+	    double dz = -Math.cos(yaw) * Math.cos(pitch);
 
-		if(hitNameCount > 0) {
-			this.hitResult = new HitResult(names[0], names[1], names[2], names[3], names[4]);
-		} else {
-			this.hitResult = null;
-		}
+	    double reach = 3.0;
+	    double step = 0.05;
 
+	    HitResult closestHit = null;
+
+	    double closestT = reach + 1;
+
+	    for (int x = (int) Math.floor(px - reach); x <= (int) Math.floor(px + reach); x++) {
+	        for (int y = (int) Math.floor(py - reach); y <= (int) Math.floor(py + reach); y++) {
+	            for (int z = (int) Math.floor(pz - reach); z <= (int) Math.floor(pz + reach); z++) {
+	                int block = level.getTile(x, y, z);
+	                if (block != 0) {
+
+	                    double txmin = (x - px) / dx;
+	                    double txmax = (x + 1 - px) / dx;
+	                    if (txmin > txmax) { double temp = txmin; txmin = txmax; txmax = temp; }
+
+	                    double tymin = (y - py) / dy;
+	                    double tymax = (y + 1 - py) / dy;
+	                    if (tymin > tymax) { double temp = tymin; tymin = tymax; tymax = temp; }
+
+	                    double tzmin = (z - pz) / dz;
+	                    double tzmax = (z + 1 - pz) / dz;
+	                    if (tzmin > tzmax) { double temp = tzmin; tzmin = tzmax; tzmax = temp; }
+
+	                    double tEnter = Math.max(Math.max(txmin, tymin), tzmin);
+	                    double tExit = Math.min(Math.min(txmax, tymax), tzmax);
+
+	                    if (tEnter <= tExit && tEnter < closestT && tEnter >= 0 && tEnter <= reach) {
+	                        closestT = tEnter;
+
+	                        int face;
+	                        if (tEnter == txmin) {
+	                            face = dx > 0 ? 4 : 5;
+	                        } else if (tEnter == tymin) {
+	                            face = dy > 0 ? 0 : 1;
+	                        } else {
+	                            face = dz > 0 ? 2 : 3;
+	                        }
+
+	                        closestHit = new HitResult(x, y, z, block, face);
+	                    }
+	                }
+	            }
+	        }
+	    }
+
+	    this.hitResult = closestHit;
 	}
+
 
 	public void render(float a) {
 		float xo = (float)Mouse.getDX();
