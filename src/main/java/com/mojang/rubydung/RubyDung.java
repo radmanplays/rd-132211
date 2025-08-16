@@ -261,8 +261,4 @@ public class RubyDung implements Runnable {
 			throw new IllegalStateException(GLU.gluErrorString(e));
 		}
 	}
-
-	public static void main(String[] args) throws LWJGLException {
-		(new Thread(new RubyDung())).start();
-	}
 }
