@@ -4,6 +4,7 @@ import com.mojang.rubydung.level.Chunk;
 import com.mojang.rubydung.level.Level;
 import com.mojang.rubydung.level.LevelRenderer;
 
+import com.mojang.util.GLAllocation;
 import net.lax1dude.eaglercraft.EagRuntime;
 
 import java.awt.Component;
@@ -23,13 +24,13 @@ public class RubyDung implements Runnable {
 	private static final boolean FULLSCREEN_MODE = false;
 	private int width;
 	private int height;
-	private FloatBuffer fogColor = BufferUtils.createFloatBuffer(4);
+	private FloatBuffer fogColor = GLAllocation.createFloatBuffer(4);
 	private Timer timer = new Timer(60.0F);
 	private Level level;
 	private LevelRenderer levelRenderer;
 	private Player player;
-	private IntBuffer viewportBuffer = BufferUtils.createIntBuffer(16);
-	private IntBuffer selectBuffer = BufferUtils.createIntBuffer(2000);
+	private IntBuffer viewportBuffer = GLAllocation.createIntBuffer(16);
+	private IntBuffer selectBuffer = GLAllocation.createIntBuffer(2000);
 	private HitResult hitResult = null;
 
 	public void init() throws LWJGLException, IOException {

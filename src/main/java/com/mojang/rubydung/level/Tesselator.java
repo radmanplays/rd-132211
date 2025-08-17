@@ -1,5 +1,6 @@
 package com.mojang.rubydung.level;
 
+import com.mojang.util.GLAllocation;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
@@ -7,9 +8,9 @@ import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
 
 public class Tesselator {
 	private static final int MAX_VERTICES = 100000;
-	private FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(300000);
-	private FloatBuffer texCoordBuffer = BufferUtils.createFloatBuffer(200000);
-	private FloatBuffer colorBuffer = BufferUtils.createFloatBuffer(300000);
+	private FloatBuffer vertexBuffer = GLAllocation.createFloatBuffer(300000);
+	private FloatBuffer texCoordBuffer = GLAllocation.createFloatBuffer(200000);
+	private FloatBuffer colorBuffer = GLAllocation.createFloatBuffer(300000);
 	private int vertices = 0;
 	private float u;
 	private float v;
@@ -23,33 +24,6 @@ public class Tesselator {
 		this.vertexBuffer.flip();
 		this.texCoordBuffer.flip();
 		this.colorBuffer.flip();
-		GL11.glVertexPointer(3, 0, (FloatBuffer)this.vertexBuffer);
-		if(this.hasTexture) {
-			GL11.glTexCoordPointer(2, 0, (FloatBuffer)this.texCoordBuffer);
-		}
-
-		if(this.hasColor) {
-			GL11.glColorPointer(3, 0, (FloatBuffer)this.colorBuffer);
-		}
-
-		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-		if(this.hasTexture) {
-			GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-		}
-
-		if(this.hasColor) {
-			GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
-		}
-
-		GL11.glDrawArrays(GL11.GL_QUADS, GL11.GL_POINTS, this.vertices);
-		GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-		if(this.hasTexture) {
-			GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-		}
-
-		if(this.hasColor) {
-			GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
-		}
 
 		this.clear();
 	}

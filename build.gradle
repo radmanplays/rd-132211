@@ -1,25 +1,30 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
+import org.teavm.gradle.api.OptimizationLevel
 
+buildscript {
     dependencies {
         classpath files("src/teavmc-classpath/resources")
     }
 }
+
 plugins {
     id "java"
+    id "eclipse"
     id "org.teavm" version "0.9.2"
-    id "com.diffplug.spotless" version "7.0.1"
 }
-
-sourceCompatibility = 11
-targetCompatibility = 11
 
 sourceSets {
     main {
         java {
+            srcDirs(
+                    "src/main/java",
+                    "src/teavm/java"
+            )
+        }
+    }
+    eagler {
+        java {
             srcDir 'src/main/java'
+            srcDir 'src/lwjgl/java'
         }
     }
 }
@@ -28,28 +33,41 @@ repositories {
     mavenCentral()
 }
 
-
 dependencies {
-    implementation "org.teavm:teavm-jso:0.9.2"
-    implementation "org.teavm:teavm-jso-apis:0.9.2"
-    implementation "org.teavm:teavm-core:0.9.2"
     teavm(teavm.libs.jso)
     teavm(teavm.libs.jsoApis)
+    compileOnly "org.teavm:teavm-core:0.9.2" // workaround for a few hacks
+    eaglerImplementation fileTree(dir: './desktopRuntime', include: '*.jar')
 }
 
 def folder = "javascript"
 def name = "classes.js"
 
 teavm.js {
-    targetFileName = "../" + name
+    obfuscated = false // Change to "true" for release, used for debugging
     sourceMap = true
-    obfuscated = false;
-    processMemory = 2048
+    targetFileName = "../" + name
+    optimization = OptimizationLevel.AGGRESSIVE // Change to "AGGRESSIVE" for release
+    outOfProcess = false
+    fastGlobalAnalysis = false
+    processMemory = 1024
     entryPointName = "main"
-    mainClass = "com.demez.minecraft.Client.Client"
+    mainClass = "net.lax1dude.eaglercraft.internal.teavm.MainClass"
     outputDir = file(folder)
     properties = [ "java.util.TimeZone.autodetect": "true" ]
-    debugInformation = true
+    debugInformation = false
 }
 
+tasks.register('runclient', JavaExec) {
+    jvmArgs "-Djava.library.path=" + System.getProperty("user.dir") + "/desktopRuntime"
+    classpath = sourceSets.eagler.compileClasspath
+    group = "Eaglercraft-0.30"
+    description = "Runs the client"
+    classpath sourceSets.eagler.runtimeClasspath
+    if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+        jvmArgs '-XstartOnFirstThread'
+    }
 
+    workingDir "./desktopRuntime"
+    main 'net.lax1dude.eaglercraft.internal.MainClass'
+}

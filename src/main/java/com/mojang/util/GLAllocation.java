@@ -30,4 +30,16 @@ public class GLAllocation {
 	public static FloatBuffer createDirectFloatBuffer(int capacity) {
 		return EagRuntime.allocateFloatBuffer(capacity);
 	}
+
+    public static FloatBuffer createFloatBuffer(int i) {
+		return EagRuntime.allocateFloatBuffer(i);
+    }
+
+	public static IntBuffer createIntBuffer(int i) {
+		return EagRuntime.allocateIntBuffer(i);
+	}
+
+	public static ByteBuffer createByteBuffer(int i) {
+		return EagRuntime.allocateByteBuffer(i);
+	}
 }

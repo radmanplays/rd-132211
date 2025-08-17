@@ -4,7 +4,7 @@ import static net.lax1dude.eaglercraft.opengl.RealOpenGLEnums.*;
 
 /**
  * Copyright (c) 2022-2023 lax1dude. All Rights Reserved.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -16,16 +16,9 @@ import static net.lax1dude.eaglercraft.opengl.RealOpenGLEnums.*;
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  */
-public enum VertexFormat {
-
-	BLOCK(true, true, false, true), BLOCK_SHADERS(true, true, true, true), ITEM(true, true, true, false),
-	OLDMODEL_POSITION_TEX_NORMAL(true, false, true, false), PARTICLE_POSITION_TEX_COLOR_LMAP(true, true, true, true),
-	POSITION(false, false, false, false), POSITION_COLOR(false, true, false, false),
-	POSITION_TEX(true, false, false, false), POSITION_NORMAL(false, false, true, false),
-	POSITION_TEX_COLOR(true, true, false, false), POSITION_TEX_NORMAL(true, false, true, false),
-	POSITION_TEX_LMAP_COLOR(true, true, false, true), POSITION_TEX_COLOR_NORMAL(true, true, true, false);
+public class VertexFormat {
 
 	public static final int COMPONENT_POSITION_SIZE = 3;
 	public static final int COMPONENT_POSITION_FORMAT = GL_FLOAT;
@@ -92,7 +85,9 @@ public enum VertexFormat {
 
 	public final int eaglercraftAttribBits;
 
-	private VertexFormat(boolean texture, boolean color, boolean normal, boolean lightmap) {
+	static final VertexFormat[] stateCache = new VertexFormat[32];
+
+	public VertexFormat(boolean texture, boolean color, boolean normal, boolean lightmap) {
 
 		int index = 0;
 		int bytes = 0;
@@ -185,7 +180,50 @@ public enum VertexFormat {
 		attribNormalStride = normal ? bytes : -1;
 		attribLightmapStride = lightmap ? bytes : -1;
 		eaglercraftAttribBits = bitfield;
+		stateCache[bitfield] = this;
 
 	}
 
+	private static int bitfield;
+
+	public static VertexFormat createVertexFormat(boolean texture, boolean color, boolean normal) {
+		bitfield = 0;
+		if (color) {
+			bitfield |= EaglercraftGPU.ATTRIB_COLOR;
+		}
+		if (texture) {
+			bitfield |= EaglercraftGPU.ATTRIB_TEXTURE;
+		}
+		if (normal) {
+			bitfield |= EaglercraftGPU.ATTRIB_NORMAL;
+		}
+
+		VertexFormat format = stateCache[bitfield];
+		if (format != null) {
+			return format;
+		}
+		return new VertexFormat(texture, color, normal, false);
+	}
+
+	public static VertexFormat createVertexFormat(boolean texture, boolean color, boolean normal, boolean lightmap) {
+		bitfield = 0;
+		if (color) {
+			bitfield |= EaglercraftGPU.ATTRIB_COLOR;
+		}
+		if (texture) {
+			bitfield |= EaglercraftGPU.ATTRIB_TEXTURE;
+		}
+		if (normal) {
+			bitfield |= EaglercraftGPU.ATTRIB_NORMAL;
+		}
+		if (lightmap) {
+			bitfield |= EaglercraftGPU.ATTRIB_LIGHTMAP;
+		}
+
+		VertexFormat format = stateCache[bitfield];
+		if (format != null) {
+			return format;
+		}
+		return new VertexFormat(texture, color, normal, lightmap);
+	}
 }

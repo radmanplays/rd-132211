@@ -1,7 +1,7 @@
 package org.lwjgl;
 
+import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.internal.buffer.ByteBuffer;
-import net.lax1dude.eaglercraft.internal.buffer.EaglerLWJGLAllocator;
 import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
 import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;
 import net.lax1dude.eaglercraft.internal.buffer.ShortBuffer;
@@ -23,7 +23,7 @@ public final class BufferUtils {
      */
     public static ByteBuffer createByteBuffer(int size) {
         //return EaglerLWJGLAllocator.allocateDirect(size).order(ByteOrder.nativeOrder());
-    	return EaglerLWJGLAllocator.allocByteBuffer(size);
+    	return EagRuntime.allocateByteBuffer(size);
     }
 
     /**

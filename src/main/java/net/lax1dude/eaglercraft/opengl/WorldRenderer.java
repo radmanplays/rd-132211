@@ -290,6 +290,8 @@ public class WorldRenderer {
 
 	}
 
+	public void setVertexFormat(VertexFormat format) {
+	}
 	/**
 	 * gets the color index of a vertex parInt1 indicies before the current vertex
 	 */
