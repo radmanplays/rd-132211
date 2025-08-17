@@ -1,73 +1,60 @@
 package com.mojang.rubydung.level;
 
-import com.mojang.util.GLAllocation;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
-import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
-
 public class Tesselator {
-	private static final int MAX_VERTICES = 100000;
-	private FloatBuffer vertexBuffer = GLAllocation.createFloatBuffer(300000);
-	private FloatBuffer texCoordBuffer = GLAllocation.createFloatBuffer(200000);
-	private FloatBuffer colorBuffer = GLAllocation.createFloatBuffer(300000);
-	private int vertices = 0;
-	private float u;
-	private float v;
-	private float r;
-	private float g;
-	private float b;
-	private boolean hasColor = false;
-	private boolean hasTexture = false;
+    private float u, v;
+    private float r, g, b;
+    private boolean hasColor = false;
+    private boolean hasTexture = false;
+    private boolean drawing = false;
 
-	public void flush() {
-		this.vertexBuffer.flip();
-		this.texCoordBuffer.flip();
-		this.colorBuffer.flip();
+    public void init() {
+        if (drawing) {
+            flush();
+        }
+        hasColor = false;
+        hasTexture = false;
+        drawing = true;
 
-		this.clear();
-	}
+        GL11.glBegin(GL11.GL_QUADS);
+    }
 
-	private void clear() {
-		this.vertices = 0;
-		this.vertexBuffer.clear();
-		this.texCoordBuffer.clear();
-		this.colorBuffer.clear();
-	}
+    public void tex(float u, float v) {
+        this.u = u;
+        this.v = v;
+        this.hasTexture = true;
+        GL11.glTexCoord2f(u, v);
+    }
 
-	public void init() {
-		this.clear();
-		this.hasColor = false;
-		this.hasTexture = false;
-	}
+    public void color(float r, float g, float b) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.hasColor = true;
+        GL11.glColor3f(r, g, b);
+    }
 
-	public void tex(float u, float v) {
-		this.hasTexture = true;
-		this.u = u;
-		this.v = v;
-	}
+    public void vertex(float x, float y, float z) {
+        if (hasColor) {
+            GL11.glColor3f(r, g, b);
+        }
 
-	public void color(float r, float g, float b) {
-		this.hasColor = true;
-		this.r = r;
-		this.g = g;
-		this.b = b;
-	}
+        if (hasTexture) {
+            GL11.glTexCoord2f(u, v);
+        }
 
-	public void vertex(float x, float y, float z) {
-		this.vertexBuffer.put(this.vertices * 3 + 0, x).put(this.vertices * 3 + 1, y).put(this.vertices * 3 + 2, z);
-		if(this.hasTexture) {
-			this.texCoordBuffer.put(this.vertices * 2 + 0, this.u).put(this.vertices * 2 + 1, this.v);
-		}
+        GL11.glVertex3f(x, y, z);
 
-		if(this.hasColor) {
-			this.colorBuffer.put(this.vertices * 3 + 0, this.r).put(this.vertices * 3 + 1, this.g).put(this.vertices * 3 + 2, this.b);
-		}
+        hasColor = false;
+        hasTexture = false;
+    }
 
-		++this.vertices;
-		if(this.vertices == 100000) {
-			this.flush();
-		}
-
-	}
+    public void flush() {
+        if (!drawing) return;
+        GL11.glEnd();
+        drawing = false;
+        hasColor = false;
+        hasTexture = false;
+    }
 }

@@ -3,6 +3,10 @@ package org.lwjgl.opengl;
 import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.opengl.EaglercraftGPU;
 import net.lax1dude.eaglercraft.opengl.RealOpenGLEnums;
+import net.lax1dude.eaglercraft.opengl.Tessellator;
+import net.lax1dude.eaglercraft.opengl.VertexFormat;
+import net.lax1dude.eaglercraft.opengl.WorldRenderer;
+import net.lax1dude.eaglercraft.vertex.DefaultVertexFormats;
 
 import static net.lax1dude.eaglercraft.opengl.RealOpenGLEnums.*;
 
@@ -12,6 +16,13 @@ import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;
 public class GL11 extends EaglercraftGPU {
 
 	public static final int GL_TEXTURE_2D = RealOpenGLEnums.GL_TEXTURE_2D;
+    private static final Tessellator tessellator = Tessellator.getInstance();
+    private static final WorldRenderer renderer = tessellator.getWorldRenderer();
+    
+    private static boolean hasColor = false;
+    private static boolean hasTexture = false;
+    private static float r, g, b, a;
+    private static float u, v;
 
 	public static void glEnable(int p1) {
 		switch (p1) {
@@ -153,10 +164,6 @@ public class GL11 extends EaglercraftGPU {
 		EaglercraftGPU.rotate(f, g, h, i);
 	}
 
-	public static void glColor4f(float f, float g, float h, float i) {
-		EaglercraftGPU.color(f, g, h, i);
-	}
-
 	public static void glBindTexture(int i, int var110) {
 		if (i != GL_TEXTURE_2D) {
 			throw new RuntimeException("Only 2D texture types are supported!");
@@ -184,35 +191,54 @@ public class GL11 extends EaglercraftGPU {
 		EaglercraftGPU.depthMask(b);
 	}
 
-//	public static void glBegin(int i) {
-//		renderer.begin(i, VertexFormat.POSITION_TEX_NORMAL);
-//		hasColor = false;
-//	}
-//
-//	public static void glVertex3f(float x1, float y0, float z1) {
-//		renderer.pos(x1, y0, z1);
-//		if(hasColor) {
-//			renderer.color(r, g, b, a);
-//		}
-//		renderer.endVertex();
-//	}
-//	
-//	public static void glVertex2f(float f, float g) {
-//		glVertex3f(f, g, 0.0f);
-//	}
-//	
-//	public static void glTexCoord2f(float u, float v) {
-//		renderer.tex(u, v);
-//		if(hasColor) {
-//			renderer.color(r, g, b, a);
-//		}
-//		renderer.endVertex();
-//	}
-//
-//	public static final void glEnd() {
-//		renderer.finishDrawing();
-//		uploader.func_181679_a(renderer);
-//	}
+
+    public static void glColor4f(float red, float green, float blue, float alpha) {
+    	EaglercraftGPU.color(red, green, blue, alpha);
+        r = red;
+        g = green;
+        b = blue;
+        a = alpha;
+        hasColor = true;
+    }
+
+    public static void glColor3f(float red, float green, float blue) {
+        glColor4f(red, green, blue, 1.0f);
+    }
+
+    public static void glTexCoord2f(float tu, float tv) {
+        u = tu;
+        v = tv;
+        hasTexture = true;
+    }
+
+    public static void glVertex3f(float x, float y, float z) {
+        if (hasTexture) {
+            renderer.tex(u, v);
+        }
+        if (hasColor) {
+            renderer.color(r, g, b, a);
+        }
+        renderer.pos(x, y, z);
+        renderer.endVertex();
+        hasTexture = false;
+    }
+    
+
+    public static void glVertex2f(float x, float y) {
+        glVertex3f(x, y, 0.0f);
+    }
+
+    public static void glBegin(int mode) {
+        renderer.begin(mode, DefaultVertexFormats.POSITION_TEX_COLOR);
+        hasColor = false;
+        hasTexture = false;
+    }
+
+    public static void glEnd() {
+        tessellator.draw();
+        hasColor = false;
+        hasTexture = false;
+    }
 
 	public static void glCallLists(IntBuffer p1) {
 		while (p1.hasRemaining()) {
@@ -232,10 +258,6 @@ public class GL11 extends EaglercraftGPU {
 
 	public static void glGetFloat(int glModelviewMatrix, FloatBuffer modelviewBuff) {
 		EaglercraftGPU.getFloat(glModelviewMatrix, modelviewBuff);
-	}
-
-	public static void glColor3f(float f, float g, float h) {
-		EaglercraftGPU.color(f, g, h);
 	}
 
 	public static void glColorMaterial(int i, int j) {
