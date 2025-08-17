@@ -69,6 +69,10 @@ public class Chunk {
 		if(this.dirty) {
 			this.rebuild(0);
 			this.rebuild(1);
+			// If still dirty, rebuild was throttled this frame; skip drawing to avoid invalid display list
+			if(this.dirty) {
+				return;
+			}
 		}
 
 		GL11.glCallList(this.lists + layer);

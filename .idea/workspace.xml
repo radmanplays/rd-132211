@@ -4,73 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0acb7e08-1832-472f-8454-87d4a8345847" name="Changes" comment="add BufferUtils">
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/Java-WebSocket-1.5.1-with-dependencies.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/MainClass.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/OpenAL.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/UnsafeMemcpy.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/UnsafeMemcpy.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/_eagstorage.p.dat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/_start_desktop_runtime.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/codecjorbis-20101023.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/codecwav-20101023.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/d3dcompiler_47.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/glfw.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/jemalloc.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/libEGL.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/libEGL.so" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/libGLESv2.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/libGLESv2.so" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/libUnsafeMemcpy.so" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/libglfw.so" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/libjemalloc.so" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/liblwjgl.so" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/liblwjgl_opengles.so" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/libopenal.so" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/libvulkan.so.1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/libwebrtc-java.so" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/lwjgl-egl.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/lwjgl-glfw.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/lwjgl-jemalloc.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/lwjgl-openal.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/lwjgl-opengles.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/lwjgl.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/lwjgl_opengles.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/resources/assets/eagler/audioctx_test_ogg.dat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/resources/assets/eagler/audioctx_test_wav16.dat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/resources/assets/eagler/audioctx_test_wav32f.dat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/resources/assets/eagler/eagtek.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/resources/assets/eagler/glsl/accel_font.fsh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/resources/assets/eagler/glsl/accel_font.vsh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/resources/assets/eagler/glsl/accel_particle.fsh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/resources/assets/eagler/glsl/accel_particle.vsh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/resources/assets/eagler/glsl/core.fsh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/resources/assets/eagler/glsl/core.vsh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/resources/assets/eagler/glsl/gles2_compat.glsl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/resources/assets/eagler/glsl/hw_fingerprint.fsh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/resources/assets/eagler/glsl/local.vsh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/resources/assets/eagler/glsl/post_fxaa.fsh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/resources/assets/eagler/glsl/texture_blit.fsh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/resources/assets/eagler/glsl/texture_blit.vsh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/resources/assets/eagler/glsl/texture_mix.fsh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/resources/assets/eagler/gui/eagler_gui.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/soundsystem-20120107.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/vulkan-1.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktopRuntime/yee.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktopRuntime/CompileEPK.jar" beforeDir="false" afterPath="$PROJECT_DIR$/desktopRuntime/CompileEPK.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktopRuntime/lwjgl.dll" beforeDir="false" afterPath="$PROJECT_DIR$/desktopRuntime/lwjgl.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktopRuntime/terrain.png" beforeDir="false" afterPath="$PROJECT_DIR$/desktopRuntime/resources/terrain.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/RubyDung.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/RubyDung.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/Textures.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/Textures.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/level/Tesselator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mojang/rubydung/level/Tesselator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mojang/util/GLAllocation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mojang/util/GLAllocation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/lax1dude/eaglercraft/opengl/VertexFormat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/lax1dude/eaglercraft/opengl/VertexFormat.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/lax1dude/eaglercraft/opengl/WorldRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/lax1dude/eaglercraft/opengl/WorldRenderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/lwjgl/BufferUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/lwjgl/BufferUtils.java" afterDir="false" />
-    </list>
+    <list default="true" id="0acb7e08-1832-472f-8454-87d4a8345847" name="Changes" comment="add BufferUtils" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
