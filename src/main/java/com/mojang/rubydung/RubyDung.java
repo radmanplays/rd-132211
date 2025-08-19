@@ -69,7 +69,7 @@ public class RubyDung implements Runnable {
 			this.init();
 		} catch (Exception var9) {
 			System.out.println("Failed to start RubyDung");
-			System.exit(0);
+			throw new RuntimeException(var9);
 		}
 
 		long lastTime = System.currentTimeMillis();
