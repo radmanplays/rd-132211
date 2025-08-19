@@ -76,7 +76,7 @@ public class RubyDung implements Runnable {
 		int frames = 0;
 
 		try {
-			while(!Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !Display.isCloseRequested()) {
+			while(!Display.isCloseRequested()) {
 				this.timer.advanceTime();
 
 				for(int e = 0; e < this.timer.ticks; ++e) {
@@ -87,7 +87,7 @@ public class RubyDung implements Runnable {
 				++frames;
 
 				while(System.currentTimeMillis() >= lastTime + 1000L) {
-					System.out.println(frames + " fps, " + Chunk.updates);
+					//System.out.println(frames + " fps, " + Chunk.updates);
 					Chunk.updates = 0;
 					lastTime += 1000L;
 					frames = 0;
@@ -96,7 +96,7 @@ public class RubyDung implements Runnable {
 		} catch (Exception var10) {
 			var10.printStackTrace();
 		} finally {
-			this.destroy();
+			EagRuntime.destroy();
 		}
 
 	}
@@ -193,6 +193,10 @@ public class RubyDung implements Runnable {
 		this.pick(a);
 
 		while(Mouse.next()) {
+			if (Mouse.getEventButtonState()) {
+				Mouse.setGrabbed(true);
+			}
+
 			if(Mouse.getEventButton() == 1 && Mouse.getEventButtonState() && this.hitResult != null) {
 				this.level.setTile(this.hitResult.x, this.hitResult.y, this.hitResult.z, 0);
 			}
@@ -230,9 +234,16 @@ public class RubyDung implements Runnable {
 		}
 
 		while(Keyboard.next()) {
+			Mouse.setGrabbed(true);
 			if(Keyboard.getEventKey() == Keyboard.KEY_RETURN && Keyboard.getEventKeyState()) {
 				this.level.save();
 			}
+		}
+
+		if (Display.wasResized()) {
+			this.width = Display.getWidth();
+			this.height = Display.getHeight();
+			GL11.glViewport(0, 0, this.width, this.height);
 		}
 
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
