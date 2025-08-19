@@ -22,7 +22,7 @@ import net.lax1dude.eaglercraft.internal.buffer.ByteBuffer;
  * POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-public class VFileInputStream extends InputStream {
+class VFileInputStream extends InputStream {
 
 	private ByteBuffer fileBuffer;
 

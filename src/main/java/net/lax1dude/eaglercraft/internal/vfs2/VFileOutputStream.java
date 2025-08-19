@@ -22,7 +22,7 @@ import net.lax1dude.eaglercraft.internal.buffer.ByteBuffer;
  * POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-public class VFileOutputStream extends EaglerOutputStream {
+class VFileOutputStream extends EaglerOutputStream {
 
 	private final VFile2 vfsFile;
 	private boolean closed = false;

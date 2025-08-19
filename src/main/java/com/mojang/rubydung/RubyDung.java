@@ -96,7 +96,7 @@ public class RubyDung implements Runnable {
 		} catch (Exception var10) {
 			var10.printStackTrace();
 		} finally {
-			EagRuntime.destroy();
+			this.destroy();
 		}
 
 	}
@@ -237,6 +237,10 @@ public class RubyDung implements Runnable {
 			Mouse.setGrabbed(true);
 			if(Keyboard.getEventKey() == Keyboard.KEY_RETURN && Keyboard.getEventKeyState()) {
 				this.level.save();
+			}
+			if(Keyboard.getEventKey() == Keyboard.KEY_BACK && Keyboard.getEventKeyState()) {
+				this.level.reset();
+				this.player.resetPos();
 			}
 		}
 

@@ -26,7 +26,7 @@ public class Player {
 		this.resetPos();
 	}
 
-	private void resetPos() {
+	public void resetPos() {
 		float x = (float)Math.random() * (float)this.level.width;
 		float y = (float)(this.level.depth + 10);
 		float z = (float)Math.random() * (float)this.level.height;
@@ -55,14 +55,19 @@ public class Player {
 
 	}
 
+	Boolean rdown = false;
+
 	public void tick() {
 		this.xo = this.x;
 		this.yo = this.y;
 		this.zo = this.z;
 		float xa = 0.0F;
 		float ya = 0.0F;
-		if(Keyboard.isKeyDown(Keyboard.KEY_R)) {
+		if(!rdown && Keyboard.isKeyDown(Keyboard.KEY_R)) {
 			this.resetPos();
+			rdown = true;
+		} else if (!Keyboard.isKeyDown(Keyboard.KEY_R)) {
+			rdown = false;
 		}
 
 		if(Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W)) {

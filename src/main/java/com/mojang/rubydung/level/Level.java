@@ -69,6 +69,31 @@ public class Level {
 
 	}
 
+	public void reset() {
+		try {
+			VFile2 file = new VFile2("level.dat");
+			if (file.exists()) {
+				file.delete();
+			}
+			java.util.Arrays.fill(this.blocks, (byte)0);
+			for(int x = 0; x < this.width; ++x) {
+				for(int y = 0; y < this.depth; ++y) {
+					for(int z = 0; z < this.height; ++z) {
+						int i = (y * this.height + z) * this.width + x;
+						this.blocks[i] = (byte)(y <= this.depth * 2 / 3 ? 1 : 0);
+					}
+				}
+			}
+			this.calcLightDepths(0, 0, this.width, this.height);
+			for (int i = 0; i < this.levelListeners.size(); ++i) {
+				((LevelListener)this.levelListeners.get(i)).allChanged();
+			}
+		} catch (Exception var2) {
+			var2.printStackTrace();
+		}
+
+	}
+
 	public void calcLightDepths(int x0, int y0, int x1, int y1) {
 		for(int x = x0; x < x0 + x1; ++x) {
 			for(int z = y0; z < y0 + y1; ++z) {
