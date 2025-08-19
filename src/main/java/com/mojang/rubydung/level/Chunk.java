@@ -33,7 +33,6 @@ public class Chunk {
 	}
 
 	private void rebuild(int layer) {
-		if(rebuiltThisFrame != 2) {
 			this.dirty = false;
 			++updates;
 			++rebuiltThisFrame;
@@ -62,19 +61,15 @@ public class Chunk {
 			t.flush();
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glEndList();
-		}
 	}
 
 	public void render(int layer) {
 		if(this.dirty) {
 			this.rebuild(0);
 			this.rebuild(1);
-			// If still dirty, rebuild was throttled this frame; skip drawing to avoid invalid display list
-			if(this.dirty) {
-				return;
-			}
 		}
-
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
 		GL11.glCallList(this.lists + layer);
 	}
 

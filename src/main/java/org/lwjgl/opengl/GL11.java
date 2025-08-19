@@ -2,6 +2,7 @@ package org.lwjgl.opengl;
 
 import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.opengl.EaglercraftGPU;
+import net.lax1dude.eaglercraft.opengl.GlStateManager;
 import net.lax1dude.eaglercraft.opengl.RealOpenGLEnums;
 import net.lax1dude.eaglercraft.opengl.Tessellator;
 import net.lax1dude.eaglercraft.opengl.VertexFormat;
@@ -193,7 +194,6 @@ public class GL11 extends EaglercraftGPU {
 
 
     public static void glColor4f(float red, float green, float blue, float alpha) {
-    	EaglercraftGPU.color(red, green, blue, alpha);
         r = red;
         g = green;
         b = blue;
@@ -212,16 +212,39 @@ public class GL11 extends EaglercraftGPU {
     }
 
     public static void glVertex3f(float x, float y, float z) {
-        if (hasTexture) {
-            renderer.tex(u, v);
-        }
         if (hasColor) {
             renderer.color(r, g, b, a);
         }
+        if (hasTexture) {
+            renderer.tex(u, v);
+        }
         renderer.pos(x, y, z);
         renderer.endVertex();
-        hasTexture = false;
     }
+    
+	public static void glFogf(int pname, float param) {
+		switch (pname) {
+			case GL_FOG_DENSITY:
+				GlStateManager.setFogDensity(param);
+				break;
+			case GL_FOG_START:
+				GlStateManager.setFogStart(param);
+				break;
+			case GL_FOG_END:
+				GlStateManager.setFogEnd(param);
+				break;
+			default:
+				break;
+		}
+	}
+
+	public static void glFogi(int pname, int param) {
+		if (pname == GL_FOG_MODE) {
+			GlStateManager.setFog(param);
+		} else {
+			glFogf(pname, (float) param);
+		}
+	}
     
 
     public static void glVertex2f(float x, float y) {

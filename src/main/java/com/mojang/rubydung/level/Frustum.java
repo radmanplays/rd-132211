@@ -5,7 +5,6 @@ import com.mojang.rubydung.phys.AABB;
 import com.mojang.util.GLAllocation;
 import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 public class Frustum {

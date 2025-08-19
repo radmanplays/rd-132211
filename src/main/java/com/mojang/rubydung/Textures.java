@@ -8,7 +8,6 @@ import javax.imageio.ImageIO;
 import com.mojang.util.GLAllocation;
 import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.opengl.ImageData;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 import net.lax1dude.eaglercraft.internal.buffer.ByteBuffer;
@@ -41,7 +40,7 @@ public class Textures {
                 int r = rawPixels[i] >> 16 & 255;
                 int g = rawPixels[i] >> 8 & 255;
                 int b = rawPixels[i] & 255;
-                rawPixels[i] = a << 24 | b << 16 | g << 8 | r;
+                rawPixels[i] = a << 24 | r << 16 | g << 8 | b;
             }
 
             pixels.asIntBuffer().put(rawPixels);

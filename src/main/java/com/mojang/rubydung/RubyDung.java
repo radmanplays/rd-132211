@@ -9,7 +9,6 @@ import net.lax1dude.eaglercraft.EagRuntime;
 
 import java.awt.Component;
 import java.io.IOException;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -240,8 +239,8 @@ public class RubyDung implements Runnable {
 		this.setupCamera(a);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glEnable(GL11.GL_FOG);
-//		GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_EXP);
-//		GL11.glFogf(GL11.GL_FOG_DENSITY, 0.2F);
+		GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_EXP);
+		GL11.glFogf(GL11.GL_FOG_DENSITY, 0.2F);
 		GL11.glFog(GL11.GL_FOG_COLOR, this.fogColor);
 		GL11.glDisable(GL11.GL_FOG);
 		this.levelRenderer.render(this.player, 0);
