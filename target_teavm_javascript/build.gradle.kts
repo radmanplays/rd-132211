@@ -88,15 +88,13 @@ eaglercraftBuild {
 		js("main") {
 			sourceGeneratorOutput = file("$jsFolder/$jsFileName")
 			offlineDownloadTemplate = file("javascript/OfflineDownloadTemplate.txt")
-			mainOutput = file("$jsFolder/EaglercraftX_1.8_Offline_en_US.html")
-			internationalOutput = file("$jsFolder/EaglercraftX_1.8_Offline_International.html")
+			mainOutput = file("$jsFolder/rd-132211-JS.html")
 		}.apply {
 			epkSources = file("../desktopRuntime/resources")
 			epkOutput = file("$jsFolder/assets.epk")
 
-			languageMetadataInput = file("$jsFolder/lang")
-			languageEpkOutput = file("$jsFolder/lang.tmp.epk")
-
+            			languageMetadataInput = file("$jsFolder/lang")
+           			languageEpkOutput = file("$jsFolder/lang.tmp.epk")
 			sourceGeneratorTaskName = "generateJavaScript"
 		}
 	}

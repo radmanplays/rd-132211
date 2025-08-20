@@ -19,4 +19,4 @@ favicon-image-mime=image/png
 jspi-unavailable-file=enableJSPIScreen.html
 offline-download-template=OfflineDownloadTemplate.txt
 offline-download-script=../javascript_dist/bootstrap.js
-offline-download-name=EaglercraftX_1.8_WASM-GC_Offline_Download.html
+offline-download-name=rd-132211-WASM.html
