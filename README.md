@@ -1,6 +1,6 @@
 # rd-132211 [![Build and Upload JS + WASM](https://github.com/radmanplays/rd-132211/actions/workflows/build.yml/badge.svg)](https://github.com/radmanplays/rd-132211/actions/workflows/build.yml)
 ## requires java 17 to compile!
-### (versions greater than 17 wont work)
+### (versions newer or older than 17 wont work)
 
 
 **To compile the JavaScript client:**
