@@ -1,0 +1,78 @@
+name: Build and Upload JS + WASM
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Cache Gradle
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+            
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+        
+      - name: Build JavaScript client
+        run: ./gradlew :target_teavm_javascript:makeMainOfflineDownload
+
+      - name: Build WASM-GC client
+        run: ./gradlew :target_teavm_wasm_gc:makeMainWasmClientBundle
+
+      - name: Upload JavaScript build
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: javascript
+          path: target_teavm_javascript/javascript/
+
+      - name: Upload WASM build
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: wasm
+          path: target_teavm_wasm_gc/javascript_dist/
+
+      - name: Archive builds
+        run: |
+          mkdir dist
+          zip -r dist/javascript.zip target_teavm_javascript/javascript
+          zip -r dist/wasm.zip target_teavm_wasm_gc/javascript_dist
+
+      - name: Get short commit hash
+        id: vars
+        run: echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2.3.2
+        with:
+          tag_name: ${{ steps.vars.outputs.hash }}
+          name: Release ${{ steps.vars.outputs.hash }}
+          files: dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Deploy WASM to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: target_teavm_wasm_gc/javascript_dist
+          publish_branch: gh-pages
