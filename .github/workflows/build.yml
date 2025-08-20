@@ -63,7 +63,7 @@ jobs:
 
       - name: Create GitHub Release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2.3.2
         with:
           tag_name: ${{ steps.vars.outputs.hash }}
           name: Release ${{ steps.vars.outputs.hash }}
