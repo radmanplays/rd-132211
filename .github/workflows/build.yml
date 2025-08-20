@@ -2,7 +2,7 @@ name: Build and Upload JS + WASM
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
 
 jobs:
@@ -53,8 +53,8 @@ jobs:
       - name: Archive builds
         run: |
           mkdir dist
-          zip -r dist/javascript-client.zip target_teavm_javascript/javascript
-          zip -r dist/wasm-client.zip target_teavm_wasm_gc/javascript_dist
+          zip -r dist/javascript.zip target_teavm_javascript/javascript
+          zip -r dist/wasm.zip target_teavm_wasm_gc/javascript_dist
 
       - name: Get short commit hash
         id: vars
@@ -70,3 +70,11 @@ jobs:
           files: dist/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Deploy WASM to GitHub Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: target_teavm_wasm_gc/javascript_dist
+          publish_branch: gh-pages
