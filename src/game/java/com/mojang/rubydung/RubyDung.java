@@ -14,6 +14,8 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+
+import net.lax1dude.eaglercraft.internal.EnumPlatformType;
 import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
 import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;
 
@@ -21,6 +23,8 @@ public class RubyDung implements Runnable {
 	private static final boolean FULLSCREEN_MODE = false;
 	private int width;
 	private int height;
+	private int lastWidth;
+	private int lastHeight;
 	private FloatBuffer fogColor = GLAllocation.createFloatBuffer(4);
 	private Timer timer = new Timer(60.0F);
 	private Level level;
@@ -78,7 +82,7 @@ public class RubyDung implements Runnable {
 		int frames = 0;
 
 		try {
-			while(!Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !Display.isCloseRequested()) {
+			while(!Display.isCloseRequested() && (EagRuntime.getPlatformType() != EnumPlatformType.DESKTOP || !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))) {
 				this.timer.advanceTime();
 
 				for(int e = 0; e < this.timer.ticks; ++e) {
@@ -118,9 +122,12 @@ public class RubyDung implements Runnable {
 	}
 
 	private void setupCamera(float a) {
-        if (Display.wasResized()) {
-            this.width = Display.getWidth();
-            this.height = Display.getHeight();
+        this.width = Display.getWidth();
+        this.height = Display.getHeight();
+
+	    if (width != lastWidth || height != lastHeight) {
+	        lastWidth = width;
+	        lastHeight = height;
             GL11.glViewport(0, 0, this.width, this.height);
             setupProjection(this.width, this.height);
         }
