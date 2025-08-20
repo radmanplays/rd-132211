@@ -41,13 +41,13 @@ jobs:
       - name: Upload JavaScript build
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: javascript-client
+          name: javascript
           path: target_teavm_javascript/javascript/
 
       - name: Upload WASM build
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: wasm-client
+          name: wasm
           path: target_teavm_wasm_gc/javascript_dist/
 
       - name: Archive builds
