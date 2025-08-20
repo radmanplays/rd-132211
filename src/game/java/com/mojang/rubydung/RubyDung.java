@@ -76,7 +76,7 @@ public class RubyDung implements Runnable {
 		int frames = 0;
 
 		try {
-			while(!Display.isCloseRequested()) {
+			while(!Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !Display.isCloseRequested()) {
 				this.timer.advanceTime();
 
 				for(int e = 0; e < this.timer.ticks; ++e) {
@@ -87,7 +87,7 @@ public class RubyDung implements Runnable {
 				++frames;
 
 				while(System.currentTimeMillis() >= lastTime + 1000L) {
-					//System.out.println(frames + " fps, " + Chunk.updates);
+					System.out.println(frames + " fps, " + Chunk.updates);
 					Chunk.updates = 0;
 					lastTime += 1000L;
 					frames = 0;

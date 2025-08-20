@@ -120,11 +120,11 @@ public class Tile {
 	}
 
 	public void renderFace(Tesselator t, int x, int y, int z, int face) {
-		float x0 = (float)x + 0.001F;
+		float x0 = (float)x - 0.001F;
 		float x1 = (float)x + 1.001F;
-		float y0 = (float)y + 0.001F;
+		float y0 = (float)y - 0.001F;
 		float y1 = (float)y + 1.001F;
-		float z0 = (float)z + 0.001F;
+		float z0 = (float)z - 0.001F;
 		float z1 = (float)z + 1.001F;
 		if(face == 0) {
 			t.vertex(x0, y0, z1);

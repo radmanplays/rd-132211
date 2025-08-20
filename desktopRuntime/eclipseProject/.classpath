@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src_main_java"/>
 	<classpathentry kind="src" path="src_lwjgl_java"/>
+	<classpathentry kind="src" path="src_game_java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>

@@ -30,5 +30,15 @@
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC../src/main/java</locationURI>
 		</link>
+		<link>
+			<name>src_protocol-game_java</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC../src/protocol-game/java</locationURI>
+		</link>
+		<link>
+			<name>src_protocol-relay_java</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC../src/protocol-relay/java</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>
