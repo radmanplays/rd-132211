@@ -1,15 +1,11 @@
 package org.lwjgl.opengl;
 
-import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.opengl.EaglercraftGPU;
 import net.lax1dude.eaglercraft.opengl.GlStateManager;
 import net.lax1dude.eaglercraft.opengl.RealOpenGLEnums;
 import net.lax1dude.eaglercraft.opengl.Tessellator;
-import net.lax1dude.eaglercraft.opengl.VertexFormat;
 import net.lax1dude.eaglercraft.opengl.WorldRenderer;
 import net.lax1dude.eaglercraft.vertex.DefaultVertexFormats;
-
-import static net.lax1dude.eaglercraft.opengl.RealOpenGLEnums.*;
 
 import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
 import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;

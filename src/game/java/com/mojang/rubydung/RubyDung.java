@@ -7,13 +7,11 @@ import com.mojang.rubydung.level.LevelRenderer;
 import com.mojang.util.GLAllocation;
 import net.lax1dude.eaglercraft.EagRuntime;
 
-import java.awt.Component;
 import java.io.IOException;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
@@ -37,8 +35,7 @@ public class RubyDung implements Runnable {
 		float fr = 0.5F;
 		float fg = 0.8F;
 		float fb = 1.0F;
-		this.fogColor.put(new float[]{(float)(col >> 16 & 255) / 255.0F, (float)(col >> 8 & 255) / 255.0F, (float)(col & 255) / 255.0F, 1.0F});
-		this.fogColor.flip();
+		this.fogColor.put(new float[]{(float)(col >> 16 & 255) / 255.0F, (float)(col >> 8 & 255) / 255.0F, (float)(col & 255) / 255.0F, 1.0F}).flip();
 		Display.create();
 		Keyboard.create();
 		Mouse.create();
@@ -50,14 +47,19 @@ public class RubyDung implements Runnable {
 		GL11.glClearDepth(1.0D);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDepthFunc(GL11.GL_LEQUAL);
-		GL11.glMatrixMode(GL11.GL_PROJECTION);
-		GL11.glLoadIdentity();
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		setupProjection(this.width, this.height);
 		this.level = new Level(256, 256, 64);
 		this.levelRenderer = new LevelRenderer(this.level);
 		this.player = new Player(this.level);
 		Mouse.setGrabbed(true);
 	}
+	
+    private void setupProjection(int width, int height) {
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadIdentity();
+        GLU.gluPerspective(70.0F, (float) width / height, 0.05F, 1000.0F);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+    }
 
 	public void destroy() {
 		this.level.save();
@@ -116,10 +118,12 @@ public class RubyDung implements Runnable {
 	}
 
 	private void setupCamera(float a) {
-		GL11.glMatrixMode(GL11.GL_PROJECTION);
-		GL11.glLoadIdentity();
-		GLU.gluPerspective(70.0F, (float)this.width / (float)this.height, 0.05F, 1000.0F);
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        if (Display.wasResized()) {
+            this.width = Display.getWidth();
+            this.height = Display.getHeight();
+            GL11.glViewport(0, 0, this.width, this.height);
+            setupProjection(this.width, this.height);
+        }
 		GL11.glLoadIdentity();
 		this.moveCameraToPlayer(a);
 	}

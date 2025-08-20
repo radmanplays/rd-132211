@@ -2,7 +2,6 @@ package com.mojang.rubydung.level;
 
 import com.mojang.rubydung.HitResult;
 import com.mojang.rubydung.Player;
-import com.mojang.rubydung.phys.AABB;
 import org.lwjgl.opengl.GL11;
 
 public class LevelRenderer implements LevelListener {

@@ -333,10 +333,6 @@ public class EagRuntime {
 		PlatformApplication.downloadFileWithName(fileName, fileContents);
 	}
 
-	public static void openCreditsPopup(String text) {
-		PlatformApplication.openCreditsPopup(text);
-	}
-
 	public static String currentThreadName() {
 		return PlatformRuntime.currentThreadName();
 	}

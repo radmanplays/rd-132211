@@ -453,11 +453,8 @@ public class PlatformRuntime {
 		IEaglerFilesystem resourcePackFilesystem = Filesystem.getHandleFor(getClientConfigAdapter().getWorldsDB());
 		VFile2.setPrimaryFilesystem(resourcePackFilesystem);
 
-		logger.info("Initializing sound engine...");
-
 		PlatformInput.pressAnyKeyScreen();
 
-		PlatformAudio.initialize();
 
 		if(finalLoadScreen != null) {
 			EarlyLoadScreen.paintFinal(PlatformOpenGL.checkVAOCapable(), false);

@@ -112,10 +112,6 @@ public class PlatformRuntime {
 
 		IEaglerFilesystem resourcePackFilesystem = Filesystem.getHandleFor(getClientConfigAdapter().getWorldsDB());
 		VFile2.setPrimaryFilesystem(resourcePackFilesystem);
-
-		logger.info("Initializing sound engine...");
-
-		PlatformAudio.initialize();
 	}
 
 	@Import(module = "platformRuntime", name = "getRootElement")

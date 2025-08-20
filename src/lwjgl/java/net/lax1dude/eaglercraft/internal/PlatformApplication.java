@@ -31,7 +31,6 @@ import org.apache.logging.log4j.Logger;
 
 import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.internal.buffer.ByteBuffer;
-import net.lax1dude.eaglercraft.internal.lwjgl.MainMenuCreditsDialog;
 import net.lax1dude.eaglercraft.opengl.RealOpenGLEnums;
 
 /**
@@ -269,17 +268,6 @@ public class PlatformApplication {
 	public static void clearFileChooserResult() {
 		fileChooserHasResult = false;
 		fileChooserResultObject = null;
-	}
-
-	private static MainMenuCreditsDialog creditsDialog = null;
-
-	public static void openCreditsPopup(String text) {
-		if (creditsDialog == null) {
-			creditsDialog = new MainMenuCreditsDialog();
-		}
-		creditsDialog.setCreditsText(text);
-		creditsDialog.setLocationRelativeTo(null);
-		creditsDialog.setVisible(true);
 	}
 
 	private static final File downloadsDirectory = new File("downloads");

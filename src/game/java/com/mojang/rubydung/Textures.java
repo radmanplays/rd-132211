@@ -1,9 +1,6 @@
 package com.mojang.rubydung;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.HashMap;
-import javax.imageio.ImageIO;
 
 import com.mojang.util.GLAllocation;
 import net.lax1dude.eaglercraft.EagRuntime;
