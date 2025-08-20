@@ -1,0 +1,72 @@
+name: Build and Upload JS + WASM
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Cache Gradle
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+            
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+        
+      - name: Build JavaScript client
+        run: ./gradlew :target_teavm_javascript:makeMainOfflineDownload
+
+      - name: Build WASM-GC client
+        run: ./gradlew :target_teavm_wasm_gc:makeMainWasmClientBundle
+
+      - name: Upload JavaScript build
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: javascript-client
+          path: target_teavm_javascript/javascript/
+
+      - name: Upload WASM build
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: wasm-client
+          path: target_teavm_wasm_gc/javascript_dist/
+
+      - name: Archive builds
+        run: |
+          mkdir dist
+          zip -r dist/javascript-client.zip target_teavm_javascript/javascript
+          zip -r dist/wasm-client.zip target_teavm_wasm_gc/javascript_dist
+
+      - name: Get short commit hash
+        id: vars
+        run: echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.vars.outputs.hash }}
+          name: Release ${{ steps.vars.outputs.hash }}
+          files: dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
