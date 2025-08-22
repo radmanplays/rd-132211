@@ -106,9 +106,24 @@ public class RubyDung implements Runnable {
 		}
 
 	}
+	
+	public int ticksUntilSave = 600;
+
+	private void levelSave() {
+
+		if (this.level == null) {
+			ticksUntilSave = this.timer.ticks + 600;
+		}
+
+		if (this.timer.ticks >= this.ticksUntilSave) {
+			this.level.save();
+			ticksUntilSave = this.timer.ticks + 600;
+		}
+	}
 
 	public void tick() {
 		this.player.tick();
+		levelSave();
 	}
 
 	private void moveCameraToPlayer(float a) {
