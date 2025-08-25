@@ -19,11 +19,11 @@ package net.lax1dude.eaglercraft.internal.wasm_gc_teavm;
 import static net.lax1dude.eaglercraft.internal.PlatformOpenGL.*;
 import static net.lax1dude.eaglercraft.opengl.RealOpenGLEnums.*;
 
-import net.lax1dude.eaglercraft.internal.IVertexArrayGL;
 import net.lax1dude.eaglercraft.internal.IBufferGL;
 import net.lax1dude.eaglercraft.internal.IProgramGL;
 import net.lax1dude.eaglercraft.internal.IShaderGL;
 import net.lax1dude.eaglercraft.internal.ITextureGL;
+import net.lax1dude.eaglercraft.internal.IVertexArrayGL;
 import net.lax1dude.eaglercraft.internal.PlatformAssets;
 import net.lax1dude.eaglercraft.internal.PlatformInput;
 import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;

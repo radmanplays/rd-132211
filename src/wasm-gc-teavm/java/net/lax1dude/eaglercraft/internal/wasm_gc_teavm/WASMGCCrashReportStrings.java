@@ -19,8 +19,6 @@ package net.lax1dude.eaglercraft.internal.wasm_gc_teavm;
 import org.teavm.interop.Import;
 import org.teavm.jso.core.JSString;
 
-import net.lax1dude.eaglercraft.EaglercraftVersion;
-
 public class WASMGCCrashReportStrings {
 
 	private static final int CRASH_REPORT_EAGLER_VERSION = 0;
@@ -31,9 +29,9 @@ public class WASMGCCrashReportStrings {
 	private static native void setCrashReportString(int id, JSString str);
 
 	public static void setCrashReportStrings() {
-		setCrashReportString(CRASH_REPORT_EAGLER_VERSION, JSString.valueOf(EaglercraftVersion.projectForkVersion));
-		setCrashReportString(CRASH_REPORT_EAGLER_VENDOR, JSString.valueOf(EaglercraftVersion.projectForkVendor));
-		setCrashReportString(CRASH_REPORT_MINECRAFT_VERSION, JSString.valueOf("1.8.8"));
+		//setCrashReportString(CRASH_REPORT_EAGLER_VERSION, JSString.valueOf(EaglercraftVersion.projectForkVersion));
+		//setCrashReportString(CRASH_REPORT_EAGLER_VENDOR, JSString.valueOf(EaglercraftVersion.projectForkVendor));
+		setCrashReportString(CRASH_REPORT_MINECRAFT_VERSION, JSString.valueOf("Beta 1.1_02"));
 	}
 
 }

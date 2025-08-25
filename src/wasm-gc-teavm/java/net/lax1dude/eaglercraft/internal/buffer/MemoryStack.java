@@ -33,7 +33,7 @@ public class MemoryStack {
 
 	static {
 		stackBase = Heap.alloc(STACK_SIZE + 16);
-		if (stackBase.toInt() == 0) {
+		if(stackBase.toInt() == 0) {
 			throw new Error("Could not allocate MemoryStack of size " + STACK_SIZE);
 		}
 		stackMax = stackBase.add(STACK_SIZE);
@@ -45,7 +45,7 @@ public class MemoryStack {
 
 	public static void push() {
 		Address addr = stackTopPointer.add(8);
-		if (addr.toInt() > stackMax.toInt()) {
+		if(addr.toInt() > stackMax.toInt()) {
 			throw new StackOverflowError();
 		}
 		stackTopPointer.putAddress(stackBottomPointer);
@@ -56,21 +56,21 @@ public class MemoryStack {
 
 	public static void pop() {
 		Address addr = stackBottomPointer.getAddress();
-		if (addr.toInt() == 0) {
+		if(addr.toInt() == 0) {
 			throw new IllegalStateException("MemoryStack underflow");
 		}
 		stackTopPointer = stackBottomPointer;
 		stackBottomPointer = addr;
 		Address cleanup = stackTopPointer.add(4).getAddress();
-		while (cleanup.toInt() != 0) {
+		while(cleanup.toInt() != 0) {
 			WASMGCBufferAllocator.free(cleanup.getAddress());
 			cleanup = cleanup.add(4).getAddress();
 		}
 	}
 
 	public static Address malloc(int length) {
-		if (length > MALLOC_THRESHOLD || (stackMax.toInt() - stackTopPointer.toInt()) < RESERVE_SIZE) {
-			if (stackTopPointer.toInt() + 8 > stackMax.toInt()) {
+		if(length > MALLOC_THRESHOLD || (stackMax.toInt() - stackTopPointer.toInt()) < RESERVE_SIZE) {
+			if(stackTopPointer.toInt() + 8 > stackMax.toInt()) {
 				throw new StackOverflowError();
 			}
 			Address malloced = WASMGCBufferAllocator.malloc(length);
@@ -80,7 +80,7 @@ public class MemoryStack {
 			stackBottomPointer.add(4).putAddress(stackTopPointer);
 			stackTopPointer = stackTopPointer.add(8);
 			return malloced;
-		} else {
+		}else {
 			Address ret = stackTopPointer;
 			stackTopPointer = stackTopPointer.add((length + 3) & 0xFFFFFFFC);
 			return ret;

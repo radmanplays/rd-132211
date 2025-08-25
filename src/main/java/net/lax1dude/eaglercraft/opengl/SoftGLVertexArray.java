@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2024 lax1dude. All Rights Reserved.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ */
+
 package net.lax1dude.eaglercraft.opengl;
 
 import net.lax1dude.eaglercraft.internal.IVertexArrayGL;
@@ -5,22 +21,6 @@ import net.lax1dude.eaglercraft.internal.IBufferGL;
 
 import static net.lax1dude.eaglercraft.internal.PlatformOpenGL.*;
 
-/**
- * Copyright (c) 2024 lax1dude. All Rights Reserved.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- * 
- */
 class SoftGLVertexArray implements IVertexArrayGL {
 
 	Attrib[] attribs = new Attrib[4];
@@ -34,9 +34,9 @@ class SoftGLVertexArray implements IVertexArrayGL {
 	}
 
 	void setAttrib(IBufferGL buffer, int index, int size, int format, boolean normalized, int stride, int offset) {
-		if (index >= attribs.length) {
+		if(index >= attribs.length) {
 			int newLen = attribs.length << 1;
-			while (newLen <= index) {
+			while(newLen <= index) {
 				newLen <<= 1;
 			}
 			Attrib[] newAttrib = new Attrib[newLen];
@@ -47,39 +47,42 @@ class SoftGLVertexArray implements IVertexArrayGL {
 	}
 
 	void setAttribDivisor(int index, int divisor) {
-		if (attribDivisors == null) {
-			if (divisor != 0) {
+		if(attribDivisors == null) {
+			if(divisor != 0) {
 				int newLen = 8;
-				while (newLen <= index) {
+				while(newLen <= index) {
 					newLen <<= 1;
 				}
 				attribDivisors = new int[newLen];
 			}
-		} else if (index >= attribDivisors.length) {
+		}else if(index >= attribDivisors.length) {
 			int newLen = attribDivisors.length << 1;
-			while (newLen <= index) {
+			while(newLen <= index) {
 				newLen <<= 1;
 			}
 			int[] newDivisor = new int[newLen];
 			System.arraycopy(attribDivisors, 0, newDivisor, 0, attribDivisors.length);
 			attribDivisors = newDivisor;
 		}
-		if (attribDivisors != null) {
+		if(attribDivisors != null) {
 			attribDivisors[index] = divisor;
-			if (divisor != 0) {
+			if(divisor != 0) {
 				hasAttribDivisorMask |= (1 << index);
-			} else {
+			}else {
 				hasAttribDivisorMask &= ~(1 << index);
 			}
 		}
 	}
 
-	void enableAttrib(int index, boolean en) {
-		if (en) {
-			enabled |= (1 << index);
-		} else {
-			enabled &= ~(1 << index);
-		}
+	@Override
+	public void setBit(int bit) {
+		enabled |= bit;
+		enabledCnt = 32 - Integer.numberOfLeadingZeros(enabled);
+	}
+
+	@Override
+	public void unsetBit(int bit) {
+		enabled &= ~bit;
 		enabledCnt = 32 - Integer.numberOfLeadingZeros(enabled);
 	}
 
@@ -99,70 +102,69 @@ class SoftGLVertexArray implements IVertexArrayGL {
 		Attrib[] attrs = attribs;
 		int[] divs = attribDivisors;
 		int hasDivs = hasAttribDivisorMask;
-		if (oldEnabledCnt >= 0) {
+		if(oldEnabledCnt >= 0) {
 			int enMax = Math.max(enCnt, oldEnabledCnt);
-			for (int i = 0, ii; i < enMax; ++i) {
+			for(int i = 0, ii; i < enMax; ++i) {
 				ii = (1 << i);
 				boolean old = i < oldEnabledCnt && (oldEnabled & ii) != 0;
 				boolean _new = i < enCnt && (en & ii) != 0;
-				if (_new) {
-					if (!old) {
+				if(_new) {
+					if(!old) {
 						_wglEnableVertexAttribArray(i);
 					}
 					Attrib attr = i < attrs.length ? attrs[i] : null;
-					if (attr != null) {
+					if(attr != null) {
 						Attrib oldAttr = oldAttrs[i];
-						if (oldAttr == null || !oldAttr.equalsExplicit(attr)) {
+						if(oldAttr == null || !oldAttr.equalsExplicit(attr)) {
 							EaglercraftGPU.bindGLArrayBuffer(attr.buffer);
-							_wglVertexAttribPointer(i, attr.size, attr.format, attr.normalized, attr.stride,
-									attr.offset);
+							_wglVertexAttribPointer(i, attr.size, attr.format, attr.normalized, attr.stride, attr.offset);
 							oldAttrs[i] = attr;
 						}
-					} else {
+					}else {
 						oldAttrs[i] = null;
 					}
-					if (instancingCapable) {
+					if(instancingCapable) {
 						// instancing is uncommon
-						if ((hasDivs & ii) != 0) {
+						if((hasDivs & ii) != 0) {
 							int newDivisor = divs[i];
-							if ((oldHasAttribDivisorMask & ii) == 0 || newDivisor != oldAttribDivisors[i]) {
+							if((oldHasAttribDivisorMask & ii) == 0 || newDivisor != oldAttribDivisors[i]) {
 								_wglVertexAttribDivisor(i, newDivisor);
 								oldAttribDivisors[i] = newDivisor;
 								previousState.hasAttribDivisorMask |= ii;
 							}
-						} else {
-							if ((oldHasAttribDivisorMask & ii) != 0) {
+						}else {
+							if((oldHasAttribDivisorMask & ii) != 0) {
 								_wglVertexAttribDivisor(i, 0);
 								oldAttribDivisors[i] = 0;
 								previousState.hasAttribDivisorMask &= ~ii;
 							}
 						}
 					}
-				} else if (old) {
+				}else if(old) {
 					_wglDisableVertexAttribArray(i);
 				}
 			}
-		} else {
+		}else {
 			// Bootstrap code for the emulator's first draw
-			for (int i = 0; i < enCnt; ++i) {
+			for(int i = 0; i < enCnt; ++i) {
 				int ii = (1 << i);
-				if ((en & ii) != 0) {
+				if((en & ii) != 0) {
 					_wglEnableVertexAttribArray(i);
 					Attrib attr = attrs[i];
-					if (attr != null) {
+					if(attr != null) {
 						EaglercraftGPU.bindGLArrayBuffer(attr.buffer);
 						_wglVertexAttribPointer(i, attr.size, attr.format, attr.normalized, attr.stride, attr.offset);
 						oldAttrs[i] = attr;
-					} else {
+					}else {
 						oldAttrs[i] = null;
 					}
-					if (instancingCapable) {
-						if ((hasDivs & ii) != 0) {
+					if(instancingCapable) {
+						if((hasDivs & ii) != 0) {
 							int newDivisor = divs[i];
 							_wglVertexAttribDivisor(i, newDivisor);
 							oldAttribDivisors[i] = newDivisor;
 							previousState.hasAttribDivisorMask |= ii;
-						} else {
+						}else {
 							_wglVertexAttribDivisor(i, 0);
 							oldAttribDivisors[i] = 0;
 						}
@@ -170,9 +172,9 @@ class SoftGLVertexArray implements IVertexArrayGL {
 				}
 			}
 		}
-		if (elements) {
+		if(elements) {
 			IBufferGL indexBufferL = indexBuffer;
-			if (indexBufferL != null) {
+			if(indexBufferL != null) {
 				EaglercraftGPU.bindEmulatedVAOIndexBuffer(indexBufferL);
 			}
 		}
@@ -182,6 +184,11 @@ class SoftGLVertexArray implements IVertexArrayGL {
 
 	@Override
 	public void free() {
+	}
+
+	@Override
+	public int getBits() {
+		return enabled;
 	}
 
 	static class Attrib {
@@ -212,18 +219,14 @@ class SoftGLVertexArray implements IVertexArrayGL {
 		}
 
 		public boolean equals(Object obj) {
-			if (obj == this)
-				return true;
-			if (!(obj instanceof Attrib))
-				return false;
-			Attrib o2 = (Attrib) obj;
-			return o2.hash == hash && o2.buffer == buffer && o2.checkVal == checkVal && o2.stride == stride
-					&& o2.offset == offset;
+			if(obj == this) return true;
+			if(!(obj instanceof Attrib)) return false;
+			Attrib o2 = (Attrib)obj;
+			return o2.hash == hash && o2.buffer == buffer && o2.checkVal == checkVal && o2.stride == stride && o2.offset == offset;
 		}
 
 		public boolean equalsExplicit(Attrib o2) {
-			return o2 == this || (o2.hash == hash && o2.buffer == buffer && o2.checkVal == checkVal
-					&& o2.stride == stride && o2.offset == offset);
+			return o2 == this || (o2.hash == hash && o2.buffer == buffer && o2.checkVal == checkVal && o2.stride == stride && o2.offset == offset);
 		}
 
 	}

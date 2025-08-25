@@ -22,12 +22,12 @@ import org.teavm.interop.Import;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.browser.Window;
 
-import com.mojang.rubydung.RubyDung;
-
-import net.lax1dude.eaglercraft.Display;
-import net.lax1dude.eaglercraft.EagRuntime;
+import net.lax1dude.eaglercraft.internal.ContextLostError;
+import net.lax1dude.eaglercraft.internal.PlatformApplication;
 import net.lax1dude.eaglercraft.internal.PlatformRuntime;
 import net.lax1dude.eaglercraft.internal.wasm_gc_teavm.opts.JSEaglercraftXOptsRoot;
+import com.mojang.rubydung.RubyDung;
+import net.lax1dude.eaglercraft.EagRuntime;
 
 public class ClientMain {
 
@@ -70,6 +70,10 @@ public class ClientMain {
 
 			try {
 				EagRuntime.create();
+			}catch(ContextLostError t) {
+				systemErr.println("ClientMain: [ERROR] webgl context lost during initialization!");
+				PlatformRuntime.showContextLostScreen(EagRuntime.getStackTrace(t));
+				return;
 			}catch(Throwable t) {
 				systemErr.println("ClientMain: [ERROR] eaglercraftx's runtime could not be initialized!");
 				EagRuntime.debugPrintStackTraceToSTDERR(t);
@@ -82,6 +86,9 @@ public class ClientMain {
 
 			try {
 				new RubyDung().run();
+			}catch(ContextLostError t) {
+				systemErr.println("ClientMain: [ERROR] webgl context lost!");
+				PlatformRuntime.showContextLostScreen(EagRuntime.getStackTrace(t));
 			}catch(Throwable t) {
 				systemErr.println("ClientMain: [ERROR] unhandled exception caused main thread to exit");
 				EagRuntime.debugPrintStackTraceToSTDERR(t);
@@ -92,6 +99,25 @@ public class ClientMain {
 		}
 	}
 
+	/**
+	 * Defined here to match the JS runtime
+	 */
+	public static void resetSettings() {
+		boolean y = false;
+		if (Window.confirm("Do you want to reset client settings?")) {
+			PlatformApplication.setLocalStorage("g", null);
+			PlatformApplication.setLocalStorage("p", null);
+			y = true;
+		}
+		if (Window.confirm("Do you want to reset servers and relays?")) {
+			PlatformApplication.setLocalStorage("r", null);
+			PlatformApplication.setLocalStorage("s", null);
+			y = true;
+		}
+		if (y) {
+			Window.alert("Settings reset.");
+		}
+	}
 
 	@Import(module = "platformRuntime", name = "getEaglercraftXOpts")
 	private static native JSObject getEaglerXOpts();

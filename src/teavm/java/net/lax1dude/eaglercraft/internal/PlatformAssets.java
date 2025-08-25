@@ -15,11 +15,9 @@ import org.teavm.jso.dom.events.EventListener;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.teavm.jso.dom.html.HTMLImageElement;
 import org.teavm.jso.dom.xml.Document;
-import org.teavm.jso.typedarrays.ArrayBuffer;
 import org.teavm.jso.typedarrays.Uint8ClampedArray;
 
 import net.lax1dude.eaglercraft.EaglerInputStream;
-import net.lax1dude.eaglercraft.internal.teavm.ClientMain;
 import net.lax1dude.eaglercraft.internal.teavm.TeaVMBlobURLHandle;
 import net.lax1dude.eaglercraft.internal.teavm.TeaVMBlobURLManager;
 import net.lax1dude.eaglercraft.internal.teavm.TeaVMUtils;
@@ -51,23 +49,7 @@ public class PlatformAssets {
 			path = path.substring(1);
 		}
 		byte[] ret = assets.get(path);
-		if(ret != null && ret != MISSING_FILE) {
-			return true;
-		}else {
-			if(path.startsWith("assets/minecraft/lang/") && !path.endsWith(".mcmeta")) {
-				ArrayBuffer file = PlatformRuntime.downloadRemoteURI(
-						ClientMain.configLocalesFolder + "/" + path.substring(22));
-				if(file != null) {
-					assets.put(path, TeaVMUtils.wrapByteArrayBuffer(file));
-					return true;
-				}else {
-					assets.put(path, MISSING_FILE);
-					return false;
-				}
-			}else {
-				return false;
-			}
-		}
+		return ret != null && ret != MISSING_FILE;
 	}
 	
 	public static byte[] getResourceBytes(String path) {
@@ -75,20 +57,7 @@ public class PlatformAssets {
 			path = path.substring(1);
 		}
 		byte[] data = assets.get(path);
-		if(data == null && path.startsWith("assets/minecraft/lang/") && !path.endsWith(".mcmeta")) {
-			ArrayBuffer file = PlatformRuntime.downloadRemoteURI(
-					ClientMain.configLocalesFolder + "/" + path.substring(22));
-			if(file != null) {
-				data = TeaVMUtils.wrapByteArrayBuffer(file);
-				assets.put(path, data);
-				return data;
-			}else {
-				assets.put(path, MISSING_FILE);
-				return null;
-			}
-		}else {
-			return data == MISSING_FILE ? null : data;
-		}
+		return data == MISSING_FILE ? null : data;
 	}
 	
 	public static ImageData loadImageFile(InputStream data) {

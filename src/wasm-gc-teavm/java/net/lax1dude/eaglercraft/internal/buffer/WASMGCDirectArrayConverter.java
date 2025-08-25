@@ -42,20 +42,16 @@ public class WASMGCDirectArrayConverter {
 	}
 
 	public static ByteBuffer byteArrayToBuffer(byte[] byteArray, int offset, int length) {
-		if (offset < 0)
-			throw Buffer.makeIOOBE(offset);
-		if (offset + length > byteArray.length)
-			throw Buffer.makeIOOBE(offset + length - 1);
+		if(offset < 0) throw Buffer.makeIOOBE(offset);
+		if(offset + length > byteArray.length) throw Buffer.makeIOOBE(offset + length - 1);
 		Address ret = WASMGCBufferAllocator.malloc(length);
 		WASMGCDirectArrayCopy.memcpy(ret, byteArray, offset, length);
 		return new DirectMallocByteBuffer(ret, length, true);
 	}
 
 	public static ByteBuffer byteArrayToStackBuffer(byte[] byteArray, int offset, int length) {
-		if (offset < 0)
-			throw Buffer.makeIOOBE(offset);
-		if (offset + length > byteArray.length)
-			throw Buffer.makeIOOBE(offset + length - 1);
+		if(offset < 0) throw Buffer.makeIOOBE(offset);
+		if(offset + length > byteArray.length) throw Buffer.makeIOOBE(offset + length - 1);
 		Address ret = MemoryStack.malloc(length);
 		WASMGCDirectArrayCopy.memcpy(ret, byteArray, offset, length);
 		return new DirectMallocByteBuffer(ret, length, true);
@@ -76,20 +72,16 @@ public class WASMGCDirectArrayConverter {
 	}
 
 	public static ShortBuffer shortArrayToBuffer(short[] shortArray, int offset, int length) {
-		if (offset < 0)
-			throw Buffer.makeIOOBE(offset);
-		if (offset + length > shortArray.length)
-			throw Buffer.makeIOOBE(offset + length - 1);
+		if(offset < 0) throw Buffer.makeIOOBE(offset);
+		if(offset + length > shortArray.length) throw Buffer.makeIOOBE(offset + length - 1);
 		Address ret = WASMGCBufferAllocator.malloc(length << 1);
 		WASMGCDirectArrayCopy.memcpy(ret, shortArray, offset, length);
 		return new DirectMallocShortBuffer(ret, length, true);
 	}
 
 	public static ShortBuffer shortArrayToStackBuffer(short[] shortArray, int offset, int length) {
-		if (offset < 0)
-			throw Buffer.makeIOOBE(offset);
-		if (offset + length > shortArray.length)
-			throw Buffer.makeIOOBE(offset + length - 1);
+		if(offset < 0) throw Buffer.makeIOOBE(offset);
+		if(offset + length > shortArray.length) throw Buffer.makeIOOBE(offset + length - 1);
 		Address ret = MemoryStack.malloc(length << 1);
 		WASMGCDirectArrayCopy.memcpy(ret, shortArray, offset, length);
 		return new DirectMallocShortBuffer(ret, length, true);
@@ -110,20 +102,16 @@ public class WASMGCDirectArrayConverter {
 	}
 
 	public static IntBuffer intArrayToBuffer(int[] intArray, int offset, int length) {
-		if (offset < 0)
-			throw Buffer.makeIOOBE(offset);
-		if (offset + length > intArray.length)
-			throw Buffer.makeIOOBE(offset + length - 1);
+		if(offset < 0) throw Buffer.makeIOOBE(offset);
+		if(offset + length > intArray.length) throw Buffer.makeIOOBE(offset + length - 1);
 		Address ret = WASMGCBufferAllocator.malloc(length << 2);
 		WASMGCDirectArrayCopy.memcpy(ret, intArray, offset, length);
 		return new DirectMallocIntBuffer(ret, length, true);
 	}
 
 	public static IntBuffer intArrayToStackBuffer(int[] intArray, int offset, int length) {
-		if (offset < 0)
-			throw Buffer.makeIOOBE(offset);
-		if (offset + length > intArray.length)
-			throw Buffer.makeIOOBE(offset + length - 1);
+		if(offset < 0) throw Buffer.makeIOOBE(offset);
+		if(offset + length > intArray.length) throw Buffer.makeIOOBE(offset + length - 1);
 		Address ret = MemoryStack.malloc(length << 2);
 		WASMGCDirectArrayCopy.memcpy(ret, intArray, offset, length);
 		return new DirectMallocIntBuffer(ret, length, true);
@@ -144,20 +132,16 @@ public class WASMGCDirectArrayConverter {
 	}
 
 	public static FloatBuffer floatArrayToBuffer(float[] floatArray, int offset, int length) {
-		if (offset < 0)
-			throw Buffer.makeIOOBE(offset);
-		if (offset + length > floatArray.length)
-			throw Buffer.makeIOOBE(offset + length - 1);
+		if(offset < 0) throw Buffer.makeIOOBE(offset);
+		if(offset + length > floatArray.length) throw Buffer.makeIOOBE(offset + length - 1);
 		Address ret = WASMGCBufferAllocator.malloc(length << 2);
 		WASMGCDirectArrayCopy.memcpy(ret, floatArray, offset, length);
 		return new DirectMallocFloatBuffer(ret, length, true);
 	}
 
 	public static FloatBuffer floatArrayToStackBuffer(float[] floatArray, int offset, int length) {
-		if (offset < 0)
-			throw Buffer.makeIOOBE(offset);
-		if (offset + length > floatArray.length)
-			throw Buffer.makeIOOBE(offset + length - 1);
+		if(offset < 0) throw Buffer.makeIOOBE(offset);
+		if(offset + length > floatArray.length) throw Buffer.makeIOOBE(offset + length - 1);
 		Address ret = MemoryStack.malloc(length << 2);
 		WASMGCDirectArrayCopy.memcpy(ret, floatArray, offset, length);
 		return new DirectMallocFloatBuffer(ret, length, true);
@@ -173,7 +157,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Uint8Array byteArrayToExternU8Array(byte[] byteArray) {
 		int len = byteArray.length;
-		if (len == 0) {
+		if(len == 0) {
 			return UINT8ZeroLength;
 		}
 		MemoryStack.push();
@@ -187,7 +171,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Uint8Array byteArrayToStackU8Array(byte[] byteArray) {
 		int len = byteArray.length;
-		if (len == 0) {
+		if(len == 0) {
 			return UINT8ZeroLength;
 		}
 		Address addr = MemoryStack.malloc(len);
@@ -197,7 +181,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Uint8ClampedArray byteArrayToExternU8CArray(byte[] byteArray) {
 		int len = byteArray.length;
-		if (len == 0) {
+		if(len == 0) {
 			return UINT8CZeroLength;
 		}
 		MemoryStack.push();
@@ -211,7 +195,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Uint8ClampedArray byteArrayToStackU8CArray(byte[] byteArray) {
 		int len = byteArray.length;
-		if (len == 0) {
+		if(len == 0) {
 			return UINT8CZeroLength;
 		}
 		Address addr = MemoryStack.malloc(len);
@@ -221,7 +205,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Int8Array byteArrayToExternI8Array(byte[] byteArray) {
 		int len = byteArray.length;
-		if (len == 0) {
+		if(len == 0) {
 			return INT8ZeroLength;
 		}
 		MemoryStack.push();
@@ -235,7 +219,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Int8Array byteArrayToStackI8Array(byte[] byteArray) {
 		int len = byteArray.length;
-		if (len == 0) {
+		if(len == 0) {
 			return INT8ZeroLength;
 		}
 		Address addr = MemoryStack.malloc(len);
@@ -245,7 +229,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Uint16Array byteArrayToExternU16Array(byte[] byteArray) {
 		int len = byteArray.length & 0xFFFFFFFE;
-		if (len == 0) {
+		if(len == 0) {
 			return UINT16ZeroLength;
 		}
 		MemoryStack.push();
@@ -260,7 +244,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Uint16Array byteArrayToStackU16Array(byte[] byteArray) {
 		int len = byteArray.length & 0xFFFFFFFE;
-		if (len == 0) {
+		if(len == 0) {
 			return UINT16ZeroLength;
 		}
 		Address addr = MemoryStack.malloc(len);
@@ -270,7 +254,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Int16Array byteArrayToExternI16Array(byte[] byteArray) {
 		int len = byteArray.length & 0xFFFFFFFE;
-		if (len == 0) {
+		if(len == 0) {
 			return INT16ZeroLength;
 		}
 		MemoryStack.push();
@@ -285,7 +269,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Int16Array byteArrayToStackI16Array(byte[] byteArray) {
 		int len = byteArray.length & 0xFFFFFFFE;
-		if (len == 0) {
+		if(len == 0) {
 			return INT16ZeroLength;
 		}
 		Address addr = MemoryStack.malloc(len);
@@ -295,7 +279,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Uint16Array shortArrayToExternU16Array(short[] shortArray) {
 		int len = shortArray.length;
-		if (len == 0) {
+		if(len == 0) {
 			return UINT16ZeroLength;
 		}
 		MemoryStack.push();
@@ -309,7 +293,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Uint16Array shortArrayToStackU16Array(short[] shortArray) {
 		int len = shortArray.length;
-		if (len == 0) {
+		if(len == 0) {
 			return UINT16ZeroLength;
 		}
 		Address addr = MemoryStack.malloc(len << 1);
@@ -319,7 +303,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Int16Array shortArrayToExternI16Array(short[] shortArray) {
 		int len = shortArray.length;
-		if (len == 0) {
+		if(len == 0) {
 			return INT16ZeroLength;
 		}
 		MemoryStack.push();
@@ -333,7 +317,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Int16Array shortArrayToStackI16Array(short[] shortArray) {
 		int len = shortArray.length;
-		if (len == 0) {
+		if(len == 0) {
 			return INT16ZeroLength;
 		}
 		Address addr = MemoryStack.malloc(len << 1);
@@ -343,7 +327,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Int32Array byteArrayToExternI32Array(byte[] byteArray) {
 		int len = byteArray.length & 0xFFFFFFFC;
-		if (len == 0) {
+		if(len == 0) {
 			return INT32ZeroLength;
 		}
 		MemoryStack.push();
@@ -358,7 +342,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Int32Array byteArrayToStackI32Array(byte[] byteArray) {
 		int len = byteArray.length & 0xFFFFFFFC;
-		if (len == 0) {
+		if(len == 0) {
 			return INT32ZeroLength;
 		}
 		Address addr = MemoryStack.malloc(len);
@@ -368,7 +352,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Int32Array intArrayToExternI32Array(int[] intArray) {
 		int len = intArray.length;
-		if (len == 0) {
+		if(len == 0) {
 			return INT32ZeroLength;
 		}
 		MemoryStack.push();
@@ -382,7 +366,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Int32Array intArrayToStackI32Array(int[] intArray) {
 		int len = intArray.length;
-		if (len == 0) {
+		if(len == 0) {
 			return INT32ZeroLength;
 		}
 		Address addr = MemoryStack.malloc(len << 2);
@@ -392,7 +376,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Float32Array byteArrayToExternF32Array(byte[] byteArray) {
 		int len = byteArray.length & 0xFFFFFFFC;
-		if (len == 0) {
+		if(len == 0) {
 			return FLOAT32ZeroLength;
 		}
 		MemoryStack.push();
@@ -407,7 +391,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Float32Array byteArrayToStackF32Array(byte[] byteArray) {
 		int len = byteArray.length & 0xFFFFFFFC;
-		if (len == 0) {
+		if(len == 0) {
 			return FLOAT32ZeroLength;
 		}
 		Address addr = MemoryStack.malloc(len);
@@ -417,7 +401,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Float32Array floatArrayToExternF32Array(float[] floatArray) {
 		int len = floatArray.length;
-		if (len == 0) {
+		if(len == 0) {
 			return FLOAT32ZeroLength;
 		}
 		MemoryStack.push();
@@ -431,7 +415,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static Float32Array floatArrayToStackF32Array(float[] floatArray) {
 		int len = floatArray.length;
-		if (len == 0) {
+		if(len == 0) {
 			return FLOAT32ZeroLength;
 		}
 		Address addr = MemoryStack.malloc(len << 2);
@@ -446,7 +430,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static byte[] externU8ArrayToByteArray(Uint8Array U8Array) {
 		int len = U8Array.getLength();
-		if (len == 0) {
+		if(len == 0) {
 			return byteZeroLength;
 		}
 		MemoryStack.push();
@@ -460,7 +444,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static byte[] externU8CArrayToByteArray(Uint8ClampedArray U8CArray) {
 		int len = U8CArray.getLength();
-		if (len == 0) {
+		if(len == 0) {
 			return byteZeroLength;
 		}
 		MemoryStack.push();
@@ -474,7 +458,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static byte[] externI8ArrayToByteArray(Int8Array I8Array) {
 		int len = I8Array.getLength();
-		if (len == 0) {
+		if(len == 0) {
 			return byteZeroLength;
 		}
 		MemoryStack.push();
@@ -488,7 +472,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static byte[] externU16ArrayToByteArray(Uint16Array U16Array) {
 		int len = U16Array.getLength();
-		if (len == 0) {
+		if(len == 0) {
 			return byteZeroLength;
 		}
 		int len2 = len << 1;
@@ -503,7 +487,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static byte[] externI16ArrayToByteArray(Int16Array I16Array) {
 		int len = I16Array.getLength();
-		if (len == 0) {
+		if(len == 0) {
 			return byteZeroLength;
 		}
 		int len2 = len << 1;
@@ -518,7 +502,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static short[] externU16ArrayToShortArray(Uint16Array U16Array) {
 		int len = U16Array.getLength();
-		if (len == 0) {
+		if(len == 0) {
 			return shortZeroLength;
 		}
 		MemoryStack.push();
@@ -532,7 +516,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static short[] externI16ArrayToShortArray(Int16Array I16Array) {
 		int len = I16Array.getLength();
-		if (len == 0) {
+		if(len == 0) {
 			return shortZeroLength;
 		}
 		MemoryStack.push();
@@ -546,7 +530,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static byte[] externI32ArrayToByteArray(Int32Array I32Array) {
 		int len = I32Array.getLength();
-		if (len == 0) {
+		if(len == 0) {
 			return byteZeroLength;
 		}
 		int len2 = len << 2;
@@ -561,7 +545,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static int[] externI32ArrayToIntArray(Int32Array I32Array) {
 		int len = I32Array.getLength();
-		if (len == 0) {
+		if(len == 0) {
 			return intZeroLength;
 		}
 		MemoryStack.push();
@@ -575,7 +559,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static byte[] externF32ArrayToByteArray(Float32Array F32Array) {
 		int len = F32Array.getLength();
-		if (len == 0) {
+		if(len == 0) {
 			return byteZeroLength;
 		}
 		int len2 = len << 2;
@@ -590,7 +574,7 @@ public class WASMGCDirectArrayConverter {
 
 	public static float[] externF32ArrayToFloatArray(Float32Array F32Array) {
 		int len = F32Array.getLength();
-		if (len == 0) {
+		if(len == 0) {
 			return floatZeroLength;
 		}
 		MemoryStack.push();

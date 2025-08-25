@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2022-2024 lax1dude. All Rights Reserved.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ */
+
 package net.lax1dude.eaglercraft;
 
 import java.io.ByteArrayInputStream;
@@ -6,22 +22,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 
-/**
- * Copyright (c) 2022-2024 lax1dude. All Rights Reserved.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- * 
- */
 public class EaglerInputStream extends InputStream {
 
 	protected byte buf[];
@@ -122,14 +122,15 @@ public class EaglerInputStream extends InputStream {
 	}
 
 	public static byte[] inputStreamToBytes(InputStream is) throws IOException {
-		if (is instanceof EaglerInputStream) {
-			return ((EaglerInputStream) is).getAsArray();
-		} else if (is instanceof ByteArrayInputStream) {
-			byte[] ret = new byte[is.available()];
-			is.read(ret);
-			return ret;
-		} else {
-			try (EaglerOutputStream os = new EaglerOutputStream(1024)) {
+		try {
+			if (is instanceof EaglerInputStream) {
+				return ((EaglerInputStream) is).getAsArray();
+			} else if (is instanceof ByteArrayInputStream) {
+				byte[] ret = new byte[is.available()];
+				is.read(ret);
+				return ret;
+			} else {
+				EaglerOutputStream os = new EaglerOutputStream(1024);
 				byte[] buf = new byte[1024];
 				int i;
 				while ((i = is.read(buf)) != -1) {
@@ -137,7 +138,19 @@ public class EaglerInputStream extends InputStream {
 				}
 				return os.toByteArray();
 			}
+		}finally {
+			is.close();
 		}
+	}
+
+	public static byte[] inputStreamToBytesNoClose(InputStream is) throws IOException {
+		EaglerOutputStream os = new EaglerOutputStream(1024);
+		byte[] buf = new byte[1024];
+		int i;
+		while ((i = is.read(buf)) != -1) {
+			os.write(buf, 0, i);
+		}
+		return os.toByteArray();
 	}
 
 	public byte[] getAsArray() {

@@ -16,6 +16,9 @@
 
 const platfAudioName = "platformAudio";
 
+/** @type {HTMLAudioElement|null} */
+var silenceElement = null;
+
 function setCurrentAudioContext(audioContext, audioImports) {
 
 	/**
@@ -23,6 +26,63 @@ function setCurrentAudioContext(audioContext, audioImports) {
 	 */
 	audioImports["getContext"] = function() {
 		return audioContext;
+	};
+
+	/**
+	 * @param {number} addr
+	 * @param {number} length
+	 */
+	audioImports["initKeepAliveHack"] = function(addr, length) {
+		const copiedData = heapArrayBuffer.slice(addr, addr + length);
+		const copiedDataURI = URL.createObjectURL(new Blob([copiedData], {type: "audio/wav"}));
+		const audioElement = /** @type {HTMLAudioElement} */ (document.createElement("audio"));
+		audioElement.classList.add("_eaglercraftX_keepalive_hack");
+		audioElement.setAttribute("style", "display:none;");
+		audioElement.autoplay = false;
+		audioElement.loop = true;
+		audioElement.addEventListener("seeked", function() {
+			// NOP, wakes up the browser's event loop
+		});
+		audioElement.addEventListener("canplay", function() {
+			if (silenceElement && document.visibilityState === "hidden") {
+				silenceElement.play();
+			}
+		});
+		const sourceElement = /** @type {HTMLSourceElement} */ (document.createElement("source"));
+		sourceElement.type = "audio/wav";
+		sourceElement.src = copiedDataURI;
+		audioElement.appendChild(sourceElement);
+		parentElement.appendChild(audioElement);
+		silenceElement = audioElement;
+	};
+
+	handleVisibilityChange = function() {
+		if (silenceElement) {
+			if (document.visibilityState === "hidden") {
+				silenceElement.play();
+			} else {
+				silenceElement.pause();
+			}
+		}
+	};
+
+	/**
+	 * @param {PannerNode} node
+	 * @param {number} maxDist
+	 * @param {number} x
+	 * @param {number} y
+	 * @param {number} z
+	 */
+	audioImports["setupPanner"] = function(node, maxDist, x, y, z) {
+		node.maxDistance = maxDist;
+		node.rolloffFactor = 1.0;
+		node.panningModel = "HRTF";
+		node.distanceModel = "linear";
+		node.coneInnerAngle = 360.0;
+		node.coneOuterAngle = 0.0;
+		node.coneOuterGain = 0.0;
+		node.setOrientation(0.0, 1.0, 0.0);
+		node.setPosition(x, y, z);
 	};
 
 	/**
@@ -72,6 +132,8 @@ function setNoAudioContext(audioImports) {
 	audioImports["getContext"] = function() {
 		return null;
 	};
+	setUnsupportedFunc(audioImports, platfAudioName, "setupPanner");
+	setUnsupportedFunc(audioImports, platfAudioName, "initKeepAliveHack");
 	setUnsupportedFunc(audioImports, platfAudioName, "registerIsEndedHandler");
 	setUnsupportedFunc(audioImports, platfAudioName, "releaseIsEndedHandler");
 	setUnsupportedFunc(audioImports, platfAudioName, "decodeAudioBrowser");

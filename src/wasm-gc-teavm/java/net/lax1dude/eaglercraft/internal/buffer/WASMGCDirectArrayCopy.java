@@ -24,7 +24,7 @@ public class WASMGCDirectArrayCopy {
 	@Unmanaged
 	public static void memcpy(Address dest, byte[] src, int srcOffset, int count) {
 		Address destEnd = dest.add(count);
-		while (dest.isLessThan(destEnd)) {
+		while(dest.isLessThan(destEnd)) {
 			dest.putByte(src[srcOffset]);
 			++srcOffset;
 			dest = dest.add(1);
@@ -34,7 +34,7 @@ public class WASMGCDirectArrayCopy {
 	@Unmanaged
 	public static void memcpy(Address dest, short[] src, int srcOffset, int count) {
 		Address destEnd = dest.add(count << 1);
-		while (dest.isLessThan(destEnd)) {
+		while(dest.isLessThan(destEnd)) {
 			dest.putShort(src[srcOffset]);
 			++srcOffset;
 			dest = dest.add(2);
@@ -44,7 +44,7 @@ public class WASMGCDirectArrayCopy {
 	@Unmanaged
 	public static void memcpy(Address dest, char[] src, int srcOffset, int count) {
 		Address destEnd = dest.add(count << 1);
-		while (dest.isLessThan(destEnd)) {
+		while(dest.isLessThan(destEnd)) {
 			dest.putChar(src[srcOffset]);
 			++srcOffset;
 			dest = dest.add(2);
@@ -54,7 +54,7 @@ public class WASMGCDirectArrayCopy {
 	@Unmanaged
 	public static void memcpy(Address dest, int[] src, int srcOffset, int count) {
 		Address destEnd = dest.add(count << 2);
-		while (dest.isLessThan(destEnd)) {
+		while(dest.isLessThan(destEnd)) {
 			dest.putInt(src[srcOffset]);
 			++srcOffset;
 			dest = dest.add(4);
@@ -64,7 +64,7 @@ public class WASMGCDirectArrayCopy {
 	@Unmanaged
 	public static void memcpy(Address dest, float[] src, int srcOffset, int count) {
 		Address destEnd = dest.add(count << 2);
-		while (dest.isLessThan(destEnd)) {
+		while(dest.isLessThan(destEnd)) {
 			dest.putFloat(src[srcOffset]);
 			++srcOffset;
 			dest = dest.add(4);
@@ -74,7 +74,7 @@ public class WASMGCDirectArrayCopy {
 	@Unmanaged
 	public static void memcpy(byte[] dest, int destOffset, Address src, int count) {
 		Address srcEnd = src.add(count);
-		while (src.isLessThan(srcEnd)) {
+		while(src.isLessThan(srcEnd)) {
 			dest[destOffset] = src.getByte();
 			++destOffset;
 			src = src.add(1);
@@ -84,7 +84,7 @@ public class WASMGCDirectArrayCopy {
 	@Unmanaged
 	public static void memcpy(short[] dest, int destOffset, Address src, int count) {
 		Address srcEnd = src.add(count << 1);
-		while (src.isLessThan(srcEnd)) {
+		while(src.isLessThan(srcEnd)) {
 			dest[destOffset] = src.getShort();
 			++destOffset;
 			src = src.add(2);
@@ -94,7 +94,7 @@ public class WASMGCDirectArrayCopy {
 	@Unmanaged
 	public static void memcpy(char[] dest, int destOffset, Address src, int count) {
 		Address srcEnd = src.add(count << 1);
-		while (src.isLessThan(srcEnd)) {
+		while(src.isLessThan(srcEnd)) {
 			dest[destOffset] = src.getChar();
 			++destOffset;
 			src = src.add(2);
@@ -104,7 +104,7 @@ public class WASMGCDirectArrayCopy {
 	@Unmanaged
 	public static void memcpy(int[] dest, int destOffset, Address src, int count) {
 		Address srcEnd = src.add(count << 2);
-		while (src.isLessThan(srcEnd)) {
+		while(src.isLessThan(srcEnd)) {
 			dest[destOffset] = src.getInt();
 			++destOffset;
 			src = src.add(4);
@@ -114,7 +114,7 @@ public class WASMGCDirectArrayCopy {
 	@Unmanaged
 	public static void memcpy(float[] dest, int destOffset, Address src, int count) {
 		Address srcEnd = src.add(count << 2);
-		while (src.isLessThan(srcEnd)) {
+		while(src.isLessThan(srcEnd)) {
 			dest[destOffset] = src.getFloat();
 			++destOffset;
 			src = src.add(4);

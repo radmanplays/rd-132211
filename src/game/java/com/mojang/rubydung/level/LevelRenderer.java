@@ -64,7 +64,7 @@ public class LevelRenderer implements LevelListener {
 	public void renderHit(HitResult h) {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-		GL11.color(1.0F, 1.0F, 1.0F, (float)Math.sin((double)System.currentTimeMillis() / 100.0D) * 0.2F + 0.4F);
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, (float)Math.sin((double)System.currentTimeMillis() / 100.0D) * 0.2F + 0.4F);
 		this.t.init();
 		Tile.rock.renderFace(this.t, h.x, h.y, h.z, h.f);
 		this.t.flush();

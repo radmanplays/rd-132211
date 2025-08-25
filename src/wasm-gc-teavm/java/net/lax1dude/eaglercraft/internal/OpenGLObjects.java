@@ -56,6 +56,7 @@ class OpenGLObjects {
 		private static int hashGen = 0;
 		final WebGLVertexArray ptr;
 		final int hash;
+		int enabled;
 
 		VertexArrayGL(WebGLVertexArray ptr) {
 			this.ptr = ptr;
@@ -71,6 +72,21 @@ class OpenGLObjects {
 			PlatformOpenGL._wglDeleteVertexArrays(this);
 		}
 
+		@Override
+		public int getBits() {
+			return enabled;
+		}
+
+		@Override
+		public void setBit(int bit) {
+			enabled |= bit;
+		}
+
+		@Override
+		public void unsetBit(int bit) {
+			enabled &= ~bit;
+		}
+
 	}
 
 	static class TextureGL implements ITextureGL {
@@ -80,6 +96,9 @@ class OpenGLObjects {
 		final int hash;
 		int width;
 		int height;
+		
+		boolean nearest = false;
+		boolean anisotropic = false;
 
 		TextureGL(WebGLTexture ptr) {
 			this.ptr = ptr;
@@ -109,6 +128,26 @@ class OpenGLObjects {
 		@Override
 		public int getHeight() {
 			return height;
+		}
+		
+		@Override
+		public void setNearest(boolean nearest) {
+			this.nearest = nearest;
+		}
+
+		@Override
+		public void setAnisotropic(boolean anisotropic) {
+			this.anisotropic = anisotropic;
+		}
+
+		@Override
+		public boolean isNearest() {
+			return this.nearest;
+		}
+
+		@Override
+		public boolean isAnisotropic() {
+			return this.anisotropic;
 		}
 
 	}

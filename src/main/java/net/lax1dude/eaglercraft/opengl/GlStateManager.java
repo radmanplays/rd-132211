@@ -22,8 +22,6 @@ import net.lax1dude.eaglercraft.vector.Matrix4f;
 import net.lax1dude.eaglercraft.vector.Vector3f;
 import net.lax1dude.eaglercraft.vector.Vector4f;
 
-import static net.lax1dude.eaglercraft.opengl.RealOpenGLEnums.*;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -79,9 +77,9 @@ public class GlStateManager extends RealOpenGLEnums {
 	static boolean stateMaterial = false;
 	static boolean stateLighting = false;
 	static int stateLightsStackPointer = 0;
-	static final boolean[][] stateLightsEnabled = new boolean[4][8];
-	static final Vector4f[][] stateLightsStack = new Vector4f[4][8];
-	static final int[] stateLightingSerial = new int[4];
+	static final boolean[][] stateLightsEnabled = new boolean[2][8];
+	static final Vector4f[][] stateLightsStack = new Vector4f[2][8];
+	static final int[] stateLightingSerial = new int[2];
 
 	static float stateLightingAmbientR = 0.0f;
 	static float stateLightingAmbientG = 0.0f;
@@ -108,9 +106,12 @@ public class GlStateManager extends RealOpenGLEnums {
 	static final boolean[] stateTexture = new boolean[16];
 	static final int[] boundTexture = new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 
-	static float stateAnisotropicFixW = -999.0f;
-	static float stateAnisotropicFixH = -999.0f;
 	static int stateAnisotropicFixSerial = 0;
+	static float stateAnisotropicFixW = 1024.0f;
+	static float stateAnisotropicFixH = 1024.0f;
+	static boolean enableAnisotropicFix = false;
+	static boolean enableAnisotropicPatch = false;
+	static boolean hintAnisotropicPatch = false;
 
 	static boolean stateTexGen = false;
 
@@ -168,6 +169,14 @@ public class GlStateManager extends RealOpenGLEnums {
 	static boolean stateUseExtensionPipeline = false;
 
 	private static final Matrix4f tmpInvertedMatrix = new Matrix4f();
+	
+	public static final void anisotropicPatch(boolean e) {
+		enableAnisotropicPatch = e;
+	}
+	
+	public static final void hintAnisotropicFix(boolean hint) {
+		hintAnisotropicPatch = hint;
+	}
 
 	static {
 		populateStack(modelMatrixStack);
@@ -277,12 +286,17 @@ public class GlStateManager extends RealOpenGLEnums {
 		paramVector4.w = (float) 0.0f;
 		Matrix4f.transform(modelMatrixStack[modelMatrixStackPointer], paramVector4, paramVector4);
 		Vector4f dest = stateLightsStack[stateLightsStackPointer][light];
-		float len = MathHelper.sqrt(
+		float len = MathHelper.sqrt_float(
 				paramVector4.x * paramVector4.x + paramVector4.y * paramVector4.y + paramVector4.z * paramVector4.z);
 		dest.x = paramVector4.x / len;
 		dest.y = paramVector4.y / len;
 		dest.z = paramVector4.z / len;
 		dest.w = diffuse;
+		stateLightsEnabled[stateLightsStackPointer][light] = true;
+		++stateLightingSerial[stateLightsStackPointer];
+	}
+	
+	public static void enableMCLight(int light) {
 		stateLightsEnabled[stateLightsStackPointer][light] = true;
 		++stateLightingSerial[stateLightsStackPointer];
 	}
@@ -649,11 +663,32 @@ public class GlStateManager extends RealOpenGLEnums {
 			_wglActiveTexture(GL_TEXTURE0 + activeTexture);
 		}
 	}
+	
+	public static ITextureGL getCurrentBoundTexture() {
+		return EaglercraftGPU.getNativeTexture(getBoundTexture());
+	}
+	
+	protected static final void updateAnisotropicPatch() {
+		stateAnisotropicFixSerial++;
+		//if(activeTexture == GL_TEXTURE0) {
+			enableAnisotropicFix = false;
+			ITextureGL boundTexture = getCurrentBoundTexture();
+			if(enableAnisotropicPatch && boundTexture != null && boundTexture.isAnisotropic() && boundTexture.isNearest()) {
+				enableAnisotropicFix = true;
+				stateAnisotropicFixW = boundTexture.getWidth();
+				stateAnisotropicFixH = boundTexture.getHeight();
+			}
+		//}
+	}
 
 	public static void bindTexture(int texture) {
 		if (texture != boundTexture[activeTexture]) {
 			_wglBindTexture(GL_TEXTURE_2D, EaglercraftGPU.mapTexturesGL.get(texture));
 			boundTexture[activeTexture] = texture;
+			
+			//if(activeTexture == GL_TEXTURE0) {
+				updateAnisotropicPatch();
+			//}
 		}
 	}
 

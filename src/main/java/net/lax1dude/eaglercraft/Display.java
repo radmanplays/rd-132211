@@ -1,5 +1,6 @@
 package net.lax1dude.eaglercraft;
 
+import net.lax1dude.eaglercraft.internal.ContextLostError;
 import net.lax1dude.eaglercraft.internal.PlatformInput;
 
 /**
@@ -49,10 +50,6 @@ public class Display {
 
 	public static boolean isActive() {
 		return PlatformInput.getWindowFocused();
-	}
-
-	public static void create() {
-
 	}
 
 	public static void setTitle(String string) {
@@ -145,6 +142,12 @@ public class Display {
 			cacheDPI = PlatformInput.getDPI();
 		}
 		return cacheDPI;
+	}
+
+	public static void checkContextLost() {
+		if(PlatformInput.contextLost()) {
+			throw new ContextLostError();
+		}
 	}
 
 }

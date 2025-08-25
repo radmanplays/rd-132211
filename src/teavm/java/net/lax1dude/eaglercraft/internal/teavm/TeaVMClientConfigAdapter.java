@@ -2,8 +2,6 @@ package net.lax1dude.eaglercraft.internal.teavm;
 
 import net.lax1dude.eaglercraft.EaglercraftVersion;
 
-import java.util.List;
-
 import org.teavm.jso.JSObject;
 
 import net.lax1dude.eaglercraft.internal.IClientConfigAdapter;
@@ -30,16 +28,11 @@ public class TeaVMClientConfigAdapter implements IClientConfigAdapter {
 
 	public static final IClientConfigAdapter instance = new TeaVMClientConfigAdapter();
 
-	private String defaultLocale = "en_US";
-	private String serverToJoin = null;   
 	private String worldsDB = "worlds";
 	private String resourcePacksDB = "resourcePacks";
 	private boolean checkGLErrors = false;
-	private boolean demoMode = EaglercraftVersion.forceDemoMode;
 	private String localStorageNamespace = "_eaglercraftX";
 	private final TeaVMClientConfigAdapterHooks hooks = new TeaVMClientConfigAdapterHooks();
-	private boolean fixDebugConsoleUnloadListener = false;
-	private boolean autoFixLegacyStyleAttr = false;
 	private boolean forceWebGL1 = false;
 	private boolean forceWebGL2 = false;
 	private boolean allowExperimentalWebGL1 = true;
@@ -52,21 +45,18 @@ public class TeaVMClientConfigAdapter implements IClientConfigAdapter {
 	private boolean disableBlobURLs = false;
 	private boolean eaglerNoDelay = false;
 	private boolean ramdiskMode = false;
-	private boolean singleThreadMode = false;
 	private boolean enableEPKVersionCheck = true;
+	
+	private boolean keepAliveHack = true;
+	private boolean finishOnSwap = true;
 
 	public void loadNative(JSObject jsObject) {
 		JSEaglercraftXOptsRoot eaglercraftXOpts = (JSEaglercraftXOptsRoot)jsObject;
 		
-		defaultLocale = eaglercraftXOpts.getLang("en_US");
-		serverToJoin = eaglercraftXOpts.getJoinServer(null);
 		worldsDB = eaglercraftXOpts.getWorldsDB("worlds");
 		resourcePacksDB = eaglercraftXOpts.getResourcePacksDB("resourcePacks");
 		checkGLErrors = eaglercraftXOpts.getCheckGLErrors(false);
-		demoMode = EaglercraftVersion.forceDemoMode || eaglercraftXOpts.getDemoMode(false);
 		localStorageNamespace = eaglercraftXOpts.getLocalStorageNamespace(EaglercraftVersion.localStorageNamespace);
-		fixDebugConsoleUnloadListener = eaglercraftXOpts.getFixDebugConsoleUnloadListener(false);
-		autoFixLegacyStyleAttr = eaglercraftXOpts.getAutoFixLegacyStyleAttr(true);
 		forceWebGL1 = eaglercraftXOpts.getForceWebGL1(false);
 		forceWebGL2 = eaglercraftXOpts.getForceWebGL2(false);
 		allowExperimentalWebGL1 = eaglercraftXOpts.getAllowExperimentalWebGL1(true);
@@ -79,21 +69,13 @@ public class TeaVMClientConfigAdapter implements IClientConfigAdapter {
 		disableBlobURLs = eaglercraftXOpts.getDisableBlobURLs(false);
 		eaglerNoDelay = eaglercraftXOpts.getEaglerNoDelay(false);
 		ramdiskMode = eaglercraftXOpts.getRamdiskMode(false);
-		singleThreadMode = eaglercraftXOpts.getSingleThreadMode(false);
 		enableEPKVersionCheck = eaglercraftXOpts.getEnableEPKVersionCheck(true);
+		keepAliveHack = eaglercraftXOpts.getKeepAliveHack(true);
+		finishOnSwap = eaglercraftXOpts.getFinishOnSwap(true);
 		JSEaglercraftXOptsHooks hooksObj = eaglercraftXOpts.getHooks();
 		if(hooksObj != null) {
 			hooks.loadHooks(hooksObj);
 		}
-	}
-
-	public String getDefaultLocale() {
-		return defaultLocale;
-	}
-
-	@Override
-	public String getServerToJoin() {
-		return serverToJoin;
 	}
 
 	@Override
@@ -109,14 +91,6 @@ public class TeaVMClientConfigAdapter implements IClientConfigAdapter {
 	@Override
 	public String getLocalStorageNamespace() {
 		return localStorageNamespace;
-	}
-
-	public boolean isFixDebugConsoleUnloadListenerTeaVM() {
-		return fixDebugConsoleUnloadListener;
-	}
-
-	public boolean isAutoFixLegacyStyleAttrTeaVM() {
-		return autoFixLegacyStyleAttr;
 	}
 
 	public boolean isForceWebGL1TeaVM() {
@@ -159,10 +133,6 @@ public class TeaVMClientConfigAdapter implements IClientConfigAdapter {
 		return disableBlobURLs;
 	}
 
-	public boolean isSingleThreadModeTeaVM() {
-		return singleThreadMode;
-	}
-
 	public boolean isEnableEPKVersionCheckTeaVM() {
 		return enableEPKVersionCheck;
 	}
@@ -188,132 +158,15 @@ public class TeaVMClientConfigAdapter implements IClientConfigAdapter {
 	}
 
 	@Override
-	public List<DefaultServer> getDefaultServerList() {
-		return null;
-	}
-
-	@Override
 	public String getResourcePacksDB() {
 		return this.resourcePacksDB;
 	}
-
-	@Override
-	public boolean isCheckShaderGLErrors() {
-		// TODO Auto-generated method stub
-		return false;
+	
+	public boolean isKeepAliveHackTeaVM() {
+		return keepAliveHack;
 	}
-
-	@Override
-	public boolean isDemo() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean allowUpdateSvc() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean allowUpdateDL() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isEnableDownloadOfflineButton() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public String getDownloadOfflineButtonLink() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean useSpecialCursors() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isLogInvalidCerts() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isCheckRelaysForUpdates() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isEnableSignatureBadge() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isAllowVoiceClient() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isAllowFNAWSkins() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isEnableMinceraft() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isEnableServerCookies() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isAllowServerRedirects() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isOpenDebugConsoleOnLaunch() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isForceWebViewSupport() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isEnableWebViewCSP() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isAllowBootMenu() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isForceProfanityFilter() {
-		// TODO Auto-generated method stub
-		return false;
+	
+	public boolean isFinishOnSwapTeaVM() {
+		return finishOnSwap;
 	}
 }

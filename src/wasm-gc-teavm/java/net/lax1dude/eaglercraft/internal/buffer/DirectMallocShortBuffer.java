@@ -85,56 +85,47 @@ public class DirectMallocShortBuffer extends ShortBuffer {
 
 	@Override
 	public short get() {
-		if (position >= limit)
-			throw Buffer.makeIOOBE(position);
+		if(position >= limit) throw Buffer.makeIOOBE(position);
 		return address.add((position++) << SHIFT).getShort();
 	}
 
 	@Override
 	public ShortBuffer put(short b) {
-		if (position >= limit)
-			throw Buffer.makeIOOBE(position);
+		if(position >= limit) throw Buffer.makeIOOBE(position);
 		address.add((position++) << SHIFT).putShort(b);
 		return this;
 	}
 
 	@Override
 	public short get(int index) {
-		if (index < 0 || index >= limit)
-			throw Buffer.makeIOOBE(index);
+		if(index < 0 || index >= limit) throw Buffer.makeIOOBE(index);
 		return address.add(index << SHIFT).getShort();
 	}
 
 	@Override
 	public ShortBuffer put(int index, short b) {
-		if (index < 0 || index >= limit)
-			throw Buffer.makeIOOBE(index);
+		if(index < 0 || index >= limit) throw Buffer.makeIOOBE(index);
 		address.add(index << SHIFT).putShort(b);
 		return this;
 	}
 
 	@Override
 	public short getElement(int index) {
-		if (index < 0 || index >= limit)
-			throw Buffer.makeIOOBE(index);
+		if(index < 0 || index >= limit) throw Buffer.makeIOOBE(index);
 		return address.add(index << SHIFT).getShort();
 	}
 
 	@Override
 	public void putElement(int index, short value) {
-		if (index < 0 || index >= limit)
-			throw Buffer.makeIOOBE(index);
+		if(index < 0 || index >= limit) throw Buffer.makeIOOBE(index);
 		address.add(index << SHIFT).putShort(value);
 	}
 
 	@Override
 	public ShortBuffer get(short[] dst, int offset, int length) {
-		if (position + length > limit)
-			throw Buffer.makeIOOBE(position + length - 1);
-		if (offset < 0)
-			throw Buffer.makeIOOBE(offset);
-		if (offset + length > dst.length)
-			throw Buffer.makeIOOBE(offset + length - 1);
+		if(position + length > limit) throw Buffer.makeIOOBE(position + length - 1);
+		if(offset < 0) throw Buffer.makeIOOBE(offset);
+		if(offset + length > dst.length) throw Buffer.makeIOOBE(offset + length - 1);
 		WASMGCDirectArrayCopy.memcpy(dst, offset, address.add(position << SHIFT), length);
 		position += length;
 		return this;
@@ -143,8 +134,7 @@ public class DirectMallocShortBuffer extends ShortBuffer {
 	@Override
 	public ShortBuffer get(short[] dst) {
 		int dstLen = dst.length;
-		if (position + dstLen > limit)
-			throw Buffer.makeIOOBE(position + dstLen - 1);
+		if(position + dstLen > limit) throw Buffer.makeIOOBE(position + dstLen - 1);
 		WASMGCDirectArrayCopy.memcpy(dst, 0, address.add(position << SHIFT), dstLen);
 		position += dstLen;
 		return this;
@@ -152,20 +142,18 @@ public class DirectMallocShortBuffer extends ShortBuffer {
 
 	@Override
 	public ShortBuffer put(ShortBuffer src) {
-		if (src instanceof DirectMallocShortBuffer) {
-			DirectMallocShortBuffer c = (DirectMallocShortBuffer) src;
+		if(src instanceof DirectMallocShortBuffer) {
+			DirectMallocShortBuffer c = (DirectMallocShortBuffer)src;
 			int l = c.limit - c.position;
-			if (position + l > limit)
-				throw Buffer.makeIOOBE(position + l - 1);
+			if(position + l > limit) throw Buffer.makeIOOBE(position + l - 1);
 			Address.moveMemoryBlock(c.address.add(c.position << SHIFT), address.add(position << SHIFT), l << SHIFT);
 			position += l;
 			c.position += l;
-		} else {
+		}else {
 			int l = src.remaining();
-			if (position + l > limit)
-				throw Buffer.makeIOOBE(position + l - 1);
+			if(position + l > limit) throw Buffer.makeIOOBE(position + l - 1);
 			Address addrBase = address.add(position << SHIFT);
-			for (int i = 0, ll = l << SHIFT; i < ll; i += 2) {
+			for(int i = 0, ll = l << SHIFT; i < ll; i += 2) {
 				addrBase.add(i).putShort(src.get());
 			}
 			position += l;
@@ -175,12 +163,9 @@ public class DirectMallocShortBuffer extends ShortBuffer {
 
 	@Override
 	public ShortBuffer put(short[] src, int offset, int length) {
-		if (position + length > limit)
-			throw Buffer.makeIOOBE(position + length - 1);
-		if (offset < 0)
-			throw Buffer.makeIOOBE(offset);
-		if (offset + length > src.length)
-			throw Buffer.makeIOOBE(offset + length - 1);
+		if(position + length > limit) throw Buffer.makeIOOBE(position + length - 1);
+		if(offset < 0) throw Buffer.makeIOOBE(offset);
+		if(offset + length > src.length) throw Buffer.makeIOOBE(offset + length - 1);
 		WASMGCDirectArrayCopy.memcpy(address.add(position << SHIFT), src, offset, length);
 		position += length;
 		return this;
@@ -189,8 +174,7 @@ public class DirectMallocShortBuffer extends ShortBuffer {
 	@Override
 	public ShortBuffer put(short[] src) {
 		int srcLen = src.length;
-		if (position + srcLen > limit)
-			throw Buffer.makeIOOBE(position + srcLen - 1);
+		if(position + srcLen > limit) throw Buffer.makeIOOBE(position + srcLen - 1);
 		WASMGCDirectArrayCopy.memcpy(address.add(position << SHIFT), src, 0, srcLen);
 		position += src.length;
 		return this;
@@ -210,8 +194,7 @@ public class DirectMallocShortBuffer extends ShortBuffer {
 	@Override
 	public ShortBuffer reset() {
 		int m = mark;
-		if (m < 0)
-			throw new IndexOutOfBoundsException("Invalid mark: " + m);
+		if(m < 0) throw new IndexOutOfBoundsException("Invalid mark: " + m);
 		position = m;
 		return this;
 	}
@@ -241,16 +224,14 @@ public class DirectMallocShortBuffer extends ShortBuffer {
 
 	@Override
 	public ShortBuffer limit(int newLimit) {
-		if (newLimit < 0 || newLimit > capacity)
-			throw Buffer.makeIOOBE(newLimit);
+		if(newLimit < 0 || newLimit > capacity) throw Buffer.makeIOOBE(newLimit);
 		limit = newLimit;
 		return this;
 	}
 
 	@Override
 	public ShortBuffer position(int newPosition) {
-		if (newPosition < 0 || newPosition > limit)
-			throw Buffer.makeIOOBE(newPosition);
+		if(newPosition < 0 || newPosition > limit) throw Buffer.makeIOOBE(newPosition);
 		position = newPosition;
 		return this;
 	}

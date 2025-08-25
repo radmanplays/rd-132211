@@ -18,10 +18,6 @@ package net.lax1dude.eaglercraft.opengl;
  */
 public class FixedFunctionShader {
 
-	public static final int initialSize = 0x8000;
-	public static final int initialCount = 3;
-	public static final int maxCount = 8;
-
 	public class FixedFunctionState {
 
 		public static final int fixedFunctionStatesCount = 12;
@@ -48,7 +44,7 @@ public class FixedFunctionShader {
 		public static final String FILENAME_VSH = "/assets/eagler/glsl/core.vsh";
 		public static final String FILENAME_FSH = "/assets/eagler/glsl/core.fsh";
 
-		public static final String PRECISION_INT = "lowp";
+		public static final String PRECISION_INT = "mediump";
 		public static final String PRECISION_FLOAT = "highp";
 		public static final String PRECISION_SAMPLER = "mediump";
 

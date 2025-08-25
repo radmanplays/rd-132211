@@ -70,9 +70,15 @@ public class TextureFormatHelper {
 		switch (internalFormat) {
 		case _GL_R8:
 			return GL_LUMINANCE;
+		case GL_LUMINANCE:
+			return GL_LUMINANCE;
 		case GL_RGB8:
 			return GL_RGB;
+		case GL_RGB:
+			return GL_RGB;
 		case GL_RGBA8:
+			return GL_RGBA;
+		case GL_RGBA:
 			return GL_RGBA;
 		default:
 			throw new UnsupportedOperationException();

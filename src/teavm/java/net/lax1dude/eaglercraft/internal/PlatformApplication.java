@@ -27,7 +27,6 @@ import org.teavm.jso.typedarrays.ArrayBuffer;
 import net.lax1dude.eaglercraft.Base64;
 import net.lax1dude.eaglercraft.internal.buffer.ByteBuffer;
 import net.lax1dude.eaglercraft.internal.buffer.EaglerArrayBufferAllocator;
-import net.lax1dude.eaglercraft.internal.teavm.DebugConsoleWindow;
 import net.lax1dude.eaglercraft.internal.teavm.TeaVMBlobURLHandle;
 import net.lax1dude.eaglercraft.internal.teavm.TeaVMBlobURLManager;
 import net.lax1dude.eaglercraft.internal.teavm.TeaVMUtils;
@@ -487,18 +486,6 @@ public class PlatformApplication {
 
 	static void downloadURLWithNameTeaVM(String str, String url, DownloadBytesBlobURLRevoke revoker) {
 		downloadBytesImpl(str, url, revoker, PlatformRuntime.parent);
-	}
-
-	public static void showDebugConsole() {
-		DebugConsoleWindow.showDebugConsole();
-	}
-
-	public static void addLogMessage(String text, boolean err) {
-		DebugConsoleWindow.addLogMessage(text, err);
-	}
-
-	public static boolean isShowingDebugConsole() {
-		return DebugConsoleWindow.isShowingDebugConsole();
 	}
 
 	@JSBody(params = { "str" }, script = "window.minecraftServer = str;")

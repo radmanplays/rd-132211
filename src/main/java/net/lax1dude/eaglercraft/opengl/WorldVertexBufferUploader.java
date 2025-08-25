@@ -40,7 +40,7 @@ public class WorldVertexBufferUploader {
 					cunt);
 			worldRenderer.reset();
 		} else {
-			EaglercraftGPU.flushDisplayList(displayList);
+			EaglercraftGPU.flushDisplayList(displayList, false);
 		}
 	}
 }

@@ -5,6 +5,7 @@ import static net.lax1dude.eaglercraft.opengl.RealOpenGLEnums.*;
 
 import java.util.List;
 
+import net.lax1dude.eaglercraft.Display;
 import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.internal.IVertexArrayGL;
 import net.lax1dude.eaglercraft.internal.IBufferGL;
@@ -76,6 +77,7 @@ public class DrawUtils {
 			_wglCompileShader(vshLocal);
 
 			if (_wglGetShaderi(vshLocal, GL_COMPILE_STATUS) != GL_TRUE) {
+				Display.checkContextLost();
 				EaglercraftGPU.logger.error("Failed to compile GL_VERTEX_SHADER \"" + vertexShaderPath + "\"!");
 				String log = _wglGetShaderInfoLog(vshLocal);
 				if (log != null) {

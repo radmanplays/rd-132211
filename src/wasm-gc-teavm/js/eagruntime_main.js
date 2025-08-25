@@ -23,13 +23,7 @@ const eagruntimeImpl = {
 	platformInput: {},
 	platformNetworking: {},
 	platformOpenGL: {},
-	platformRuntime: {},
-	platformScreenRecord: {},
-	platformVoiceClient: {},
-	platformWebRTC: {},
-	platformWebView: {},
-	clientPlatformSingleplayer: {},
-	serverPlatformSingleplayer: {}
+	platformRuntime: {}
 };
 
 /** @type {WebAssembly.Module} */

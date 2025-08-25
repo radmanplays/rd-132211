@@ -4,7 +4,6 @@ import net.lax1dude.eaglercraft.internal.buffer.ByteBuffer;
 import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
 import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;
 
-import java.nio.ByteOrder;
 import java.util.BitSet;
 import java.util.function.IntBinaryOperator;
 
@@ -38,14 +37,14 @@ public class WorldRenderer {
 
 	private static final Logger logger = LogManager.getLogger("WorldRenderer");
 
-	private boolean needsUpdate;
+	public boolean needsUpdate;
 	private int drawMode;
 	private double xOffset;
 	private double yOffset;
 	private double zOffset;
-	private boolean isDrawing;
+	public boolean isDrawing;
 
-	private VertexFormat vertexFormat;
+	public VertexFormat vertexFormat;
 
 	private int vertexCount;
 	private ByteBuffer byteBuffer;
@@ -76,7 +75,7 @@ public class WorldRenderer {
 		int i = this.byteBuffer.capacity() >> 2;
 		if (parInt1 > (i - pos)) {
 			int k = (((pos + parInt1 + (parInt1 >> 1)) >> 16) + 1) << 16;
-			logger.warn("Needed to grow BufferBuilder buffer: Old size " + (i << 2) + " bytes, new size " + (k << 2)
+			logger.warn("Needed to grow WorldRenderer buffer: Old size " + (i << 2) + " bytes, new size " + (k << 2)
 					+ " bytes.");
 			ByteBuffer bytebuffer = GLAllocation.createDirectByteBuffer(k << 2);
 			this.byteBuffer.position(0);
@@ -230,46 +229,25 @@ public class WorldRenderer {
 		this.intBuffer.clear();
 	}
 
-	public void begin(int parInt1, VertexFormat parVertexFormat) {
+	public void begin(int parInt1, VertexFormat format) {
 		if (this.isDrawing) {
 			throw new IllegalStateException("WorldRenderer already building you eagler!");
 		} else {
 			this.isDrawing = true;
 			this.reset();
+			this.vertexFormat = format;
 			this.drawMode = parInt1;
-			this.vertexFormat = parVertexFormat;
 			this.needsUpdate = false;
 			this.byteBuffer.limit(this.byteBuffer.capacity());
 		}
 	}
-
+	
 	public WorldRenderer tex(double parDouble1, double parDouble2) {
 		VertexFormat fmt = this.vertexFormat;
 		int i = this.vertexCount * fmt.attribStride + fmt.attribTextureOffset;
 		this.byteBuffer.putFloat(i, (float) parDouble1);
 		this.byteBuffer.putFloat(i + 4, (float) parDouble2);
 		return this;
-	}
-
-	public WorldRenderer lightmap(int parInt1, int parInt2) {
-		VertexFormat fmt = this.vertexFormat;
-		int i = this.vertexCount * fmt.attribStride + fmt.attribLightmapOffset;
-		this.byteBuffer.putShort(i, (short) parInt2);
-		this.byteBuffer.putShort(i + 2, (short) parInt1);
-		return this;
-	}
-
-	/**
-	 * update lightmap color of the last 4 verticies, used in AO calculation
-	 */
-	public void putBrightness4(int parInt1, int parInt2, int parInt3, int parInt4) {
-		VertexFormat fmt = this.vertexFormat;
-		int j = fmt.attribStride >> 2;
-		int i = (this.vertexCount - 4) * j + (fmt.attribLightmapOffset >> 2);
-		this.intBuffer.put(i, parInt1);
-		this.intBuffer.put(i + j, parInt2);
-		this.intBuffer.put(i + j * 2, parInt3);
-		this.intBuffer.put(i + j * 3, parInt4);
 	}
 
 	/**
@@ -290,8 +268,6 @@ public class WorldRenderer {
 
 	}
 
-	public void setVertexFormat(VertexFormat format) {
-	}
 	/**
 	 * gets the color index of a vertex parInt1 indicies before the current vertex
 	 */
@@ -406,6 +382,10 @@ public class WorldRenderer {
 		this.byteBuffer.putFloat(i + 4, (float) (parDouble2 + this.yOffset));
 		this.byteBuffer.putFloat(i + 8, (float) (parDouble3 + this.zOffset));
 		return this;
+	}
+	
+	public WorldRenderer posUV(double parDouble1, double parDouble2, double parDouble3, double u, double v) {
+		return this.pos(parDouble1, parDouble2, parDouble3).tex(u, v);
 	}
 
 	/**
@@ -559,6 +539,18 @@ public class WorldRenderer {
 		}
 
 	}
+	
+	public WorldRenderer color(int var1) {
+		int var2 = var1 >> 16 & 255;
+		int var3 = var1 >> 8 & 255;
+		int var4 = var1 & 255;
+		this.color(var2, var3, var4);
+		return this;
+	}
+	
+	private void color(int var1, int var2, int var3) {
+		this.setColorRGBA(var1, var2, var3, 255);
+	}
 
 	public class State {
 		private final IntBuffer stateRawBuffer;
@@ -596,19 +588,7 @@ public class WorldRenderer {
 		}
 	}
 
-	public WorldRenderer color(int var1) {
-		int var2 = var1 >>> 16 & 255;
-		int var3 = var1 >>> 8 & 255;
-		int var4 = var1 & 255;
-		setColorOpaque(var2, var3, var4);
-		return this;
-	}
-
-	public void setColorOpaque(int var1, int var2, int var3) {
-		this.setColorRGBA(var1, var2, var3, 255);
-	}
-
-	public void setColorRGBA(int var1, int var2, int var3, int var4) {
+	public WorldRenderer setColorRGBA(int var1, int var2, int var3, int var4) {
 		if (!this.needsUpdate) {
 			if (var1 > 255) {
 				var1 = 255;
@@ -644,11 +624,8 @@ public class WorldRenderer {
 
 			VertexFormat fmt = this.vertexFormat;
 			int i = this.vertexCount * fmt.attribStride + fmt.attribColorOffset;
-			if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
-				this.byteBuffer.putInt(i, var4 << 24 | var3 << 16 | var2 << 8 | var1);
-			} else {
-				this.byteBuffer.putInt(i, var1 << 24 | var2 << 16 | var3 << 8 | var4);
-			}
+			this.byteBuffer.putInt(i, var4 << 24 | var3 << 16 | var2 << 8 | var1);
 		}
+		return this;
 	}
 }

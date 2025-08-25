@@ -62,7 +62,6 @@ import net.lax1dude.eaglercraft.internal.teavm.ImmediateContinue;
 import net.lax1dude.eaglercraft.internal.teavm.MessageChannel;
 import net.lax1dude.eaglercraft.internal.teavm.TeaVMBlobURLManager;
 import net.lax1dude.eaglercraft.internal.teavm.ClientMain;
-import net.lax1dude.eaglercraft.internal.teavm.DebugConsoleWindow;
 import net.lax1dude.eaglercraft.internal.teavm.EPKDownloadHelper;
 import net.lax1dude.eaglercraft.internal.teavm.TeaVMClientConfigAdapter;
 import net.lax1dude.eaglercraft.internal.teavm.TeaVMDataURLManager;
@@ -137,7 +136,6 @@ public class PlatformRuntime {
 	public static void create() {
 		win = Window.current();
 		doc = win.getDocument();
-		DebugConsoleWindow.initialize(win);
 		PlatformApplication.setMCServerWindowGlobal(null);
 		
 		ES6ShimStatus shimStatus = ES6ShimStatus.getRuntimeStatus();
@@ -186,51 +184,6 @@ public class PlatformRuntime {
 
 		TeaVMClientConfigAdapter teavmCfg = (TeaVMClientConfigAdapter) getClientConfigAdapter();
 		boolean isEmbeddedInBody = root.getTagName().equalsIgnoreCase("body");
-		if (teavmCfg.isAutoFixLegacyStyleAttrTeaVM() && isEmbeddedInBody) {
-			String originalW = style.getPropertyValue("width");
-			String originalH = style.getPropertyValue("height");
-			if("100vw".equals(originalW) && "100vh".equals(originalH)) {
-				logger.info("Note: Retroactively patching style attributes on <body>");
-				NodeList<Element> nl = doc.getElementsByTagName("html");
-				if(nl.getLength() > 0) {
-					CSSStyleDeclaration htmlDecl = ((HTMLElement)nl.get(0)).getStyle();
-					htmlDecl.setProperty("width", "100%");
-					htmlDecl.setProperty("height", "100%");
-					htmlDecl.setProperty("background-color", "black");
-				}else {
-					logger.warn("Could not find <html> tag!");
-				}
-				style.setProperty("width", "100%");
-				style.setProperty("height", "100%");
-				style.setProperty("background-color", "black");
-			}
-			HTMLElement viewportTag = doc.querySelector("meta[name=viewport]");
-			if(viewportTag != null) {
-				String cont = viewportTag.getAttribute("content");
-				if(cont != null) {
-					String[] oldTokenArray = cont.split(",");
-	                Set<String> oldTokens = new HashSet<>();
-	                for (String token : oldTokenArray) {
-	                    oldTokens.add(token.trim());
-	                }
-					Set<String> tokens = new HashSet<>();
-					for(String str : oldTokens) {
-						if (!(str.startsWith("width=") || str.startsWith("initial-scale=")
-								|| str.startsWith("minimum-scale=") || str.startsWith("maximum-scale="))) {
-							tokens.add(str);
-						}
-					}
-					tokens.add("width=device-width");
-					tokens.add("initial-scale=1.0");
-					tokens.add("minimum-scale=1.0");
-					tokens.add("maximum-scale=1.0");
-					if(!tokens.equals(oldTokens)) {
-						logger.info("Note: Retroactively patching viewport <meta> tag");
-						viewportTag.setAttribute("content", String.join(", ", tokens));
-					}
-				}
-			}
-		}
 
 		useDelayOnSwap = teavmCfg.isUseDelayOnSwapTeaVM();
 
@@ -432,7 +385,7 @@ public class PlatformRuntime {
 		}
 
 		EPKDownloadHelper.downloadEPKFilesOfVersion(ClientMain.configEPKFiles,
-				teavmCfg.isEnableEPKVersionCheckTeaVM() ? EaglercraftVersion.EPKVersionIdentifier : null,
+				null,
 				PlatformAssets.assets);
 
 		logger.info("Loaded {} resources from EPKs", PlatformAssets.assets.size());
@@ -453,8 +406,9 @@ public class PlatformRuntime {
 		IEaglerFilesystem resourcePackFilesystem = Filesystem.getHandleFor(getClientConfigAdapter().getWorldsDB());
 		VFile2.setPrimaryFilesystem(resourcePackFilesystem);
 
-		PlatformInput.pressAnyKeyScreen();
+		logger.info("Initializing sound engine...");
 
+		PlatformInput.pressAnyKeyScreen();
 
 		if(finalLoadScreen != null) {
 			EarlyLoadScreen.paintFinal(PlatformOpenGL.checkVAOCapable(), false);
@@ -497,7 +451,6 @@ public class PlatformRuntime {
 
 	@JSBody(params = { }, script = "return navigator.userAgent||null;")
 	public static native String getUserAgentString();
-
 
 	@JSBody(params = { }, script = "return (typeof visualViewport !== \"undefined\");")
 	private static native boolean isVisualViewportSupported();

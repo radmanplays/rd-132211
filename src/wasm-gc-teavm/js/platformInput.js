@@ -118,7 +118,8 @@ async function initPlatformInput(inputImports) {
 		blur: null,
 		pointerlock: null,
 		pointerlockerr: null,
-		fullscreenChange: null
+		fullscreenChange: null,
+		visibilitychange: null
 	};
 
 	touchKeyboardOpenZone = document.createElement("div");
@@ -350,6 +351,11 @@ async function initPlatformInput(inputImports) {
 		pushEvent(EVENT_TYPE_INPUT, EVENT_INPUT_FOCUS, null);
 	});
 
+	document.addEventListener("visibilitychange", currentEventListeners.visibilitychange = function(/** Event */ evt) {
+		if (handleVisibilityChange)
+			handleVisibilityChange();
+	});
+
 	/**
 	 * @param {number} evtType
 	 * @param {KeyboardEvent} evt
@@ -371,7 +377,6 @@ async function initPlatformInput(inputImports) {
 	window.addEventListener("keydown", /** @type {function(Event)} */ (currentEventListeners.keydown = function(/** KeyboardEvent */ evt) {
 		evt.preventDefault();
 		evt.stopPropagation();
-
 		if(evt.key === "F11" && !evt.repeat) {
 			toggleFullscreenImpl();
 			return;
@@ -613,15 +618,19 @@ async function initPlatformInput(inputImports) {
 	/**
 	 * @param {number} fpsLimit
 	 * @param {number} vsync
+	 * @param {number} finish
 	 * @return {Promise}
 	 */
-	function updatePlatformAndSleepImpl(fpsLimit, vsync) {
+	function updatePlatformAndSleepImpl(fpsLimit, vsync, finish) {
 		reportWindowSize();
 		if((typeof document.visibilityState !== "string") || (document.visibilityState === "visible")) {
 			if(vsyncSupport && vsync) {
 				manualSyncTimer = 0;
 				return asyncRequestAnimationFrame();
 			}else {
+				if(finish) {
+					webglContext.finish();
+				}
 				if(fpsLimit <= 0) {
 					manualSyncTimer = 0;
 					return swapDelayImpl();
@@ -1129,6 +1138,10 @@ async function initPlatformInput(inputImports) {
 			if(currentEventListeners.blur) {
 				window.removeEventListener("blur", /** @type {function(Event)} */ (currentEventListeners.blur));
 				currentEventListeners.blur = null;
+			}
+			if(currentEventListeners.visibilitychange) {
+				document.removeEventListener("visibilitychange", currentEventListeners.visibilitychange);
+				currentEventListeners.visibilitychange = null;
 			}
 			if(currentEventListeners.pointerlock) {
 				document.removeEventListener("pointerlockchange", /** @type {function(Event)} */ (currentEventListeners.pointerlock));

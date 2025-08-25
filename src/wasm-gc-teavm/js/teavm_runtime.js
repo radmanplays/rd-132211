@@ -618,8 +618,7 @@ function jsoImports(imports, context) {
             let getJsException = context.exports["teavm.getJsException"];
             return getJsException(e);
         },
-        "jsExports": () => context.userExports,
-        "charAt": (s, index) => s.charCodeAt(index),
+        "jsExports": () => context.userExports
     };
     for (let name of ["wrapByte", "wrapShort", "wrapChar", "wrapInt", "wrapLong", "wrapFloat", "wrapDouble",
         "unwrapByte", "unwrapShort", "unwrapChar", "unwrapInt", "unwrapLong", "unwrapFloat", "unwrapDouble"]) {

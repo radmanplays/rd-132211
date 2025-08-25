@@ -65,6 +65,7 @@ public class EagRuntime {
 		angleBackend = PlatformRuntime.getPlatformANGLE();
 		EaglercraftGPU.warmUpCache();
 		PlatformRuntime.postCreate();
+		Display.checkContextLost();
 	}
 
 	public static void destroy() {

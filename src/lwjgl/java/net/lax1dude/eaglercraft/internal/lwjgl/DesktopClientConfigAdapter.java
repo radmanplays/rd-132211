@@ -1,7 +1,5 @@
 package net.lax1dude.eaglercraft.internal.lwjgl;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 import net.lax1dude.eaglercraft.EaglercraftVersion;
@@ -28,24 +26,7 @@ public class DesktopClientConfigAdapter implements IClientConfigAdapter {
 
 	public static final IClientConfigAdapter instance = new DesktopClientConfigAdapter();
 
-	public final List<DefaultServer> defaultServers = new ArrayList<>();
-
 	private final DesktopClientConfigAdapterHooks hooks = new DesktopClientConfigAdapterHooks();
-
-	@Override
-	public String getDefaultLocale() {
-		return "en_US";
-	}
-
-	@Override
-	public List<DefaultServer> getDefaultServerList() {
-		return defaultServers;
-	}
-
-	@Override
-	public String getServerToJoin() {
-		return null;
-	}
 
 	@Override
 	public String getWorldsDB() {
@@ -63,108 +44,8 @@ public class DesktopClientConfigAdapter implements IClientConfigAdapter {
 	}
 
 	@Override
-	public boolean isCheckShaderGLErrors() {
-		return false;
-	}
-
-	@Override
-	public boolean isDemo() {
-		return EaglercraftVersion.forceDemoMode;
-	}
-
-	@Override
-	public boolean allowUpdateSvc() {
-		return false;
-	}
-
-	@Override
-	public boolean allowUpdateDL() {
-		return false;
-	}
-
-	@Override
-	public boolean isEnableDownloadOfflineButton() {
-		return false;
-	}
-
-	@Override
-	public String getDownloadOfflineButtonLink() {
-		return null;
-	}
-
-	@Override
-	public boolean useSpecialCursors() {
-		return false;
-	}
-
-	@Override
-	public boolean isLogInvalidCerts() {
-		return false;
-	}
-
-	@Override
-	public boolean isCheckRelaysForUpdates() {
-		return false;
-	}
-
-	@Override
-	public boolean isEnableSignatureBadge() {
-		return false;
-	}
-
-	@Override
-	public boolean isAllowVoiceClient() {
-		return false;
-	}
-
-	@Override
-	public boolean isAllowFNAWSkins() {
-		return true;
-	}
-
-	@Override
 	public String getLocalStorageNamespace() {
 		return EaglercraftVersion.localStorageNamespace;
-	}
-
-	@Override
-	public boolean isEnableMinceraft() {
-		return true;
-	}
-
-	@Override
-	public boolean isEnableServerCookies() {
-		return true;
-	}
-
-	@Override
-	public boolean isAllowServerRedirects() {
-		return true;
-	}
-
-	@Override
-	public boolean isOpenDebugConsoleOnLaunch() {
-		return false;
-	}
-
-	@Override
-	public boolean isForceWebViewSupport() {
-		return false;
-	}
-
-	@Override
-	public boolean isEnableWebViewCSP() {
-		return true;
-	}
-
-	@Override
-	public boolean isAllowBootMenu() {
-		return false;
-	}
-
-	@Override
-	public boolean isForceProfanityFilter() {
-		return false;
 	}
 
 	@Override

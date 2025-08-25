@@ -32,7 +32,6 @@ import org.teavm.jso.core.JSString;
 import org.teavm.jso.typedarrays.Uint8Array;
 import org.teavm.jso.typedarrays.Uint8ClampedArray;
 
-import net.lax1dude.eaglercraft.EaglerInputStream;
 import net.lax1dude.eaglercraft.internal.buffer.ByteBuffer;
 import net.lax1dude.eaglercraft.internal.buffer.MemoryStack;
 import net.lax1dude.eaglercraft.internal.buffer.WASMGCBufferAllocator;
@@ -40,63 +39,63 @@ import net.lax1dude.eaglercraft.internal.buffer.WASMGCDirectArrayConverter;
 import net.lax1dude.eaglercraft.internal.wasm_gc_teavm.BetterJSStringConverter;
 import net.lax1dude.eaglercraft.internal.wasm_gc_teavm.ClientMain;
 import net.lax1dude.eaglercraft.internal.wasm_gc_teavm.EPKLoader;
+import net.lax1dude.eaglercraft.EaglerInputStream;
 import net.lax1dude.eaglercraft.opengl.ImageData;
 
 public class PlatformAssets {
 
 	static final Logger logger = LogManager.getLogger("PlatformAssets");
-	public static Map<String, byte[]> serverAssets = new HashMap<String, byte[]>();
 
 	private static final byte[] MISSING_FILE = new byte[0];
 
-	public static Map<String,byte[]> assets = new HashMap<>();
+	static Map<String, byte[]> assets = new HashMap<>();
 
 	public static boolean getResourceExists(String path) {
-		if(path.startsWith("/")) {
+		if (path.startsWith("/")) {
 			path = path.substring(1);
 		}
 		byte[] ret = assets.get(path);
-		if(ret != null && ret != MISSING_FILE) {
+		if (ret != null && ret != MISSING_FILE) {
 			return true;
-		}else {
-			if(path.startsWith("assets/minecraft/lang/") && !path.endsWith(".mcmeta")) {
-				byte[] file = PlatformRuntime.downloadRemoteURIByteArray(
-						ClientMain.configLocalesFolder + "/" + path.substring(22));
-				if(file != null) {
+		} else {
+			if (path.startsWith("assets/minecraft/lang/") && !path.endsWith(".mcmeta")) {
+				byte[] file = PlatformRuntime
+						.downloadRemoteURIByteArray(ClientMain.configLocalesFolder + "/" + path.substring(22));
+				if (file != null) {
 					assets.put(path, file);
 					return true;
-				}else {
+				} else {
 					assets.put(path, MISSING_FILE);
 					return false;
 				}
-			}else {
+			} else {
 				return false;
 			}
 		}
 	}
-	
+
 	public static byte[] getResourceBytes(String path) {
-		if(path.startsWith("/")) {
+		if (path.startsWith("/")) {
 			path = path.substring(1);
 		}
 		byte[] data = assets.get(path);
-		if(data == null && path.startsWith("assets/minecraft/lang/") && !path.endsWith(".mcmeta")) {
-			byte[] file = PlatformRuntime.downloadRemoteURIByteArray(
-					ClientMain.configLocalesFolder + "/" + path.substring(22));
-			if(file != null) {
+		if (data == null && path.startsWith("assets/minecraft/lang/") && !path.endsWith(".mcmeta")) {
+			byte[] file = PlatformRuntime
+					.downloadRemoteURIByteArray(ClientMain.configLocalesFolder + "/" + path.substring(22));
+			if (file != null) {
 				assets.put(path, file);
 				return data;
-			}else {
+			} else {
 				assets.put(path, MISSING_FILE);
 				return null;
 			}
-		}else {
+		} else {
 			return data == MISSING_FILE ? null : data;
 		}
 	}
 
 	static void readAssetsTeaVM() {
-		if(!assets.isEmpty()) {
+		if (!assets.isEmpty()) {
 			assets = new HashMap<>();
 		}
 
@@ -104,24 +103,24 @@ public class PlatformAssets {
 
 		logger.info("Reading {} EPK files", epkCount);
 
-		for(int i = 0; i < epkCount; ++i) {
+		for (int i = 0; i < epkCount; ++i) {
 			JSEPKFileEntry etr = getEPKFileData(i);
 			String name = etr.getName();
 			String path = etr.getPath();
 			Uint8Array data = etr.getData();
 			int dataLen = data.getLength();
-			
+
 			logger.info("Reading: \"{}\" @ {}", name, path.startsWith("/") ? path : ("/" + path));
-			
+
 			ByteBuffer buf = PlatformRuntime.allocateByteBuffer(dataLen);
 			try {
 				WASMGCBufferAllocator.getUnsignedByteBufferView(buf).set(data);
 				EPKLoader.loadEPK(buf, path, assets);
-			}catch(IOException e) {
+			} catch (IOException e) {
 				logger.error("Failed to load the EPK file!");
 				logger.error(e);
 				throw new RuntimeInitializationFailureException("Failed to read EPK file \"" + name + "\"!");
-			}finally {
+			} finally {
 				PlatformRuntime.freeByteBuffer(buf);
 			}
 		}
@@ -130,16 +129,16 @@ public class PlatformAssets {
 	}
 
 	private interface JSEPKFileEntry extends JSObject {
-		
+
 		@JSProperty
 		String getName();
-		
+
 		@JSProperty
 		String getPath();
-		
+
 		@JSProperty
 		Uint8Array getData();
-		
+
 	}
 
 	@Import(module = "platformAssets", name = "getEPKFileData")
@@ -154,9 +153,9 @@ public class PlatformAssets {
 
 	public static ImageData loadImageFile(InputStream data, String mime) {
 		byte[] b = EaglerInputStream.inputStreamToBytesQuiet(data);
-		if(b != null) {
+		if (b != null) {
 			return loadImageFile(b, mime);
-		}else {
+		} else {
 			return null;
 		}
 	}
@@ -171,11 +170,11 @@ public class PlatformAssets {
 		try {
 			asyncResult = loadImageFile0(WASMGCDirectArrayConverter.byteArrayToStackU8Array(data),
 					BetterJSStringConverter.stringToJS(mime));
-		}finally {
+		} finally {
 			MemoryStack.pop();
 		}
 
-		if(asyncResult == null) {
+		if (asyncResult == null) {
 			return null;
 		}
 
@@ -183,7 +182,7 @@ public class PlatformAssets {
 		int h = asyncResult.getHeight();
 		int len = w * h;
 		int len2 = len << 2;
-		
+
 		MemoryStack.push();
 		try {
 			Address dataDest = MemoryStack.malloc(len2);
@@ -191,7 +190,7 @@ public class PlatformAssets {
 			int[] pixelsArray = new int[len];
 			copyPixelArrayFast(pixelsArray, dataDest, len2);
 			return new ImageData(w, h, pixelsArray, true);
-		}finally {
+		} finally {
 			MemoryStack.pop();
 		}
 	}
@@ -216,7 +215,7 @@ public class PlatformAssets {
 	private static void copyPixelArrayFast(int[] pixelsArray, Address addr, int count) {
 		Address addrEnd = addr.add(count);
 		int dstOffset = 0;
-		while(addr.isLessThan(addrEnd)) {
+		while (addr.isLessThan(addrEnd)) {
 			pixelsArray[dstOffset] = addr.getInt();
 			++dstOffset;
 			addr = addr.add(4);

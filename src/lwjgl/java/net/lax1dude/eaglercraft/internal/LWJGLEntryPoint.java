@@ -1,5 +1,7 @@
 package net.lax1dude.eaglercraft.internal;
 
+import java.io.File;
+
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 

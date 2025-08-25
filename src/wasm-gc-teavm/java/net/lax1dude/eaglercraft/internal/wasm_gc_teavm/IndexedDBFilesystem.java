@@ -16,6 +16,7 @@
 
 package net.lax1dude.eaglercraft.internal.wasm_gc_teavm;
 
+import org.teavm.interop.Address;
 import org.teavm.interop.Import;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.JSProperty;
@@ -27,11 +28,11 @@ import org.teavm.jso.typedarrays.Uint8Array;
 import net.lax1dude.eaglercraft.internal.IEaglerFilesystem;
 import net.lax1dude.eaglercraft.internal.PlatformRuntime;
 import net.lax1dude.eaglercraft.internal.VFSFilenameIterator;
+import net.lax1dude.eaglercraft.internal.PlatformFilesystem.FilesystemDatabaseInitializationException;
+import net.lax1dude.eaglercraft.internal.PlatformFilesystem.FilesystemDatabaseLockedException;
 import net.lax1dude.eaglercraft.internal.buffer.ByteBuffer;
 import net.lax1dude.eaglercraft.internal.buffer.WASMGCBufferAllocator;
 import net.lax1dude.eaglercraft.internal.vfs2.EaglerFileSystemException;
-import net.lax1dude.eaglercraft.internal.PlatformFilesystem.FilesystemDatabaseInitializationException;
-import net.lax1dude.eaglercraft.internal.PlatformFilesystem.FilesystemDatabaseLockedException;
 
 public class IndexedDBFilesystem implements IEaglerFilesystem {
 
@@ -124,16 +125,14 @@ public class IndexedDBFilesystem implements IEaglerFilesystem {
 
 	@Override
 	public void eaglerWrite(String pathName, ByteBuffer data) {
-		int len = data.remaining();
-		Uint8Array arr = new Uint8Array(len);
-		arr.set(WASMGCBufferAllocator.getByteBufferView(data));
-		if(!eaglerWrite(database, BetterJSStringConverter.stringToJS(pathName), arr.getBuffer())) {
-			throw new EaglerFileSystemException("Failed to write " + len + " byte file to indexeddb table: " + pathName);
+		if(!eaglerWrite(database, BetterJSStringConverter.stringToJS(pathName),
+				WASMGCBufferAllocator.getByteBufferAddress(data), data.remaining())) {
+			throw new EaglerFileSystemException("Failed to write " + data.remaining() + " byte file to indexeddb table: " + pathName);
 		}
 	}
 
 	@Import(module = "platformFilesystem", name = "eaglerWrite")
-	private static native boolean eaglerWrite(IDBDatabase database, JSString pathName, ArrayBuffer arr);
+	private static native boolean eaglerWrite(IDBDatabase database, JSString pathName, Address addr, int length);
 
 	@Override
 	public boolean eaglerExists(String pathName) {

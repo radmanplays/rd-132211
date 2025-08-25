@@ -113,6 +113,12 @@ public class ImageData {
 			System.arraycopy(pixels, offset + (y + startY) * scansize + startX, rgbArray, y * w, w);
 		}
 	}
+	
+	public void setRGB(int startX, int startY, int w, int h, int[] rgbArray, int offset, int scansize) {
+		for (int y = 0; y < h; ++y) {
+			System.arraycopy(rgbArray, y * w, pixels, offset + (y + startY) * scansize + startX, w);
+		}
+	}
 
 	public void copyPixelsFrom(ImageData input, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2,
 			int sy2) {
@@ -195,6 +201,14 @@ public class ImageData {
 
 	public static boolean isNPOTStatic(int w, int h) {
 		return (w & (w - 1)) != 0 || (h & (h - 1)) != 0;
+	}
+
+	public int getWidth() {
+		return this.width;
+	}
+	
+	public int getHeight() {
+		return this.height;
 	}
 
 }

@@ -20,7 +20,18 @@ public class MainClass {
 
 	public static void main(String[] args) {
 		WASMGCCrashReportStrings.setCrashReportStrings();
-		clientMain();
+		MemoryViews.setupCallback();
+		if(args.length == 1) {
+			if("_worker_process_".equalsIgnoreCase(args[0])) {
+				//TODO
+				//workerMain();
+				return;
+			}
+		}else if(args.length == 0) {
+			clientMain();
+			return;
+		}
+		System.out.println("???");
 	}
 
 	private static void clientMain() {
